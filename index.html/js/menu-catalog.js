@@ -7890,8 +7890,11 @@
   const heroMedia = {
     primary: "assets/images/hero/tahmisci-barista-main.jpg",
     detail: "assets/images/hero/tahmisci-barista-detail.jpg",
-    reel: "assets/videos/tahmisci-social-reel.mp4",
-    poster: "assets/images/hero/tahmisci-barista-detail.jpg"
+    coldDrinksFront: "assets/images/hero/tahmisci-cold-drinks-front.jpg",
+    coldDrinksTop: "assets/images/hero/tahmisci-cold-drinks-top.jpg",
+    reelPrimary: "assets/videos/hero/tahmisci-reel-primary.mp4",
+    reelSecondary: "assets/videos/hero/tahmisci-reel-secondary.mp4",
+    reelPoster: "assets/images/hero/tahmisci-cold-drinks-front.jpg"
   };
   const hero = { media: heroMedia, slides: [
     { title: "Kahvenin iyi hali", description: "Özenle hazırlanan kahveler ve günün her anına eşlik eden lezzetler.", buttonText: "Menüyü Keşfet", buttonIcon: "fas fa-mug-hot", buttonUrl: "#menu", backgroundImage: heroMedia.detail }

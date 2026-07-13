@@ -439,6 +439,12 @@ body.tahmisci-static-menu {
   top: 50%;
   right: max(24px, calc((100vw - 1320px) / 2));
   z-index: 3;
+  display: grid;
+  grid-template-columns: clamp(138px, 13.2vw, 192px) auto;
+  grid-template-rows: 1fr 1fr;
+  column-gap: 20px;
+  align-items: center;
+  justify-content: end;
   width: clamp(460px, 44vw, 640px);
   height: calc(100% - 58px);
   max-height: 620px;
@@ -447,8 +453,8 @@ body.tahmisci-static-menu {
 }
 
 .tahmisci-static-menu .hero-main-media,
-.tahmisci-static-menu .hero-detail-media,
-.tahmisci-static-menu .hero-reel-card {
+.tahmisci-static-menu .hero-product-media,
+.tahmisci-static-menu .hero-barista-media {
   position: absolute;
   overflow: hidden;
   margin: 0;
@@ -458,92 +464,59 @@ body.tahmisci-static-menu {
 }
 
 .tahmisci-static-menu .hero-main-media {
-  inset: 0 0 0 auto;
-  width: 68%;
+  position: relative;
+  inset: auto;
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: center;
+  justify-self: end;
+  width: auto;
+  height: min(100%, clamp(480px, 66vh, 650px));
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: 9 / 16;
   border-radius: var(--radius-feature);
+  transform: none;
 }
 
-.tahmisci-static-menu .hero-detail-media {
-  bottom: 0;
-  left: 0;
+.tahmisci-static-menu .hero-product-media,
+.tahmisci-static-menu .hero-barista-media {
+  position: relative;
+  inset: auto;
+  grid-column: 1;
   z-index: 2;
-  width: 34%;
+  width: 100%;
   aspect-ratio: 4 / 5;
-  border: 5px solid rgba(255, 250, 241, 0.9);
-  border-radius: 22px;
-  transform: rotate(-1.5deg);
+  border: 2px solid rgba(255, 250, 241, 0.72);
+  border-radius: 20px;
 }
 
-.tahmisci-static-menu .hero-main-media::after,
-.tahmisci-static-menu .hero-detail-media::after,
-.tahmisci-static-menu .hero-reel-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: rgba(183, 119, 61, 0.07);
-  pointer-events: none;
+.tahmisci-static-menu .hero-product-media {
+  grid-row: 1;
+  align-self: start;
 }
 
-.tahmisci-static-menu .hero-main-media img,
-.tahmisci-static-menu .hero-detail-media img,
-.tahmisci-static-menu .hero-reel-video,
-.tahmisci-static-menu .hero-reel-poster {
+.tahmisci-static-menu .hero-barista-media {
+  grid-row: 2;
+  align-self: end;
+}
+
+.tahmisci-static-menu .hero-main-video,
+.tahmisci-static-menu .hero-product-media img,
+.tahmisci-static-menu .hero-barista-media img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
 }
 
-.tahmisci-static-menu .hero-reel-card {
-  top: 0;
-  left: 3%;
-  z-index: 3;
-  width: 29%;
-  aspect-ratio: 4 / 5;
-  border: 4px solid rgba(255, 250, 241, 0.92);
-  border-radius: 20px;
-  background: var(--espresso);
-  transform: rotate(1.8deg);
+.tahmisci-static-menu .hero-product-media img {
+  object-position: center 58%;
 }
 
-.tahmisci-static-menu .hero-reel-video {
-  object-fit: cover;
-}
-
-.tahmisci-static-menu .hero-reel-poster {
-  position: absolute;
-  inset: 0;
-  display: none;
-  object-fit: cover;
-}
-
-.tahmisci-static-menu .hero-reel-card.is-static .hero-reel-video {
-  visibility: hidden;
-}
-
-.tahmisci-static-menu .hero-reel-card.is-static .hero-reel-poster {
-  display: block;
-}
-
-.tahmisci-static-menu .hero-reel-label {
-  position: absolute;
-  right: 8px;
-  bottom: 8px;
-  left: 8px;
-  z-index: 2;
-  display: inline-flex;
-  min-height: 30px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid rgba(255, 250, 241, 0.26);
-  border-radius: 999px;
-  background: rgba(36, 21, 15, 0.76);
-  color: var(--paper);
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  backdrop-filter: blur(8px);
+.tahmisci-static-menu .hero-barista-media img {
+  object-position: center 52%;
 }
 
 .tahmisci-static-menu .hero-slide--editorial .hero-slide-content {
@@ -1950,6 +1923,16 @@ body.tahmisci-static-menu {
   }
 }
 
+@media (max-width: 1024px) and (min-width: 769px) {
+  .tahmisci-static-menu .hero-media-stage {
+    column-gap: 16px;
+  }
+
+  .tahmisci-static-menu .hero-main-media {
+    height: clamp(380px, 58vh, 500px);
+  }
+}
+
 @media (max-width: 900px) {
   :root {
     --tahmisci-header-height: 70px;
@@ -2077,8 +2060,8 @@ body.tahmisci-static-menu {
   }
 
   .tahmisci-static-menu .hero-slide {
-    background-image: none !important;
     background-color: var(--espresso);
+    background-position: center 42%;
   }
 
   .tahmisci-static-menu .hero-slide::before {
@@ -2091,29 +2074,45 @@ body.tahmisci-static-menu {
   .tahmisci-static-menu .hero-media-stage {
     inset: 0;
     z-index: 0;
+    display: block;
     width: 100%;
     height: 100%;
     max-height: none;
     transform: none;
   }
 
-  .tahmisci-static-menu .hero-main-media,
-  .tahmisci-static-menu .hero-reel-card {
-    display: none;
+  .tahmisci-static-menu .hero-main-media {
+    position: absolute;
+    inset: auto 18px auto auto;
+    top: 50%;
+    z-index: 2;
+    display: block;
+    width: clamp(132px, 28vw, 220px);
+    height: auto;
+    aspect-ratio: 9 / 16;
+    border-width: 1px;
+    border-radius: 18px;
+    transform: translateY(-50%);
   }
 
-  .tahmisci-static-menu .hero-detail-media {
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
-    border-radius: 0;
-    transform: none;
+  .tahmisci-static-menu .hero-product-media,
+  .tahmisci-static-menu .hero-barista-media {
+    position: absolute;
+    right: calc(32px + clamp(132px, 28vw, 220px));
+    left: auto;
+    z-index: 2;
+    display: block;
+    width: clamp(90px, 14vw, 108px);
+    border-width: 1px;
+    border-radius: 15px;
   }
 
-  .tahmisci-static-menu .hero-detail-media img {
-    object-fit: contain;
-    object-position: right center;
+  .tahmisci-static-menu .hero-product-media {
+    top: 18px;
+  }
+
+  .tahmisci-static-menu .hero-barista-media {
+    bottom: 18px;
   }
 
   .tahmisci-static-menu .hero-slide-content {
@@ -2343,6 +2342,34 @@ body.tahmisci-static-menu {
 }
 
 @media (max-width: 620px) {
+  .tahmisci-static-menu .hero-main-media {
+    right: 10px;
+    top: 43%;
+    width: clamp(78px, 20vw, 90px);
+    border-radius: 13px;
+  }
+
+  .tahmisci-static-menu .hero-product-media,
+  .tahmisci-static-menu .hero-barista-media {
+    right: calc(20px + clamp(78px, 20vw, 90px));
+    display: block;
+    width: clamp(68px, 17vw, 78px);
+    border-radius: 11px;
+  }
+
+  .tahmisci-static-menu .hero-product-media {
+    top: 6px;
+  }
+
+  .tahmisci-static-menu .hero-barista-media {
+    bottom: 6px;
+  }
+
+  .tahmisci-static-menu .hero-slide-title,
+  .tahmisci-static-menu .hero-slide-description {
+    max-width: calc(100% - 110px);
+  }
+
   .tahmisci-static-menu #productsGrid.is-product-panel {
     grid-template-columns: minmax(0, 1fr);
   }

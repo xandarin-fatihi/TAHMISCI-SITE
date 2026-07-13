@@ -1911,114 +1911,144 @@ window.generateQR = generateQR;
 
         if (index === 0 && APP_CONFIG.hero?.media) {
             const media = APP_CONFIG.hero.media;
-            const primaryMediaUrl = resolveHeroMediaUrl(media.primary);
-            const detailMediaUrl = resolveHeroMediaUrl(media.detail);
-            const reelMediaUrl = resolveHeroMediaUrl(media.reel);
-            const reelPosterUrl = resolveHeroMediaUrl(media.poster || media.detail || media.primary);
+            const productMediaUrl = resolveHeroMediaUrl(media.coldDrinksTop);
+            const productFallbackUrl = resolveHeroMediaUrl(media.coldDrinksFront);
+            const baristaMediaUrl = resolveHeroMediaUrl(media.detail);
+            const baristaFallbackUrl = resolveHeroMediaUrl(media.primary);
+            const reelPlaylist = [media.reelSecondary, media.reelPrimary]
+                .map(resolveHeroMediaUrl)
+                .filter(Boolean);
+            const reelMediaUrl = reelPlaylist[0] || '';
+            const reelPosterUrl = resolveHeroMediaUrl(media.reelPoster || media.coldDrinksFront || media.detail);
 
-            if (primaryMediaUrl || detailMediaUrl) {
+            if (reelMediaUrl || productMediaUrl || baristaMediaUrl) {
                 const mediaStage = document.createElement('div');
                 mediaStage.className = 'hero-media-stage';
 
-                if (primaryMediaUrl) {
-                    const primaryMedia = document.createElement('figure');
-                    primaryMedia.className = 'hero-main-media';
-                    const primaryImage = document.createElement('img');
-                    primaryImage.src = primaryMediaUrl;
-                    primaryImage.alt = localStorage.getItem('site_language') === 'en'
-                        ? 'Tahmisçi coffee preparation detail'
-                        : 'Tahmisçi kahve hazırlama detayı';
-                    primaryImage.loading = 'eager';
-                    primaryImage.fetchPriority = 'high';
-                    primaryMedia.appendChild(primaryImage);
-                    mediaStage.appendChild(primaryMedia);
-                }
-
-                if (detailMediaUrl) {
-                    const detailMedia = document.createElement('figure');
-                    detailMedia.className = 'hero-detail-media';
-                    detailMedia.setAttribute('aria-hidden', 'true');
-                    const detailImage = document.createElement('img');
-                    detailImage.src = detailMediaUrl;
-                    detailImage.alt = '';
-                    detailImage.loading = 'eager';
-                    detailMedia.appendChild(detailImage);
-                    mediaStage.appendChild(detailMedia);
-                }
-
                 if (reelMediaUrl) {
-                    const reelCard = document.createElement('article');
-                    reelCard.className = 'hero-reel-card';
-                    reelCard.setAttribute('aria-label', localStorage.getItem('site_language') === 'en'
-                        ? 'From Instagram'
-                        : 'Instagram’dan');
+                    const reelPanel = document.createElement('figure');
+                    reelPanel.className = 'hero-main-media';
+                    reelPanel.setAttribute('aria-label', localStorage.getItem('site_language') === 'en'
+                        ? 'Tahmisçi featured video'
+                        : 'Tahmisçi öne çıkan video');
 
                     const reelVideo = document.createElement('video');
-                    reelVideo.className = 'hero-reel-video';
-                    reelVideo.src = reelMediaUrl;
+                    reelVideo.className = 'hero-main-video';
                     reelVideo.poster = reelPosterUrl;
+                    reelVideo.autoplay = true;
                     reelVideo.muted = true;
                     reelVideo.defaultMuted = true;
-                    reelVideo.loop = true;
+                    reelVideo.loop = false;
                     reelVideo.playsInline = true;
-                    reelVideo.preload = 'metadata';
+                    reelVideo.preload = 'auto';
                     reelVideo.disablePictureInPicture = true;
+                    reelVideo.controls = false;
+                    reelVideo.setAttribute('autoplay', '');
                     reelVideo.setAttribute('muted', '');
-                    reelVideo.setAttribute('loop', '');
                     reelVideo.setAttribute('playsinline', '');
+                    reelVideo.setAttribute('preload', 'auto');
 
-                    const reelPoster = document.createElement('img');
-                    reelPoster.className = 'hero-reel-poster';
-                    reelPoster.src = reelPosterUrl;
-                    reelPoster.alt = '';
+                    const reelSource = document.createElement('source');
+                    reelSource.src = reelMediaUrl;
+                    reelSource.type = 'video/mp4';
+                    reelVideo.appendChild(reelSource);
+                    reelPanel.appendChild(reelVideo);
+                    mediaStage.appendChild(reelPanel);
 
-                    const reelLabel = document.createElement('span');
-                    reelLabel.className = 'hero-reel-label';
-                    reelLabel.innerHTML = '<i class="fab fa-instagram" aria-hidden="true"></i>';
-                    reelLabel.appendChild(document.createTextNode(
-                        localStorage.getItem('site_language') === 'en' ? ' From Instagram' : ' Instagram’dan'
-                    ));
-
-                    reelCard.appendChild(reelVideo);
-                    reelCard.appendChild(reelPoster);
-                    reelCard.appendChild(reelLabel);
-                    mediaStage.appendChild(reelCard);
-
-                    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-                    const compactHero = window.matchMedia('(max-width: 768px)');
-                    const syncReelPlayback = () => {
-                        const shouldPlay = !reducedMotion.matches && !compactHero.matches;
-                        reelCard.classList.toggle('is-static', !shouldPlay);
-                        if (shouldPlay) {
-                            reelVideo.autoplay = true;
-                            reelVideo.setAttribute('autoplay', '');
-                            const playPromise = reelVideo.play();
-                            if (playPromise && typeof playPromise.catch === 'function') {
-                                playPromise.catch(() => reelCard.classList.add('is-static'));
-                            }
-                        } else {
-                            reelVideo.autoplay = false;
-                            reelVideo.removeAttribute('autoplay');
-                            reelVideo.pause();
-                            reelVideo.currentTime = 0;
-                        }
-                    };
-                    const addMediaListener = (query) => {
-                        if (typeof query.addEventListener === 'function') query.addEventListener('change', syncReelPlayback);
-                        else if (typeof query.addListener === 'function') query.addListener(syncReelPlayback);
-                    };
-                    const removeMediaListener = (query) => {
-                        if (typeof query.removeEventListener === 'function') query.removeEventListener('change', syncReelPlayback);
-                        else if (typeof query.removeListener === 'function') query.removeListener(syncReelPlayback);
-                    };
-                    addMediaListener(reducedMotion);
-                    addMediaListener(compactHero);
-                    window.__cleanupTahmisciHeroMedia = () => {
-                        removeMediaListener(reducedMotion);
-                        removeMediaListener(compactHero);
+                    reelPanel.dataset.mediaState = 'loading';
+                    reelPanel.dataset.playlistLoop = 'true';
+                    let reelIndex = 0;
+                    let consecutiveReelErrors = 0;
+                    const pauseReel = (state) => {
+                        reelPanel.dataset.mediaState = state;
                         reelVideo.pause();
                     };
-                    requestAnimationFrame(syncReelPlayback);
+                    const playReel = () => {
+                        reelVideo.autoplay = true;
+                        reelVideo.setAttribute('autoplay', '');
+                        const playPromise = reelVideo.play();
+                        if (playPromise && typeof playPromise.catch === 'function') {
+                            playPromise
+                                .then(() => { reelPanel.dataset.mediaState = 'playing'; })
+                                .catch(() => pauseReel('play-blocked'));
+                        }
+                    };
+                    const handleLoadedData = () => {
+                        consecutiveReelErrors = 0;
+                        reelPanel.dataset.loadedData = 'true';
+                        reelPanel.dataset.mediaState = 'loadeddata';
+                        playReel();
+                    };
+                    const handleCanPlay = () => {
+                        reelPanel.dataset.canPlay = 'true';
+                        reelPanel.dataset.mediaState = 'canplay';
+                        playReel();
+                    };
+                    const loadReelAt = (indexToLoad) => {
+                        if (!reelPlaylist.length) return;
+                        reelIndex = (indexToLoad + reelPlaylist.length) % reelPlaylist.length;
+                        reelPanel.dataset.reelIndex = String(reelIndex);
+                        reelSource.src = reelPlaylist[reelIndex];
+                        reelPanel.dataset.mediaState = 'loading-next';
+                        reelVideo.load();
+                    };
+                    const handleReelEnded = () => loadReelAt(reelIndex + 1);
+                    const handleReelError = () => {
+                        consecutiveReelErrors += 1;
+                        if (consecutiveReelErrors < reelPlaylist.length) {
+                            loadReelAt(reelIndex + 1);
+                            return;
+                        }
+                        pauseReel('error');
+                    };
+                    reelVideo.addEventListener('loadeddata', handleLoadedData);
+                    reelVideo.addEventListener('canplay', handleCanPlay);
+                    reelVideo.addEventListener('ended', handleReelEnded);
+                    reelVideo.addEventListener('error', handleReelError);
+                    window.__cleanupTahmisciHeroMedia = () => {
+                        reelVideo.removeEventListener('loadeddata', handleLoadedData);
+                        reelVideo.removeEventListener('canplay', handleCanPlay);
+                        reelVideo.removeEventListener('ended', handleReelEnded);
+                        reelVideo.removeEventListener('error', handleReelError);
+                        reelVideo.pause();
+                    };
+                    requestAnimationFrame(playReel);
+                }
+
+                if (productMediaUrl) {
+                    const productMedia = document.createElement('figure');
+                    productMedia.className = 'hero-product-media';
+                    const productImage = document.createElement('img');
+                    productImage.src = productMediaUrl;
+                    productImage.alt = localStorage.getItem('site_language') === 'en'
+                        ? 'Tahmisçi colorful cold drinks'
+                        : 'Tahmisçi renkli soğuk içecekleri';
+                    productImage.loading = 'eager';
+                    if (productFallbackUrl) {
+                        productImage.addEventListener('error', () => {
+                            if (productImage.src !== productFallbackUrl) productImage.src = productFallbackUrl;
+                        }, { once: true });
+                    }
+                    productMedia.appendChild(productImage);
+                    mediaStage.appendChild(productMedia);
+                }
+
+                if (baristaMediaUrl) {
+                    const baristaMedia = document.createElement('figure');
+                    baristaMedia.className = 'hero-barista-media';
+                    const baristaImage = document.createElement('img');
+                    baristaImage.src = baristaMediaUrl;
+                    baristaImage.alt = localStorage.getItem('site_language') === 'en'
+                        ? 'Tahmisçi barista pouring milk into a cup'
+                        : 'Fincana süt döken Tahmisçi baristası';
+                    baristaImage.loading = 'eager';
+                    if (baristaFallbackUrl) {
+                        baristaImage.addEventListener('error', () => {
+                            if (baristaImage.src !== baristaFallbackUrl) baristaImage.src = baristaFallbackUrl;
+                        }, { once: true });
+                    }
+                    baristaMedia.appendChild(baristaImage);
+                    mediaStage.appendChild(baristaMedia);
                 }
 
                 slideDiv.appendChild(mediaStage);
