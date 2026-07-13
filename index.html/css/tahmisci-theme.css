@@ -434,32 +434,125 @@ body.tahmisci-static-menu {
   background-size: cover;
 }
 
-.tahmisci-static-menu .hero-support-media {
+.tahmisci-static-menu .hero-media-stage {
   position: absolute;
   top: 50%;
   right: max(24px, calc((100vw - 1320px) / 2));
   z-index: 3;
-  width: clamp(230px, 23vw, 340px);
-  aspect-ratio: 4 / 5;
-  overflow: hidden;
-  border: 7px solid rgba(255, 250, 241, 0.88);
-  border-radius: var(--radius-feature);
-  background: var(--cream);
-  box-shadow: 0 26px 64px rgba(36, 21, 15, 0.34);
-  transform: translateY(-50%) rotate(1.4deg);
+  width: clamp(460px, 44vw, 640px);
+  height: calc(100% - 58px);
+  max-height: 620px;
+  transform: translateY(-50%);
   pointer-events: none;
 }
 
-.tahmisci-static-menu .hero-support-media img {
+.tahmisci-static-menu .hero-main-media,
+.tahmisci-static-menu .hero-detail-media,
+.tahmisci-static-menu .hero-reel-card {
+  position: absolute;
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid rgba(255, 250, 241, 0.3);
+  background: #18100c;
+  box-shadow: 0 24px 56px rgba(18, 10, 7, 0.38);
+}
+
+.tahmisci-static-menu .hero-main-media {
+  inset: 0 0 0 auto;
+  width: 68%;
+  border-radius: var(--radius-feature);
+}
+
+.tahmisci-static-menu .hero-detail-media {
+  bottom: 0;
+  left: 0;
+  z-index: 2;
+  width: 34%;
+  aspect-ratio: 4 / 5;
+  border: 5px solid rgba(255, 250, 241, 0.9);
+  border-radius: 22px;
+  transform: rotate(-1.5deg);
+}
+
+.tahmisci-static-menu .hero-main-media::after,
+.tahmisci-static-menu .hero-detail-media::after,
+.tahmisci-static-menu .hero-reel-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(183, 119, 61, 0.07);
+  pointer-events: none;
+}
+
+.tahmisci-static-menu .hero-main-media img,
+.tahmisci-static-menu .hero-detail-media img,
+.tahmisci-static-menu .hero-reel-video,
+.tahmisci-static-menu .hero-reel-poster {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   object-position: center;
 }
 
-.tahmisci-static-menu .hero-slide--dual-media .hero-slide-content {
-  padding-right: clamp(250px, 27vw, 390px);
+.tahmisci-static-menu .hero-reel-card {
+  top: 0;
+  left: 3%;
+  z-index: 3;
+  width: 29%;
+  aspect-ratio: 4 / 5;
+  border: 4px solid rgba(255, 250, 241, 0.92);
+  border-radius: 20px;
+  background: var(--espresso);
+  transform: rotate(1.8deg);
+}
+
+.tahmisci-static-menu .hero-reel-video {
+  object-fit: cover;
+}
+
+.tahmisci-static-menu .hero-reel-poster {
+  position: absolute;
+  inset: 0;
+  display: none;
+  object-fit: cover;
+}
+
+.tahmisci-static-menu .hero-reel-card.is-static .hero-reel-video {
+  visibility: hidden;
+}
+
+.tahmisci-static-menu .hero-reel-card.is-static .hero-reel-poster {
+  display: block;
+}
+
+.tahmisci-static-menu .hero-reel-label {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  left: 8px;
+  z-index: 2;
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 250, 241, 0.26);
+  border-radius: 999px;
+  background: rgba(36, 21, 15, 0.76);
+  color: var(--paper);
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  backdrop-filter: blur(8px);
+}
+
+.tahmisci-static-menu .hero-slide--editorial .hero-slide-content {
+  padding-right: clamp(470px, 47vw, 680px);
+}
+
+.tahmisci-static-menu .hero-slider-wrapper.is-single-slide .hero-slider-nav,
+.tahmisci-static-menu .hero-slider-wrapper.is-single-slide .hero-slider-dots {
+  display: none !important;
 }
 
 .tahmisci-static-menu .hero-slide::before {
@@ -1898,12 +1991,14 @@ body.tahmisci-static-menu {
     display: none;
   }
 
-  .tahmisci-static-menu .hero-support-media {
-    display: none;
+  .tahmisci-static-menu .hero-media-stage {
+    right: 18px;
+    width: clamp(360px, 48vw, 430px);
+    height: calc(100% - 50px);
   }
 
-  .tahmisci-static-menu .hero-slide--dual-media .hero-slide-content {
-    padding-right: 0;
+  .tahmisci-static-menu .hero-slide--editorial .hero-slide-content {
+    padding-right: clamp(360px, 49vw, 450px);
   }
 
   .tahmisci-static-menu .about-company-content {
@@ -1982,16 +2077,53 @@ body.tahmisci-static-menu {
   }
 
   .tahmisci-static-menu .hero-slide {
-    background-position: 62% center;
+    background-image: none !important;
+    background-color: var(--espresso);
   }
 
   .tahmisci-static-menu .hero-slide::before {
-    background: linear-gradient(90deg, rgba(36, 21, 15, 0.92), rgba(36, 21, 15, 0.56) 68%, rgba(36, 21, 15, 0.28));
+    z-index: 1;
+    background:
+      linear-gradient(90deg, rgba(36, 21, 15, 0.94), rgba(36, 21, 15, 0.7) 68%, rgba(36, 21, 15, 0.38)),
+      linear-gradient(0deg, rgba(36, 21, 15, 0.38), transparent 56%);
+  }
+
+  .tahmisci-static-menu .hero-media-stage {
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    transform: none;
+  }
+
+  .tahmisci-static-menu .hero-main-media,
+  .tahmisci-static-menu .hero-reel-card {
+    display: none;
+  }
+
+  .tahmisci-static-menu .hero-detail-media {
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+    transform: none;
+  }
+
+  .tahmisci-static-menu .hero-detail-media img {
+    object-fit: contain;
+    object-position: right center;
   }
 
   .tahmisci-static-menu .hero-slide-content {
+    z-index: 3;
     width: calc(100% - 36px);
     justify-content: center;
+  }
+
+  .tahmisci-static-menu .hero-slide--editorial .hero-slide-content {
+    padding-right: 0;
   }
 
   .tahmisci-static-menu .hero-slide-brand {
