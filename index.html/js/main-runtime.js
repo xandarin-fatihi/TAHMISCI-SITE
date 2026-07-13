@@ -1833,6 +1833,10 @@ window.generateQR = generateQR;
         const content = document.createElement('div');
         content.className = 'hero-slide-content';
 
+        const brand = document.createElement('span');
+        brand.className = 'hero-slide-brand';
+        brand.textContent = 'Tahmisçi Coffee & Roastery';
+
         const title = document.createElement('h1');
         title.className = 'hero-slide-title';
         title.textContent = slide.title;
@@ -1862,7 +1866,14 @@ window.generateQR = generateQR;
 
         button.appendChild(document.createTextNode(` ${slide.buttonText || ''}`));
 
+        const aboutButton = document.createElement('a');
+        aboutButton.href = '#about';
+        aboutButton.className = 'btn btn-secondary btn-large hero-about-btn';
+        aboutButton.textContent = localStorage.getItem('site_language') === 'en' ? 'About Us' : 'Hakkımızda';
+
         actions.appendChild(button);
+        actions.appendChild(aboutButton);
+        content.appendChild(brand);
         content.appendChild(title);
         content.appendChild(description);
         content.appendChild(actions);
@@ -1924,6 +1935,7 @@ window.generateQR = generateQR;
     function startAutoplay() {
         stopAutoplay();
 
+        if (document.body.classList.contains('tahmisci-static-menu')) return;
         if (!APP_CONFIG.hero?.autoplay) return;
 
         const interval = APP_CONFIG.hero.autoplayInterval || 5000;
@@ -2155,11 +2167,12 @@ window.HomepageSections = new HomepageSectionsManager();
 
     // Ürün kartı HTML'i oluştur (menu sayfasındaki yapıya birebir uygun)
     function createProductCard(product) {
-        const image = product.image || 'https://images.pexels.com/photos/2741457/pexels-photo-2741457.jpeg';
+        const image = String(product.image || '').trim();
         const isLogoFallback = product && product.image_source === 'company_logo';
+        const hasImage = Boolean(image) && !isLogoFallback;
 
         const badgeMap = {
-            'popular': 'Popüler',
+            'popular': 'Çok Satan',
             'new': 'Yeni',
             'discount': 'İndirim',
             'healthy': 'Sağlıklı',
@@ -2169,13 +2182,14 @@ window.HomepageSections = new HomepageSectionsManager();
 
         const badgeText = product.badge ? badgeMap[product.badge] || product.badge : null;
         const price = product.basePrice || product.price || 0;
+        const priceLabel = String(product.priceLabel || '').trim() || `₺${parseFloat(price || 0).toLocaleString('tr-TR')}`;
 
         return `
-      <div class="product-card${isLogoFallback ? ' product-logo-fallback' : ''}" data-product-id="${product.id}">
-        <div class="product-image">
+      <div class="product-card product-card--featured${hasImage ? '' : ' product-card--no-media'}" data-product-id="${product.id}">
+        ${hasImage ? `<div class="product-image">
           <img src="${image}" alt="${product.name || ''}" loading="lazy" class="${isLogoFallback ? 'logo-fallback-image' : ''}">
           ${badgeText ? `<div class="product-badge">${badgeText}</div>` : ''}
-        </div>
+        </div>` : ''}
         <div class="product-content">
           <div class="product-header">
             <h3 class="product-name">${product.name || ''}</h3>
@@ -2183,7 +2197,7 @@ window.HomepageSections = new HomepageSectionsManager();
           <p class="product-description">${product.description || ''}</p>
           <div class="product-footer">
             <div class="product-price">
-              <span class="current-price">${product.priceLabel || parseFloat(price || 0).toFixed(2)}</span>
+              <span class="current-price">${priceLabel}</span>
               ${product.oldPrice ? `<span class="old-price">${parseFloat(product.oldPrice || 0).toFixed(2)}</span>` : ''}
             </div>
             <button class="product-add-btn" data-product-id="${product.id}">İncele</button>
@@ -4354,9 +4368,7 @@ window.HomepageSections = new HomepageSectionsManager();
                 if (authButtons) {
                     // Only show on desktop (not mobile) - CSS already hides on mobile with !important
                     const isMobile = window.innerWidth < 992;
-                    if (window.TahmisciCatalog) {
-                        authButtons.style.setProperty('display', 'none', 'important');
-                    } else if (!isMobile) {
+                    if (!isMobile) {
                         authButtons.style.setProperty('display', 'flex', 'important');
                     } else {
                         authButtons.style.setProperty('display', 'none', 'important');
@@ -4371,7 +4383,7 @@ window.HomepageSections = new HomepageSectionsManager();
                 }
                 // Show mobile auth section when logged out (mobile nav)
                 if (mobileAuth) {
-                    mobileAuth.style.setProperty('display', window.TahmisciCatalog ? 'none' : 'flex', 'important');
+                    mobileAuth.style.setProperty('display', 'flex', 'important');
                 }
                 if (mobileUserInfo) {
                     mobileUserInfo.style.setProperty('display', 'none', 'important');
@@ -15705,7 +15717,7 @@ document.addEventListener("DOMContentLoaded", function () {
         card.style.cursor = 'pointer';
 
         const badgeMap = {
-            'popular': 'Popüler',
+            'popular': 'Çok Satan',
             'new': 'Yeni',
             'discount': 'İndirim',
             'healthy': 'Sağlıklı',
@@ -15714,7 +15726,14 @@ document.addEventListener("DOMContentLoaded", function () {
         };
         const isOutOfStock = product.product_qr_status === '2';
         const badgeText = isOutOfStock ? 'Tükendi' : (product.badge ? badgeMap[product.badge] || product.badge : null);
+        const hasFeatureBadge = Boolean(product.badge) && !isOutOfStock;
+        const image = String(product.image || '').trim();
+        const hasImage = Boolean(image) && product.image_source !== 'company_logo';
+        const basePrice = Number(product.basePrice || product.price || 0);
+        const priceLabel = String(product.priceLabel || '').trim() || (Number.isFinite(basePrice) ? `₺${basePrice.toLocaleString('tr-TR')}` : '');
         if (isOutOfStock) card.classList.add('product-out-of-stock');
+        if (hasFeatureBadge) card.classList.add('product-card--featured');
+        if (!hasImage) card.classList.add('product-card--no-media');
 
         const orderType = localStorage.getItem('menuOrderType');
         const translations = window.I18N?.getTranslations?.();
@@ -15724,19 +15743,20 @@ document.addEventListener("DOMContentLoaded", function () {
         const actionLabel = window.TahmisciCatalog ? 'İncele' : (isOutOfStock ? viewLabel : (orderType === 'tableMenu' ? viewLabel : addLabel));
 
         card.innerHTML = `
-            <div class="product-image">
+            ${hasImage ? `<div class="product-image">
                 <div class="image-loading-spinner"></div>
-                <img data-src="${product.image || ''}" alt="${product.name || ''}" class="lazy-image">
+                <img data-src="${image}" alt="${product.name || ''}" class="lazy-image">
                 ${badgeText ? `<div class="product-badge${isOutOfStock ? ' product-badge-out' : ''}">${badgeText}</div>` : ''}
-            </div>
-            <div class="product-footer">
-                <button class="product-add-btn" onclick="event.stopPropagation(); openProductModal(${product.id})">${actionLabel}</button>
-            </div>
+            </div>` : ''}
             <div class="product-content">
                 <div class="product-header">
                     <h3 class="product-name">${product.name || ''}</h3>
                 </div>
                 <p class="product-description">${product.description || ''}</p>
+                ${priceLabel ? `<div class="product-price"><span class="current-price">${priceLabel}</span>${product.oldPrice ? `<span class="old-price">₺${Number(product.oldPrice).toLocaleString('tr-TR')}</span>` : ''}</div>` : ''}
+            </div>
+            <div class="product-footer">
+                <button class="product-add-btn" onclick="event.stopPropagation(); openProductModal(${product.id})">${actionLabel}</button>
             </div>
         `;
 

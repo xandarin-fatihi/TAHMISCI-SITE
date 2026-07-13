@@ -1372,13 +1372,13 @@
     });
 
     document.title = lang === "en"
-      ? "Tahmisçi | Digital Menu"
-      : "Tahmisçi | Dijital Menü";
+      ? "Tahmisçi | Coffee & Roastery"
+      : "Tahmisçi | Coffee & Roastery";
     const description = document.querySelector('meta[name="description"]');
     if (description) {
       description.setAttribute("content", lang === "en"
-        ? "Tahmisci coffee, cold drinks, desserts and sandwich menu"
-        : "Tahmisci kahve, soguk icecek, tatli ve sandvic menusu");
+        ? "Tahmisçi Coffee & Roastery brings carefully prepared coffee, cold drinks and desserts together."
+        : "Tahmisçi Coffee & Roastery; özenle hazırlanan kahveler, soğuk içecekler ve tatlıları buluşturur.");
     }
   }
 
