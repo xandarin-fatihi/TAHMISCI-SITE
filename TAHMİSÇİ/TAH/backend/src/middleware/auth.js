@@ -16,9 +16,18 @@ function createAuthMiddleware(config) {
     );
   }
 
-  function signRecipeToken() {
+  function signRecipeToken(user) {
+    const recipeUser = user && typeof user === "object" ? user : null;
     return jwt.sign(
-      { sub: "recipe", role: "recipe" },
+      {
+        sub: recipeUser && recipeUser.id ? String(recipeUser.id) : "recipe",
+        role: "recipe",
+        ...(recipeUser && recipeUser.id ? {
+          userId: String(recipeUser.id),
+          username: String(recipeUser.username || ""),
+          name: String(recipeUser.name || "")
+        } : {})
+      },
       config.jwtSecret,
       {
         expiresIn: config.jwtExpiresIn,
@@ -149,6 +158,27 @@ function createAuthMiddleware(config) {
     }
   }
 
+  function sessionInfoFromToken(token) {
+    try {
+      return sessionInfoFromPayload(jwt.verify(token, config.jwtSecret, {
+        issuer: config.jwtIssuer,
+        audience: config.jwtAudience
+      }));
+    } catch (_error) {
+      return { expiresAt: null, ttlSeconds: 0 };
+    }
+  }
+
+  function sessionInfoFromPayload(payload) {
+    const expiresAtMs = Number(payload && payload.exp || 0) * 1000;
+    const issuedAtMs = Number(payload && payload.iat || 0) * 1000;
+    return {
+      expiresAt: expiresAtMs ? new Date(expiresAtMs).toISOString() : null,
+      issuedAt: issuedAtMs ? new Date(issuedAtMs).toISOString() : null,
+      ttlSeconds: expiresAtMs ? Math.max(0, Math.floor((expiresAtMs - Date.now()) / 1000)) : 0
+    };
+  }
+
   function bearerToken(req) {
     const header = String(req.header("Authorization") || "");
     return header.startsWith("Bearer ") ? header.slice(7).trim() : "";
@@ -173,6 +203,8 @@ function createAuthMiddleware(config) {
     requireAdmin,
     requireAdminPage,
     requireRecipe,
+    sessionInfoFromPayload,
+    sessionInfoFromToken,
     signAdminToken,
     signRecipeToken,
     verifyRecipeRequest,

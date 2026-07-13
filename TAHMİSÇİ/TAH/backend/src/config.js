@@ -3,6 +3,7 @@
 
 const crypto = require("crypto");
 const path = require("path");
+const { isKnownLocalCredential, isKnownLocalDataPath } = require("./local-development");
 
 const nodeEnv = String(process.env.NODE_ENV || "development").trim();
 const isProduction = nodeEnv === "production";
@@ -83,6 +84,18 @@ function validateConfig() {
 
   if (config.isProduction && (!config.managerKey || config.managerKey.length < 32)) {
     errors.push("Production ortaminda PASSWORD_MANAGER_KEY en az 32 karakter olmali.");
+  }
+
+  if (config.isProduction && /^(1|true|yes|on)$/i.test(String(process.env.TAHMISCI_LOCAL_DEV || ""))) {
+    errors.push("Production ortaminda TAHMISCI_LOCAL_DEV kullanilamaz.");
+  }
+
+  if (config.isProduction && [config.dataFile, config.mediaDir].some(isKnownLocalDataPath)) {
+    errors.push("Production ortaminda local-dev/local-smoke veri yollari kullanilamaz.");
+  }
+
+  if (config.isProduction && [config.defaultPanelPassword, config.defaultRecipePassword, config.jwtSecret, config.managerKey].some(isKnownLocalCredential)) {
+    errors.push("Production ortaminda bilinen lokal gelistirme bilgileri kullanilamaz.");
   }
 
   if (config.passwordResetEmail && !isEmailLike(config.passwordResetEmail)) {

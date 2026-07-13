@@ -1,105 +1,78 @@
-# Tahmisci Backend API
+# Tahmisçi Backend API
 
-Bu backend ana siteyi, admin panelini ve recete arayuzunu `MAIN_DOMAIN` uzerinden servis edecek sekilde duzenlenmistir.
+Node.js 18+ ve Express tabanlı tek veri kaynağıdır. Dosya store yazımları atomiktir; migration bilinmeyen güvenli alanları ve tüm tanınan uygulama verisini korur.
 
-## Guvenli Kurulum
+## Kurulum ve doğrulama
 
 ```bash
-cd backend
-copy .env.example .env
+cp .env.example .env
 npm install
+npm run check
+npm test
 npm start
 ```
 
-`.env` icindeki tum `change-this...` degerlerini canliya almadan once degistirin. `JWT_SECRET` ve `PASSWORD_MANAGER_KEY` uzun, rastgele ve repoya eklenmeyen degerler olmalidir.
+Production'da `NODE_ENV`, domain/origin, güçlü `JWT_SECRET`, `PASSWORD_MANAGER_KEY`, cookie, SMTP, `DATA_FILE` ve `MEDIA_DIR` değerleri `.env` içinde tanımlanır. Gerçek `.env` repoya eklenmez.
 
-## Zorunlu Ortam Degiskenleri
+Lokal önizleme için repo kökünde `.env` oluşturmadan `npm install` ve `npm run dev:local` kullanılır. Bu akış production store/medyadan ayrı `local-dev-*` hedeflerini zorlar; `npm run local:reset` yalnızca bu hedefleri silebilir ve `npm run test:local` ayrı smoke store ile uçtan uca kontrol yapar. Ayrıntılar repo kökündeki `LOCAL-DEVELOPMENT.md` dosyasındadır.
 
-```text
-NODE_ENV=production
-PORT=8080
-MAIN_DOMAIN=tahmiscicoffee.com
-ADMIN_DOMAIN=admin.tahmiscicoffee.com
-PUBLIC_SITE_URL=https://tahmiscicoffee.com
-ALLOWED_ORIGINS=https://tahmiscicoffee.com,https://www.tahmiscicoffee.com,https://admin.tahmiscicoffee.com
-JWT_SECRET=uzun-rastgele-secret
-JWT_EXPIRES_IN=5m
-PASSWORD_MANAGER_KEY=uzun-rastgele-manager-key
-PASSWORD_RESET_EMAIL=zekimerttunaydin@tahmiscicoffee.com
-PASSWORD_RESET_CODE_TTL_MINUTES=10
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=465
-SMTP_SECURE=true
-SMTP_USER=zekimerttunaydin@tahmiscicoffee.com
-SMTP_PASS="GOOGLE_UYGULAMA_SIFRESI"
-SMTP_FROM="Tahmisci Panel <zekimerttunaydin@tahmiscicoffee.com>"
-DEFAULT_PANEL_PASSWORD=IlkGucluSifre123
-DEFAULT_RECIPE_PASSWORD=
-DATA_FILE=./data/store.json
-MEDIA_DIR=./data/media
-```
+## Store şeması
 
-`DEFAULT_PANEL_PASSWORD` sadece `DATA_FILE` henuz olusmamisken ilk panel hash'ini uretmek icin kullanilir.
-`DEFAULT_RECIPE_PASSWORD` bos birakilirsa ilk kurulumda recete sifresi panel sifresiyle ayni baslar. Var olan canli veride `recipePasswordHash` yoksa backend ilk calismada mevcut panel hash'ini recete icin de kopyalar; bundan sonra iki sifre birbirinden bagimsiz guncellenir.
-`PASSWORD_RESET_EMAIL` panel veya recete sifresini e-posta kodu ile ayri ayri degistirme yetkisine sahip adrestir. Gmail icin `SMTP_PASS` normal hesap sifresi degil, Google hesabindan uretilen 16 haneli uygulama sifresi olmalidir. Gercek `.env` dosyasini GitHub'a eklemeyin. Kullanici ekrani: `https://tahmiscicoffee.com/password-reset/`.
-`MEDIA_DIR`, admin panelden yuklenen banner gorsel ve videolarinin saklandigi klasordur. Varsayilan `./data/media` klasoru GitHub'a eklenmez ve sunucuda kalici veri olarak korunmalidir.
+Store şema sürümü `2`'dir. Başlıca alanlar:
 
-## Subdomain Routing
+- `schemaVersion`, `createdAt`, `updatedAt`
+- admin ve reçete parola hash'leri/ayarları
+- `menuState`, `recipeState`, `recipeCatalog`, `recipeLinkReview`
+- `siteState`, `siteRevisions` (son 10 yayın)
+- `recipeUsers`, `recipeAssignments`, `recipeActivity`, `feedbackItems`
+- uygulamanın ileride eklediği bilinmeyen güvenli alanlar
 
-- `https://tahmiscicoffee.com/` public menu sitesini acar.
-- `https://tahmiscicoffee.com/panel/` admin panelini acar.
-- `https://tahmiscicoffee.com/recete/` sifreli recete arayuzunu acar.
-- `https://admin.tahmiscicoffee.com/login.html` admin giris ekranidir.
-- `https://admin.tahmiscicoffee.com` kullaniliyorsa ana domaine yonlendirilmelidir.
-- `https://admin.tahmiscicoffee.com/admin-password` manager key ile panel sifresi degistirme ekranidir.
+`normalizeStore` ve `normalizeRecipeState`; kullanıcıları, atamaları, aktiviteleri, not/aktiflik/sıra alanlarını veya bilinmeyen uygulama alanlarını silmez. Migration idempotenttir ve dolu store'u seed ile ezmez.
 
-## API
+## SiteState şeması
 
-- `GET /api/health`: Saglik kontrolu.
-- `POST /api/admin/login`: Bcrypt hash ile sifre dogrular, JWT dondurur ve HTTP-only cookie set eder.
-- `POST /api/admin/logout`: Admin cookie'sini temizler.
-- `GET /api/admin/me`: Gecerli Bearer token veya admin cookie ister.
-- `POST /api/admin/password`: `PASSWORD_MANAGER_KEY` ile admin sifresini degistirir.
-- `POST /api/recipe/login`: Recete sifresini dogrular, recete JWT'si dondurur ve ayri HTTP-only cookie set eder.
-- `GET /api/recipe/me`: Gecerli recete veya admin oturumu ister.
-- `POST /api/admin/password-reset/request`: Yetkili e-postaya 6 haneli dogrulama kodu gonderir.
-- `POST /api/admin/password-reset/confirm`: Kod dogruysa secilen panel veya recete sifresini gunceller.
-- `POST /api/media`: Admin token/cookie ister; banner gorsel ve video dosyalarini backend'e yukler.
-- `GET /media/...`: Yuklenen banner gorsel ve videolarini public menuye servis eder.
-- `GET /api/menu`, `GET /api/site`, `GET /api/recipes`: Public okuma endpointleri.
-- `PUT /api/menu`, `PUT /api/site`, `PUT /api/recipes`: Admin token/cookie ister.
-- `GET /api/*/events`: SSE canli guncelleme endpointleri.
+`siteState.schemaVersion = 2` ve ana bölümleri `global`, `header`, `hero`, `featuredProducts`, `menuSection`, `about`, `qrMenu`, `contact`, `footer`, `seo`, `sectionOrder`, `updatedAt` alanlarıdır. Yerelleştirilen metinler `{ "tr": "...", "en": "..." }` biçimindedir; İngilizce boşsa Türkçe fallback uygulanır. Eski düz alanlar migration ile taşınır, bilinmeyen değerler korunur. Validator gömülü medya, script/event handler, `javascript:` URL, geçersiz protokol, boyut, tür ve hero aralıklarını reddeder.
 
-## Recete Verisi
+## Menü–reçete bağlantısı
 
-`recipe-data.js` varsayilan recete verisidir. Recete olcu degeri eski formatta string olabilir veya yeni formatta `{ "content": "...", "preparation": "..." }` olabilir. Yeni formatta `content` icerik listesini, `preparation` ise recete ekranindaki "Hazirlanisi" butonunda gosterilecek yapilis bilgisini tasir.
+Her reçete `recipeCatalog` içinde değişmeyen bir kimlik taşır. Menü ürünü `recipeId`, `recipeSize`, `contentMode` ve gerekirse `manualContent` tutar. `contentMode` değerleri:
 
-Canli sunucuda backend store verisini `recipe-data.js` ile guncellemek icin:
+- `recipe`: bağlı reçeteden yalnızca public `content`; ölçü tercihi `recipeSize`, sonra `Standart`, `16 oz`, ilk geçerli ölçü.
+- `manual`: paneldeki manuel içerik.
+- `hidden`: içerik public çıktıda gösterilmez.
+
+İlk migration sadece kategori+ürün adı birebir ve benzersizse bağlar. Aynı isimli/belirsiz kayıtlar `recipeLinkReview` listesine girer. Reçete adı değişse de kimlik korunduğu için bağlantı kopmaz. Silme öncesi panel bağlı ürünleri uyarır; silinen bağlantı ürünün manuel/boş fallback'ine çevrilir.
+
+## Public API
+
+- `GET /api/health`: sağlık.
+- `GET /api/public/bootstrap`: yayınlanmış `siteState`, aktif menü projection'ı, fiyat/varyant, medya, kalori, alerjen ve çözümlenmiş public içerik.
+- `GET /api/public/events`: bootstrap SSE; menü, reçete veya site yayını sonrası günceller.
+- `GET /api/menu`, `GET /api/menu/events`: eski QR menünün public menü akışı.
+- `GET /api/site`, `GET /api/site/events`: public site içerik akışı.
+- `POST /api/feedback`: public geri bildirim oluşturma.
+
+Public bootstrap; hazırlanış, gizli ölçülü tarif, barista notu, admin/parola/token, kullanıcı, ödev, sınav ve aktivite göndermez. Cache başlığı kısa süreli revalidation kullanır.
+
+## Yetkili API
+
+- Admin: `/api/admin/login`, `/logout`, `/me`, `/session/refresh`, parola/reset, reçete kullanıcı ve atama endpointleri.
+- Yazma: `PUT /api/menu`, `PUT /api/recipes`, `PUT /api/site` yalnızca admin oturumu ve izinli origin ile.
+- Reçete: `GET /api/recipes`, `/api/recipes/events`, `/api/recipe/*` yalnızca reçete veya admin oturumu ile.
+- Medya: `POST/GET /api/media`, `DELETE /api/media/:name` yalnızca admin. Kullanılan medya silinemez.
+- Revizyon: `GET /api/admin/site/revisions`, `POST /api/admin/site/revisions/:id/restore` yalnızca admin.
+
+Upload adı backend tarafından güvenli ve benzersiz üretilir; uzantı, MIME ve dosya imzası birlikte doğrulanır. Görsel limiti 15 MB, video limiti 120 MB'dir; JPEG/PNG/WebP/GIF ve MP4/WebM kabul edilir.
+
+## Backup ve migration
 
 ```bash
-cd /var/www/tahmisci-app/index.html/backend
-npm run import:recipes
-pm2 restart tahmisci-backend --update-env
+npm run backup
+npm run migrate
 ```
 
-## Guvenlik Notlari
+Backup varsayılan olarak `data/backups/store-<timestamp>.json` üretir. Bu klasör public/static değildir ve Git tarafından yok sayılır. Migration geçici dosya + rename ile yazar. Canlıda her zaman önce backup alın.
 
-- `.env`, `data/` ve `node_modules/` `.gitignore` icindedir.
-- Production ortaminda `ALLOWED_ORIGINS=*` kabul edilmez.
-- Production ortaminda `JWT_SECRET`, `MAIN_DOMAIN`, `ADMIN_DOMAIN`, `ALLOWED_ORIGINS` ve uzun `PASSWORD_MANAGER_KEY` zorunludur.
-- Admin sifre degistirme ve yazma API'leri admin origin kontrolunden gecer. Login ve oturum kontrolu, ana domaindeki sifreli recete arayuzu icin ana domain origininden de calisir.
-- Panel ve recete sifreleri ayri bcrypt hash olarak saklanir. E-posta dogrulamali reset ekrani, secilen sifreyi digerini etkilemeden gunceller.
-- Admin sayfalari sadece admin host'unda ve `requireAdminPage` middleware'inden sonra statik servis edilir.
-- Frontend token'i `sessionStorage`da tutar; sayfa korumasi icin backend tarafinda HTTP-only cookie de kullanilir.
+## Testler
 
-## PM2
-
-Canli sunucuda:
-
-```bash
-pm2 start ecosystem.config.cjs --env production
-pm2 save
-pm2 startup systemd
-```
-
-Detayli GoDaddy, Nginx ve SSL rehberi icin kokteki `DEPLOYMENT-GODADDY-NGINX.md` dosyasini kullanin.
+`npm run check` syntax ve HTML/CSS/JS/görsel/video referanslarını; `npm test` store korumasını, seed'i, stable reçete bağlantısını, public veri sızıntısını, içerik modlarını, auth, medya, SSE ve ana route'ları test eder.

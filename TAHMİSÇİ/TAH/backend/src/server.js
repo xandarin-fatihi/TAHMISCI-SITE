@@ -17,7 +17,11 @@ const nodemailer = require("nodemailer");
 const { config, validateConfig } = require("./config");
 const { createAuthMiddleware } = require("./middleware/auth");
 const { createFileStore } = require("./store/file-store");
-const { validateMenuState, validateRecipeState, validateSiteState, validatePassword } = require("./validators");
+const { seedStoreIfEmpty } = require("./store/seed-defaults");
+const { reconcileRecipeCatalog } = require("./store/migrations");
+const { buildPublicBootstrap } = require("./public-bootstrap");
+const { migrateSiteState } = require("./site-state");
+const { validateMenuState, validateRecipeCatalog, validateRecipeState, validateSiteState, validatePassword } = require("./validators");
 
 validateConfig();
 
@@ -31,18 +35,16 @@ const auth = createAuthMiddleware(config);
 const sseClients = new Set();
 const recipeSseClients = new Set();
 const siteSseClients = new Set();
+const publicSseClients = new Set();
 const feedbackSseClients = new Set();
 const passwordResetCodes = new Map();
 let passwordResetTransporter = null;
 let xlsxModule = null;
-const publicAssetFiles = [
-  "index.html",
-  "menu.js",
-  "styles.css"
-];
 const RECIPE_ACTIVITY_LIMIT = 5000;
 
 const projectRoot = config.projectRoot;
+const siteRoot = path.join(projectRoot, "site");
+const qrMenuRoot = path.join(projectRoot, "qr-menu");
 const staticOptions = {
   dotfiles: "deny",
   etag: true,
@@ -131,6 +133,42 @@ app.get("/api/health", (_req, res) => {
     ok: true,
     time: new Date().toISOString()
   });
+});
+
+app.get("/api/public/bootstrap", async (_req, res, next) => {
+  try {
+    const data = await store.read();
+    const bootstrap = buildPublicBootstrap(data);
+    res.set({
+      "Cache-Control": "public, max-age=30, stale-while-revalidate=120",
+      "Vary": "Accept-Language"
+    });
+    res.json({ ok: true, ...bootstrap });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get("/api/public/events", async (req, res, next) => {
+  try {
+    res.writeHead(200, {
+      "Content-Type": "text/event-stream",
+      "Cache-Control": "no-cache, no-transform",
+      Connection: "keep-alive",
+      "X-Accel-Buffering": "no"
+    });
+    res.write("retry: 5000\n\n");
+    const data = await store.read();
+    sendSse(res, "bootstrap", { reason: "connected", ...buildPublicBootstrap(data) });
+    const client = { res, heartbeat: setInterval(() => res.write(": keepalive\n\n"), 25000) };
+    publicSseClients.add(client);
+    req.on("close", () => {
+      clearInterval(client.heartbeat);
+      publicSseClients.delete(client);
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 app.post("/api/admin/login", requireAdminOrMainRequestOrigin, loginLimiter, async (req, res, next) => {
@@ -1054,14 +1092,15 @@ app.put("/api/menu", requireAdminRequestOrigin, auth.requireAdmin, async (req, r
     }
 
     const updatedAt = new Date().toISOString();
-    await store.update((data) => {
+    const nextStore = await store.update((data) => {
       data.menuState = menuState;
       data.menuUpdatedAt = updatedAt;
       return data;
     });
 
-    broadcastMenuUpdate(menuState, updatedAt);
-    res.json({ ok: true, menuState, updatedAt });
+    broadcastMenuUpdate(nextStore.menuState, updatedAt);
+    broadcastPublicUpdate(nextStore, "menu");
+    res.json({ ok: true, menuState: nextStore.menuState, recipeLinkReview: nextStore.recipeLinkReview, updatedAt });
   } catch (error) {
     next(error);
   }
@@ -1104,6 +1143,7 @@ app.post("/api/admin/products/import-excel", requireAdminRequestOrigin, auth.req
     });
 
     broadcastMenuUpdate(importedMenuState || nextStore.menuState, updatedAt);
+    broadcastPublicUpdate(nextStore, "menu");
     res.json({
       ok: true,
       menuState: importedMenuState || nextStore.menuState,
@@ -1141,6 +1181,38 @@ app.post("/api/media", requireAdminRequestOrigin, auth.requireAdmin, express.raw
   }
 });
 
+app.get("/api/media", requireAdminRequestOrigin, auth.requireAdmin, async (_req, res, next) => {
+  try {
+    await fs.mkdir(config.mediaDir, { recursive: true });
+    const names = await fs.readdir(config.mediaDir);
+    const media = await Promise.all(names.filter(isSafeMediaFileName).map(async (name) => {
+      const stats = await fs.stat(path.join(config.mediaDir, name));
+      return { name, src: `/media/${name}`, size: stats.size, updatedAt: stats.mtime.toISOString() };
+    }));
+    res.json({ ok: true, media: media.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)) });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.delete("/api/media/:name", requireAdminRequestOrigin, auth.requireAdmin, async (req, res, next) => {
+  try {
+    const name = String(req.params.name || "");
+    if (!isSafeMediaFileName(name)) return res.status(400).json({ ok: false, message: "Gecersiz medya adi." });
+    const data = await store.read();
+    const reference = `/media/${name}`;
+    const publishedData = JSON.stringify({ menuState: data.menuState, siteState: data.siteState });
+    if (publishedData.includes(reference)) {
+      return res.status(409).json({ ok: false, message: "Bu medya yayindaki menu veya site tarafindan kullaniliyor." });
+    }
+    await fs.unlink(path.join(config.mediaDir, name));
+    res.json({ ok: true });
+  } catch (error) {
+    if (error && error.code === "ENOENT") return res.status(404).json({ ok: false, message: "Medya bulunamadi." });
+    next(error);
+  }
+});
+
 app.get("/api/menu/events", async (req, res, next) => {
   try {
     res.writeHead(200, {
@@ -1169,7 +1241,13 @@ app.get("/api/menu/events", async (req, res, next) => {
 app.get("/api/recipes", requireAdminOrMainRequestOrigin, auth.requireRecipe, requireActiveRecipeUser, async (_req, res, next) => {
   try {
     const data = await store.read();
-    res.json({ ok: true, recipeState: data.recipeState, updatedAt: data.recipeUpdatedAt || null });
+    res.json({
+      ok: true,
+      recipeState: data.recipeState,
+      recipeCatalog: data.recipeCatalog || [],
+      recipeLinkReview: data.recipeLinkReview || [],
+      updatedAt: data.recipeUpdatedAt || null
+    });
   } catch (error) {
     next(error);
   }
@@ -1178,21 +1256,36 @@ app.get("/api/recipes", requireAdminOrMainRequestOrigin, auth.requireRecipe, req
 app.put("/api/recipes", requireAdminRequestOrigin, auth.requireAdmin, async (req, res, next) => {
   try {
     const recipeState = req.body && req.body.recipeState;
+    const requestedCatalog = req.body && req.body.recipeCatalog;
     const validationError = validateRecipeState(recipeState);
 
     if (validationError) {
       return res.status(400).json({ ok: false, message: validationError });
     }
 
+    const recipeCatalog = reconcileRecipeCatalog(recipeState, requestedCatalog);
+    const catalogError = validateRecipeCatalog(recipeCatalog, recipeState);
+    if (catalogError) {
+      return res.status(400).json({ ok: false, message: catalogError });
+    }
+
     const updatedAt = new Date().toISOString();
-    await store.update((data) => {
+    const nextStore = await store.update((data) => {
       data.recipeState = recipeState;
+      data.recipeCatalog = recipeCatalog;
       data.recipeUpdatedAt = updatedAt;
       return data;
     });
 
-    broadcastRecipeUpdate(recipeState, updatedAt);
-    res.json({ ok: true, recipeState, updatedAt });
+    broadcastRecipeUpdate(nextStore.recipeState, updatedAt, nextStore.recipeCatalog);
+    broadcastPublicUpdate(nextStore, "recipes");
+    res.json({
+      ok: true,
+      recipeState: nextStore.recipeState,
+      recipeCatalog: nextStore.recipeCatalog,
+      recipeLinkReview: nextStore.recipeLinkReview,
+      updatedAt
+    });
   } catch (error) {
     next(error);
   }
@@ -1228,10 +1321,13 @@ app.post("/api/admin/recipes/import-excel", requireAdminRequestOrigin, auth.requ
       return data;
     });
 
-    broadcastRecipeUpdate(importedRecipeState || nextStore.recipeState, updatedAt);
+    broadcastRecipeUpdate(importedRecipeState || nextStore.recipeState, updatedAt, nextStore.recipeCatalog);
+    broadcastPublicUpdate(nextStore, "recipes");
     res.json({
       ok: true,
       recipeState: importedRecipeState || nextStore.recipeState,
+      recipeCatalog: nextStore.recipeCatalog || [],
+      recipeLinkReview: nextStore.recipeLinkReview || [],
       report
     });
   } catch (error) {
@@ -1250,6 +1346,7 @@ app.get("/api/recipes/events", requireAdminOrMainRequestOrigin, auth.requireReci
     const data = await store.read();
     sendSse(res, "recipes", {
       recipeState: data.recipeState,
+      recipeCatalog: data.recipeCatalog || [],
       updatedAt: data.recipeUpdatedAt || null
     });
 
@@ -1349,7 +1446,7 @@ app.get("/api/site", async (_req, res, next) => {
 
 app.put("/api/site", requireAdminRequestOrigin, auth.requireAdmin, async (req, res, next) => {
   try {
-    const siteState = req.body && req.body.siteState;
+    const siteState = migrateSiteState(req.body && req.body.siteState);
     const validationError = validateSiteState(siteState);
 
     if (validationError) {
@@ -1357,14 +1454,23 @@ app.put("/api/site", requireAdminRequestOrigin, auth.requireAdmin, async (req, r
     }
 
     const updatedAt = new Date().toISOString();
-    await store.update((data) => {
+    siteState.updatedAt = updatedAt;
+    const nextStore = await store.update((data) => {
+      if (data.siteState && Object.keys(data.siteState).length) {
+        data.siteRevisions = (data.siteRevisions || []).concat({
+          id: `site-revision-${Date.now()}-${crypto.randomBytes(4).toString("hex")}`,
+          createdAt: updatedAt,
+          siteState: data.siteState
+        }).slice(-10);
+      }
       data.siteState = siteState;
       data.siteUpdatedAt = updatedAt;
       return data;
     });
 
-    broadcastSiteUpdate(siteState, updatedAt);
-    res.json({ ok: true, siteState, updatedAt });
+    broadcastSiteUpdate(nextStore.siteState, updatedAt);
+    broadcastPublicUpdate(nextStore, "site");
+    res.json({ ok: true, siteState: nextStore.siteState, updatedAt });
   } catch (error) {
     next(error);
   }
@@ -1390,6 +1496,48 @@ app.get("/api/site/events", async (req, res, next) => {
     req.on("close", () => {
       siteSseClients.delete(client);
     });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.get("/api/admin/site/revisions", requireAdminRequestOrigin, auth.requireAdmin, async (_req, res, next) => {
+  try {
+    const data = await store.read();
+    res.json({
+      ok: true,
+      revisions: (data.siteRevisions || []).map((item) => ({ id: item.id, createdAt: item.createdAt })).reverse()
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post("/api/admin/site/revisions/:id/restore", requireAdminRequestOrigin, auth.requireAdmin, async (req, res, next) => {
+  try {
+    const revisionId = String(req.params.id || "");
+    const updatedAt = new Date().toISOString();
+    let restored = null;
+    const nextStore = await store.update((data) => {
+      const revision = (data.siteRevisions || []).find((item) => item.id === revisionId);
+      if (!revision) {
+        const error = new Error("Site revizyonu bulunamadi.");
+        error.status = 404;
+        throw error;
+      }
+      data.siteRevisions = (data.siteRevisions || []).concat({
+        id: `site-revision-${Date.now()}-${crypto.randomBytes(4).toString("hex")}`,
+        createdAt: updatedAt,
+        siteState: data.siteState
+      }).slice(-10);
+      restored = migrateSiteState(revision.siteState);
+      data.siteState = restored;
+      data.siteUpdatedAt = updatedAt;
+      return data;
+    });
+    broadcastSiteUpdate(restored, updatedAt);
+    broadcastPublicUpdate(nextStore, "site");
+    res.json({ ok: true, siteState: restored, updatedAt });
   } catch (error) {
     next(error);
   }
@@ -1429,8 +1577,21 @@ app.get("/", (req, res, next) => {
 
   if (!isMainHost(req)) return notFound(req, res);
 
-  return sendProjectFile("index.html")(req, res, next);
+  return sendSiteFile("index.html")(req, res, next);
 });
+
+app.get("/site", requireMainHost, (_req, res) => res.redirect(301, "/"));
+app.get("/site/", requireMainHost, (_req, res) => res.redirect(301, "/"));
+
+app.use("/assets", requireMainHost, express.static(path.join(siteRoot, "assets"), staticOptions));
+app.use("/css", requireMainHost, express.static(path.join(siteRoot, "css"), staticOptions));
+app.use("/js", requireMainHost, express.static(path.join(siteRoot, "js"), staticOptions));
+app.get("/sw.js", requireMainHost, sendSiteFile("sw.js"));
+
+app.use("/qr-menu", requireMainHost, express.static(qrMenuRoot, {
+  ...staticOptions,
+  index: "index.html"
+}));
 
 app.use("/panel", (req, res, next) => {
   if (!isAdminHost(req)) return redirectToAdmin(req, res);
@@ -1441,8 +1602,9 @@ app.use("/panel", (req, res, next) => {
 }));
 
 app.use("/recete", (req, res, next) => {
-  if (isAdminHost(req)) return auth.requireAdminPage(req, res, next);
+  if (isConfiguredAdminHost(req)) return auth.requireAdminPage(req, res, next);
   if (isMainHost(req)) return next();
+  if (isAdminHost(req)) return auth.requireAdminPage(req, res, next);
   return notFound(req, res);
 }, express.static(path.join(projectRoot, "recete"), {
   ...staticOptions,
@@ -1456,24 +1618,15 @@ app.get("/recipe-data.js", (req, res, next) => {
 app.get("/admin-ogretici-index.html", requireAdminHost, auth.requireAdminPage, sendProjectFile("admin-ogretici-index.html"));
 app.get("/favicon.png", requireKnownHost, sendProjectFile("favicon.png"));
 app.get("/menu-data.js", (req, res, next) => {
-  if (isAdminHost(req)) {
-    return auth.requireAdminPage(req, res, () => sendProjectFile("menu-data.js")(req, res, next));
-  }
-
-  return requireMainHost(req, res, () => sendProjectFile("menu-data.js")(req, res, next));
+  if (!isMainHost(req) && !isAdminHost(req)) return notFound(req, res);
+  return auth.requireAdminPage(req, res, () => sendProjectFile("menu-data.js")(req, res, next));
 });
 
-publicAssetFiles.forEach((fileName) => {
-  app.get(`/${fileName}`, (req, res, next) => {
-    if (isAdminHost(req) && config.publicSiteUrl && fileName === "index.html") {
-      return redirectToPublicSite(req, res, fileName);
-    }
-
-    return requireMainHost(req, res, () => sendProjectFile(fileName)(req, res, next));
-  });
-});
+app.get("/menu.js", requireMainHost, (_req, res) => res.redirect(301, "/qr-menu/menu.js"));
+app.get("/styles.css", requireMainHost, (_req, res) => res.redirect(301, "/qr-menu/styles.css"));
 
 app.use("/images", requireKnownHost, express.static(path.join(projectRoot, "images"), staticOptions));
+app.use("/brand-assets", requireKnownHost, express.static(path.join(projectRoot, "Tahmisçi_Logo"), staticOptions));
 app.use("/Tahmisçi_Logo", requireKnownHost, express.static(path.join(projectRoot, "Tahmisçi_Logo"), staticOptions));
 
 app.use("/media", requireKnownHost, express.static(config.mediaDir, {
@@ -1484,21 +1637,32 @@ app.use("/media", requireKnownHost, express.static(config.mediaDir, {
 app.use(notFound);
 
 app.use((error, req, res, _next) => {
-  console.error(error);
-  return sendError(req, res, error.status || 500, error.status ? error.message : "Backend hatasi olustu.");
+  const status = error.status || 500;
+  if (status >= 500) console.error(error);
+  return sendError(req, res, status, error.status ? error.message : "Backend hatasi olustu.");
 });
 
-Promise.all([
-  store.ensure(),
-  fs.mkdir(config.mediaDir, { recursive: true })
-]).then(() => {
-  app.listen(config.port, () => {
+async function prepareRuntime() {
+  await Promise.all([
+    store.ensure(),
+    fs.mkdir(config.mediaDir, { recursive: true })
+  ]);
+  await seedStoreIfEmpty(store, projectRoot);
+}
+
+async function startServer() {
+  await prepareRuntime();
+  return app.listen(config.port, () => {
     console.log(`Tahmisci backend listening on port ${config.port}`);
   });
-}).catch((error) => {
-  console.error("Backend baslatilamadi:", error);
-  process.exit(1);
-});
+}
+
+if (require.main === module) {
+  startServer().catch((error) => {
+    console.error("Backend baslatilamadi:", error);
+    process.exit(1);
+  });
+}
 
 function corsOrigin(origin, callback) {
   if (!origin) return callback(null, true);
@@ -1666,6 +1830,14 @@ function redirectToPublicSite(_req, res, fileName) {
 function sendProjectFile(fileName) {
   return (_req, res, next) => {
     res.sendFile(path.join(projectRoot, fileName), (error) => {
+      if (error) next(error);
+    });
+  };
+}
+
+function sendSiteFile(fileName) {
+  return (_req, res, next) => {
+    res.sendFile(path.join(siteRoot, fileName), (error) => {
       if (error) next(error);
     });
   };
@@ -2274,8 +2446,8 @@ function broadcastMenuUpdate(menuState, updatedAt) {
   }
 }
 
-function broadcastRecipeUpdate(recipeState, updatedAt) {
-  const payload = { recipeState, updatedAt };
+function broadcastRecipeUpdate(recipeState, updatedAt, recipeCatalog = []) {
+  const payload = { recipeState, recipeCatalog, updatedAt };
   for (const client of recipeSseClients) {
     sendSse(client.res, "recipes", payload);
   }
@@ -2299,6 +2471,13 @@ function broadcastSiteUpdate(siteState, updatedAt) {
   const payload = { siteState, updatedAt };
   for (const client of siteSseClients) {
     sendSse(client.res, "site", payload);
+  }
+}
+
+function broadcastPublicUpdate(data, reason) {
+  const payload = { reason, ...buildPublicBootstrap(data) };
+  for (const client of publicSseClients) {
+    sendSse(client.res, "bootstrap", payload);
   }
 }
 
@@ -3103,10 +3282,22 @@ function validateMediaUpload(req) {
     throw error;
   }
 
-  const kind = String(req.header("X-Media-Kind") || "").toLowerCase() === "image" ? "image" : "video";
+  const kind = String(req.header("X-Media-Kind") || "").toLowerCase();
+  if (!['image', 'video'].includes(kind)) {
+    const error = new Error("Medya turu image veya video olmali.");
+    error.status = 400;
+    throw error;
+  }
   const contentType = String(req.get("content-type") || "application/octet-stream").split(";")[0].trim().toLowerCase();
   const originalName = decodeHeaderValue(req.header("X-File-Name")) || (kind === "image" ? "image" : "video");
   const ext = mediaExtension(kind, contentType, originalName);
+  const maxBytes = kind === "image" ? 15 * 1024 * 1024 : 120 * 1024 * 1024;
+
+  if (body.length > maxBytes) {
+    const error = new Error(kind === "image" ? "Gorsel en fazla 15 MB olabilir." : "Video en fazla 120 MB olabilir.");
+    error.status = 413;
+    throw error;
+  }
 
   if (!ext) {
     const error = new Error(kind === "image"
@@ -3118,6 +3309,26 @@ function validateMediaUpload(req) {
 
   if (contentType !== "application/octet-stream" && !contentType.startsWith(`${kind}/`)) {
     const error = new Error("Medya turu dosya tipiyle uyusmuyor.");
+    error.status = 400;
+    throw error;
+  }
+
+  const mimeExtension = {
+    "image/jpeg": ".jpg",
+    "image/png": ".png",
+    "image/webp": ".webp",
+    "image/gif": ".gif",
+    "video/mp4": ".mp4",
+    "video/webm": ".webm"
+  }[contentType];
+  if (contentType !== "application/octet-stream" && (!mimeExtension || mimeExtension !== ext)) {
+    const error = new Error("Dosya uzantisi ile MIME turu uyusmuyor.");
+    error.status = 400;
+    throw error;
+  }
+
+  if (!matchesMediaSignature(body, ext)) {
+    const error = new Error("Dosya icerigi bildirilen medya formatıyla uyusmuyor.");
     error.status = 400;
     throw error;
   }
@@ -3161,7 +3372,7 @@ function normalizeFeedbackType(value) {
 function mediaExtension(kind, contentType, originalName) {
   const allowed = kind === "image"
     ? new Set([".jpg", ".jpeg", ".png", ".webp", ".gif"])
-    : new Set([".mp4", ".webm", ".ogv", ".ogg", ".mov", ".m4v"]);
+    : new Set([".mp4", ".webm"]);
   const fromName = path.extname(String(originalName || "")).toLowerCase();
   if (allowed.has(fromName)) return fromName === ".jpeg" ? ".jpg" : fromName;
 
@@ -3171,13 +3382,26 @@ function mediaExtension(kind, contentType, originalName) {
     "image/webp": ".webp",
     "image/gif": ".gif",
     "video/mp4": ".mp4",
-    "video/webm": ".webm",
-    "video/ogg": ".ogv",
-    "video/quicktime": ".mov",
-    "video/x-m4v": ".m4v"
+    "video/webm": ".webm"
   };
   const ext = byType[contentType];
   return allowed.has(ext) ? ext : "";
+}
+
+function matchesMediaSignature(buffer, extension) {
+  if (!Buffer.isBuffer(buffer) || buffer.length < 12) return false;
+  if (extension === ".jpg") return buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
+  if (extension === ".png") return buffer.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+  if (extension === ".gif") return ["GIF87a", "GIF89a"].includes(buffer.subarray(0, 6).toString("ascii"));
+  if (extension === ".webp") return buffer.subarray(0, 4).toString("ascii") === "RIFF" && buffer.subarray(8, 12).toString("ascii") === "WEBP";
+  if (extension === ".mp4") return buffer.subarray(4, 8).toString("ascii") === "ftyp";
+  if (extension === ".webm") return buffer.subarray(0, 4).equals(Buffer.from([0x1a, 0x45, 0xdf, 0xa3]));
+  return false;
+}
+
+function isSafeMediaFileName(value) {
+  const name = String(value || "");
+  return /^[a-z0-9][a-z0-9._-]{2,180}$/i.test(name) && path.basename(name) === name;
 }
 
 function decodeHeaderValue(value) {
@@ -3209,3 +3433,5 @@ function safeEqual(first, second) {
 
   return crypto.timingSafeEqual(firstBuffer, secondBuffer);
 }
+
+module.exports = { app, prepareRuntime, startServer, store };

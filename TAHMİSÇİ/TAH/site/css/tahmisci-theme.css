@@ -502,6 +502,7 @@ body.tahmisci-static-menu {
 }
 
 .tahmisci-static-menu .hero-main-video,
+.tahmisci-static-menu .hero-main-image,
 .tahmisci-static-menu .hero-product-media img,
 .tahmisci-static-menu .hero-barista-media img {
   display: block;
@@ -517,6 +518,39 @@ body.tahmisci-static-menu {
 
 .tahmisci-static-menu .hero-barista-media img {
   object-position: center 52%;
+}
+
+.tahmisci-static-menu .public-data-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 22px;
+  padding: 14px 18px;
+  border: 1px solid rgba(183, 119, 61, 0.4);
+  border-radius: var(--radius-sm);
+  background: rgba(255, 250, 241, 0.92);
+  color: var(--coffee);
+}
+
+.tahmisci-static-menu .public-data-error[hidden] {
+  display: none;
+}
+
+.tahmisci-static-menu .public-data-error p {
+  margin: 0;
+}
+
+.tahmisci-static-menu .public-data-error button {
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--copper);
+  color: var(--paper);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 .tahmisci-static-menu .hero-slide--editorial .hero-slide-content {
@@ -2503,4 +2537,31 @@ body.tahmisci-static-menu {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+.about-feature small {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.contact-managed-details {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem 1.25rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+  color: var(--muted);
+}
+
+.contact-managed-details a {
+  color: var(--copper);
+}
+.tahmisci-static-menu .auth-buttons,
+.tahmisci-static-menu #userMenu,
+.tahmisci-static-menu .mobile-cart-btn,
+.tahmisci-static-menu .mobile-nav-auth,
+.tahmisci-static-menu .mobile-nav-account-content,
+.tahmisci-static-menu #callWaiterBtn {
+  display: none !important;
 }

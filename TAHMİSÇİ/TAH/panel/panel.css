@@ -1,27 +1,27 @@
 /* Developer: Uzeyir | System Key: xandar | Stylesheet integrity marker */
 @font-face {
   font-family: "Magnolia Script";
-  src: url("../Tahmisçi_Logo/Fontlar/Magnolia_Script_Ana_Font/Magnolia Script.otf") format("opentype");
+  src: url("/brand-assets/Fontlar/Magnolia_Script_Ana_Font/Magnolia Script.otf") format("opentype");
   font-display: swap;
 }
 
 @font-face {
   font-family: "Tahmisci Poppins";
-  src: url("../Tahmisçi_Logo/Fontlar/Poppins_Font/Poppins-Regular.ttf") format("truetype");
+  src: url("/brand-assets/Fontlar/Poppins_Font/Poppins-Regular.ttf") format("truetype");
   font-display: swap;
   font-weight: 400;
 }
 
 @font-face {
   font-family: "Tahmisci Poppins";
-  src: url("../Tahmisçi_Logo/Fontlar/Poppins_Font/Poppins-SemiBold.ttf") format("truetype");
+  src: url("/brand-assets/Fontlar/Poppins_Font/Poppins-SemiBold.ttf") format("truetype");
   font-display: swap;
   font-weight: 600;
 }
 
 @font-face {
   font-family: "Tahmisci Poppins";
-  src: url("../Tahmisçi_Logo/Fontlar/Poppins_Font/Poppins-Bold.ttf") format("truetype");
+  src: url("/brand-assets/Fontlar/Poppins_Font/Poppins-Bold.ttf") format("truetype");
   font-display: swap;
   font-weight: 700;
 }
@@ -81,7 +81,7 @@ body::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: url("../Tahmisçi_Logo/Logolar/Ana_Logo/PNG_Logo.png") center / min(44vw, 540px) auto no-repeat;
+  background: url("/brand-assets/Logolar/Ana_Logo/PNG_Logo.png") center / min(44vw, 540px) auto no-repeat;
   opacity: 0.08;
 }
 
@@ -3097,4 +3097,30 @@ body[data-panel-theme="dark"] .line-action {
   .mini-stats {
     grid-template-columns: 1fr 1fr;
   }
+}
+/* Site düzenleme: sabit tasarımı bozmadan gruplanmış CMS alanları. */
+.site-editor-card {
+  display: grid;
+  gap: 18px;
+}
+
+.site-editor-card details {
+  border: 1px solid var(--line, rgba(30, 45, 35, 0.16));
+  border-radius: 16px;
+  padding: 0 16px 16px;
+  background: color-mix(in srgb, var(--surface, #fff) 94%, transparent);
+}
+
+.site-editor-card summary {
+  cursor: pointer;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  font-weight: 800;
+}
+
+.site-editor-card details > .form-grid,
+.site-editor-card details > .asset-row,
+.site-editor-card details > .toggle-row {
+  margin-top: 14px;
 }

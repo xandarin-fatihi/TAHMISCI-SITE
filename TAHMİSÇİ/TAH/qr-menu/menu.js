@@ -13,18 +13,18 @@
   const DESIGN_PRESET_VERSION = "tahmisci-20260522a";
   const BRAND_TITLE_FONT = '"Magnolia Script", "Dancing Script", cursive';
   const BRAND_BODY_FONT = '"Tahmisci Poppins", Poppins, Arial, sans-serif';
-  const LIGHT_LOGO = "Tahmisçi_Logo/Logolar/Koyu_Yeşil_Logo/PNG_Logo.png";
-  const DARK_LOGO = "Tahmisçi_Logo/Logolar/Ana_Logo/PNG_Logo.png";
+  const LIGHT_LOGO = "/brand-assets/Logolar/Koyu_Yeşil_Logo/PNG_Logo.png";
+  const DARK_LOGO = "/brand-assets/Logolar/Ana_Logo/PNG_Logo.png";
   const PRODUCT_IMAGE_FALLBACKS = [
-    "Tahmisçi_Logo/3D_Mockups/Yeşil_Baskı/Yeşil_Baskı_Mockup_1.jpg",
-    "Tahmisçi_Logo/3D_Mockups/Yeşil_Baskı/Yeşil_Baskı_Mockup_2.jpg",
-    "Tahmisçi_Logo/3D_Mockups/Yeşil_Baskı/Yeşil_Baskı_Mockup_3.jpg",
-    "Tahmisçi_Logo/3D_Mockups/Yeşil_Baskı/Yeşil_Baskı_Mockup_4.jpg",
-    "Tahmisçi_Logo/3D_Mockups/Yeşil_Baskı/Yeşil_Baskı_Mockup_5.jpg",
-    "Tahmisçi_Logo/3D_Mockups/Kahverengi_Baskı/Kahverengi_Baskı_Mockup_1.jpg",
-    "Tahmisçi_Logo/3D_Mockups/Kahverengi_Baskı/Kahverengi_Baskı_Mockup_2.jpg",
-    "Tahmisçi_Logo/Tahmisçi_İkon_Çizim/Koyu_Yeşil_PNG.png",
-    "Tahmisçi_Logo/Tahmisçi_İkon_Çizim/Su_Yeşili_PNG.png"
+    "/brand-assets/3D_Mockups/Yeşil_Baskı/Yeşil_Baskı_Mockup_1.jpg",
+    "/brand-assets/3D_Mockups/Yeşil_Baskı/Yeşil_Baskı_Mockup_2.jpg",
+    "/brand-assets/3D_Mockups/Yeşil_Baskı/Yeşil_Baskı_Mockup_3.jpg",
+    "/brand-assets/3D_Mockups/Yeşil_Baskı/Yeşil_Baskı_Mockup_4.jpg",
+    "/brand-assets/3D_Mockups/Yeşil_Baskı/Yeşil_Baskı_Mockup_5.jpg",
+    "/brand-assets/3D_Mockups/Kahverengi_Baskı/Kahverengi_Baskı_Mockup_1.jpg",
+    "/brand-assets/3D_Mockups/Kahverengi_Baskı/Kahverengi_Baskı_Mockup_2.jpg",
+    "/brand-assets/Tahmisçi_İkon_Çizim/Koyu_Yeşil_PNG.png",
+    "/brand-assets/Tahmisçi_İkon_Çizim/Su_Yeşili_PNG.png"
   ];
   const DEFAULT_PRODUCT_IMAGE = PRODUCT_IMAGE_FALLBACKS[0];
   const THEME_LOGO_IMAGES = [

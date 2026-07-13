@@ -29,6 +29,11 @@ function getSiteRoot() {
 }
 window.getSiteRoot = getSiteRoot;
 
+function isTahmisciBackendCatalogMode() {
+    return document.body?.classList.contains('tahmisci-static-menu') === true;
+}
+window.isTahmisciBackendCatalogMode = isTahmisciBackendCatalogMode;
+
 // AJAX çağrılarında kullanılacak dil (JSON diline göre veri dönmek için)
 function getAjaxLang() {
     return (window.I18N && typeof window.I18N.getPreferredLanguage === 'function' && window.I18N.getPreferredLanguage()) || localStorage.getItem('site_language') || 'tr';
@@ -1865,7 +1870,7 @@ window.generateQR = generateQR;
 
         const brand = document.createElement('span');
         brand.className = 'hero-slide-brand';
-        brand.textContent = 'Tahmisçi Coffee & Roastery';
+        brand.textContent = slide.brand || 'Tahmisçi Coffee & Roastery';
 
         const title = document.createElement('h1');
         title.className = 'hero-slide-title';
@@ -1897,9 +1902,9 @@ window.generateQR = generateQR;
         button.appendChild(document.createTextNode(` ${slide.buttonText || ''}`));
 
         const aboutButton = document.createElement('a');
-        aboutButton.href = '#about';
+        aboutButton.href = slide.secondaryButtonUrl || '#about';
         aboutButton.className = 'btn btn-secondary btn-large hero-about-btn';
-        aboutButton.textContent = localStorage.getItem('site_language') === 'en' ? 'About Us' : 'Hakkımızda';
+        aboutButton.textContent = slide.secondaryButtonText || (localStorage.getItem('site_language') === 'en' ? 'About Us' : 'Hakkımızda');
 
         actions.appendChild(button);
         actions.appendChild(aboutButton);
@@ -1915,7 +1920,9 @@ window.generateQR = generateQR;
             const productFallbackUrl = resolveHeroMediaUrl(media.coldDrinksFront);
             const baristaMediaUrl = resolveHeroMediaUrl(media.detail);
             const baristaFallbackUrl = resolveHeroMediaUrl(media.primary);
-            const reelPlaylist = [media.reelSecondary, media.reelPrimary]
+            const useHeroVideo = APP_CONFIG.hero.mediaType !== 'image';
+            const heroImageUrl = resolveHeroMediaUrl(media.primary);
+            const reelPlaylist = (useHeroVideo ? [media.reelSecondary, media.reelPrimary] : [])
                 .map(resolveHeroMediaUrl)
                 .filter(Boolean);
             const reelMediaUrl = reelPlaylist[0] || '';
@@ -1947,6 +1954,12 @@ window.generateQR = generateQR;
                     reelVideo.setAttribute('muted', '');
                     reelVideo.setAttribute('playsinline', '');
                     reelVideo.setAttribute('preload', 'auto');
+                    const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    if (reduceMotion) {
+                        reelVideo.autoplay = false;
+                        reelVideo.removeAttribute('autoplay');
+                        reelVideo.preload = 'metadata';
+                    }
 
                     const reelSource = document.createElement('source');
                     reelSource.src = reelMediaUrl;
@@ -1964,6 +1977,10 @@ window.generateQR = generateQR;
                         reelVideo.pause();
                     };
                     const playReel = () => {
+                        if (reduceMotion) {
+                            pauseReel('reduced-motion');
+                            return;
+                        }
                         reelVideo.autoplay = true;
                         reelVideo.setAttribute('autoplay', '');
                         const playPromise = reelVideo.play();
@@ -2013,6 +2030,18 @@ window.generateQR = generateQR;
                         reelVideo.pause();
                     };
                     requestAnimationFrame(playReel);
+                } else if (!useHeroVideo && heroImageUrl) {
+                    const imagePanel = document.createElement('figure');
+                    imagePanel.className = 'hero-main-media';
+                    const mainImage = document.createElement('img');
+                    mainImage.className = 'hero-main-image';
+                    mainImage.src = heroImageUrl;
+                    mainImage.alt = localStorage.getItem('site_language') === 'en'
+                        ? 'Tahmisçi hero image'
+                        : 'Tahmisçi hero görseli';
+                    mainImage.loading = 'eager';
+                    imagePanel.appendChild(mainImage);
+                    mediaStage.appendChild(imagePanel);
                 }
 
                 if (productMediaUrl) {
@@ -2685,6 +2714,10 @@ window.HomepageSections = new HomepageSectionsManager();
 
     // Listen for products data loaded event
     window.addEventListener('productsDataLoaded', () => {
+        loadPopularProducts();
+    });
+
+    window.addEventListener('publicBootstrapUpdated', () => {
         loadPopularProducts();
     });
 
@@ -4374,6 +4407,10 @@ window.HomepageSections = new HomepageSectionsManager();
         }
 
         async function resolveServerLoginState() {
+            if (isTahmisciBackendCatalogMode()) {
+                clearClientLoginStorage();
+                return { isLoggedIn: false, user: null };
+            }
             const sessionUser = getSessionUserFromWindow();
             if (sessionUser) {
                 persistClientUser(sessionUser);
@@ -4619,35 +4656,19 @@ window.HomepageSections = new HomepageSectionsManager();
 
 class HeaderLoader {
     constructor() {
-        this.apiUrl = getSiteRoot() + '/yeppanel/db/ajax/web/header.php';
         this.headerElement = null;
         this.mobileNavElement = null;
     }
 
     async loadHeader() {
         try {
-            const lang = window.I18N?.getPreferredLanguage?.() || localStorage.getItem('site_language') || 'tr';
-            const url = this.apiUrl.includes('?')
-                ? `${this.apiUrl}&lang=${encodeURIComponent(lang)}`
-                : `${this.apiUrl}?lang=${encodeURIComponent(lang)}`;
-            const response = await fetch(url, { cache: 'no-store' });
-            const result = await response.json();
-
-            if (result.success && result.data) {
-                if (result.data.logo && result.data.logo.brandName) {
-                    window.SITE_TITLE_BRAND = result.data.logo.brandName;
-                }
-                this.renderHeader(result.data);
-                if (result.data.siteConfig) {
-                    this.applySiteConfig(result.data.siteConfig);
-                }
-                window.HeaderData = result.data;
-                document.dispatchEvent(new CustomEvent('headerDataLoaded', {
-                    detail: result.data
-                }));
-            } else {
-                console.error('Header verisi yüklenemedi:', result);
-            }
+            const provider = window.TahmisciPublicData;
+            if (!provider) return;
+            await provider.ready;
+            const siteState = provider.getBootstrap()?.siteState || {};
+            window.SITE_TITLE_BRAND = siteState.global?.siteName || 'Tahmisçi';
+            window.HeaderData = { siteState };
+            document.dispatchEvent(new CustomEvent('headerDataLoaded', { detail: window.HeaderData }));
         } catch (error) {
             console.error('Header yükleme hatası:', error);
         }
@@ -4989,6 +5010,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initSitePopup() {
+    if (isTahmisciBackendCatalogMode()) return;
     const isReservationPage =
         document.body?.classList.contains("reservation-page") ||
         /(?:^|\/)(rezervasyon|reservation)(?:\.php)?\/?$/i.test(
@@ -5103,20 +5125,11 @@ function showSitePopup(p, base) {
 
 // ========== HERO LOADER (hero.php'den slider verisi, DB'den) ==========
 class HeroLoader {
-    constructor() {
-        this.apiUrl = getSiteRoot() + '/yeppanel/db/ajax/web/hero.php';
-    }
-
     async loadHero() {
         try {
-            const lang = getAjaxLang();
-            const sep = this.apiUrl.includes('?') ? '&' : '?';
-            const response = await fetch(this.apiUrl + sep + 'lang=' + encodeURIComponent(lang));
-            const result = await response.json();
-            APP_CONFIG.hero = APP_CONFIG.hero || {};
-            if (result.success && result.data) {
-                Object.assign(APP_CONFIG.hero, result.data);
-            }
+            const provider = window.TahmisciPublicData;
+            if (!provider) throw new Error('Public veri sağlayıcısı bulunamadı.');
+            await provider.ready;
             APP_CONFIG.hero.slides = Array.isArray(APP_CONFIG.hero.slides) ? APP_CONFIG.hero.slides : [];
             APP_CONFIG.hero.autoplay = APP_CONFIG.hero.autoplay !== false;
             APP_CONFIG.hero.autoplayInterval = APP_CONFIG.hero.autoplayInterval || 5000;
@@ -5133,7 +5146,9 @@ class HeroLoader {
 
 document.addEventListener('DOMContentLoaded', () => {
     const heroLoader = new HeroLoader();
+    window.tahmisciHeroLoader = heroLoader;
     heroLoader.loadHero();
+    window.addEventListener('publicBootstrapUpdated', () => heroLoader.loadHero());
 });
 
 // ========== LANGUAGE SWITCHER ==========
@@ -5413,24 +5428,12 @@ if (document.readyState === 'loading') {
 // Footer verilerini PHP'den AJAX ile çeker ve HTML'e yükler
 
 class FooterLoader {
-    constructor() {
-        this.apiUrl = getSiteRoot() + '/yeppanel/db/ajax/web/footer.php';
-    }
-
     async loadFooter() {
         try {
-            const lang = window.I18N?.getPreferredLanguage?.() || localStorage.getItem('site_language') || 'tr';
-            let url = this.apiUrl + '?lang=' + encodeURIComponent(lang);
-            const branchId = localStorage.getItem('menuBranchId');
-            if (branchId) url += '&branch_id=' + encodeURIComponent(branchId);
-            const response = await fetch(url);
-            const result = await response.json();
-
-            if (result.success && result.data) {
-                this.renderFooter(result.data);
-            } else {
-                console.error('Footer verisi yüklenemedi:', result);
-            }
+            const provider = window.TahmisciPublicData;
+            if (!provider) return;
+            await provider.ready;
+            provider.apply(provider.getBootstrap(), 'footer');
         } catch (error) {
             console.error('Footer yükleme hatası:', error);
         }
@@ -6948,6 +6951,10 @@ class ModernMenuPage {
     // Handle sub-options toggle (show/hide sub-options when parent is selected)
     // Handle sub-options toggle (show/hide sub-options when parent is selected)
     async handleSubOptionsToggle(input) {
+        if (isTahmisciBackendCatalogMode()) {
+            this.updatePrice();
+            return;
+        }
         // Radio ve checkbox için çalışır
         if (input.type !== "radio" && input.type !== "checkbox") return;
 
@@ -7284,7 +7291,7 @@ class ModernMenuPage {
         }
 
         this.currentProduct = product;
-        this.currentProduct.nutrition = [];
+        this.currentProduct.nutrition = Array.isArray(product.nutrition) ? product.nutrition : [];
         this.editingCartItemId = cartItemId;
 
         const nutritionTooltipContent = document.getElementById(
@@ -7535,77 +7542,12 @@ class ModernMenuPage {
         this.initializeOptionListeners();
     }
 
-    // Load product options and nutrition from API
+    // Public bootstrap already carries every detail safe to show on the website.
     async loadProductOptions(productId) {
-        // Show options loading spinner
         const optionsSpinner = document.getElementById("optionsLoadingSpinner");
-        if (optionsSpinner) {
-            optionsSpinner.classList.add("loading");
-        }
-
-        try {
-            const lang = getAjaxLang();
-            const branchId = localStorage.getItem("menuBranchId");
-            const orderType = localStorage.getItem("menuOrderType");
-            const params = new URLSearchParams();
-            params.set("product_id", productId);
-            if (lang) params.set("lang", lang);
-            if (branchId) params.set("branch_id", branchId);
-            if (orderType) params.set("order_type", orderType);
-            const apiUrl = getSiteRoot() + `/yeppanel/db/ajax/web/product-options.php?${params.toString()}`;
-
-            const response = await fetch(apiUrl);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const result = await response.json();
-
-            if (result.success && result.data) {
-                const options = result.data.options || [];
-                const nutrition = Array.isArray(result.data.nutrition)
-                    ? result.data.nutrition
-                    : [];
-
-                if (this.currentProduct) {
-                    this.currentProduct.products_branches_id =
-                        Number(result.data.products_branches_id) || 0;
-                    this.currentProduct.products_branches_company_id =
-                        Number(result.data.products_branches_company_id) || 0;
-                    this.currentProduct.products_branches_calories = String(
-                        result.data.products_branches_calories ?? "",
-                    ).trim();
-                    this.currentProduct.products_branches_calories_unit = String(
-                        result.data.products_branches_calories_unit ?? "",
-                    ).trim();
-                }
-
-                // Hide spinner before rendering options
-                if (optionsSpinner) {
-                    optionsSpinner.classList.remove("loading");
-                }
-
-                // Update modal content with options and nutrition
-                if (this.currentProduct) {
-                    this.updateModalContent(this.currentProduct, options, nutrition);
-                }
-            } else {
-                // Hide spinner on error
-                if (optionsSpinner) {
-                    optionsSpinner.classList.remove("loading");
-                }
-            }
-        } catch (error) {
-            console.error("Error loading product options:", error);
-            // Hide spinner on error
-            if (optionsSpinner) {
-                optionsSpinner.classList.remove("loading");
-            }
-            // On error, just render empty options
-            if (this.currentProduct) {
-                this.updateModalContent(this.currentProduct, [], null);
-            }
-        }
+        if (optionsSpinner) optionsSpinner.classList.remove("loading");
+        if (!this.currentProduct || this.currentProduct.id !== productId) return;
+        this.updateModalContent(this.currentProduct, [], this.currentProduct.nutrition || []);
     }
 
     // (duplicate initializeOptionListeners removed - use the main implementation above)
@@ -10086,6 +10028,16 @@ class ModernMenuPage {
 
     // Kampanya motorundan kupon uyumluluk bilgisini al
     async loadPromotionEngineState(options) {
+        if (isTahmisciBackendCatalogMode()) {
+            this.selectedCampaignValidation = null;
+            this.appliedCampaigns = [];
+            this.engineCampaignDiscountCents = 0;
+            this.freeItems = [];
+            this.appliedPromotions = [];
+            this.couponAllowed = false;
+            this.couponBlockReason = '';
+            return;
+        }
         try {
             const orderType = localStorage.getItem("menuOrderType") || "tableOrder";
             // Geçmiş siparişleri localStorage’dan al (birikimli kampanya için)
@@ -10232,6 +10184,7 @@ class ModernMenuPage {
     }
 
     async fetchCampaigns() {
+        if (isTahmisciBackendCatalogMode()) return [];
         const cacheKey = "__menuCampaignsCache";
         const cacheMaxAge = 10000;
         const now = Date.now();
@@ -10260,6 +10213,7 @@ class ModernMenuPage {
     }
 
     async hasActivePromotions() {
+        if (isTahmisciBackendCatalogMode()) return false;
         const cacheKey = "__menuPromotionsAvailabilityCache";
         const cacheMaxAge = 10000;
         const now = Date.now();
@@ -10779,6 +10733,7 @@ class ModernMenuPage {
     }
 
     async applyPromoCode() {
+        if (isTahmisciBackendCatalogMode()) return;
         const promoInput = document.getElementById("promoCodeInput");
         const applyBtn = document.getElementById("applyPromoBtn");
         const errorMessage = document.getElementById("promoErrorMessage");
@@ -11926,7 +11881,6 @@ window.toggleFavorite = function (productId, btn) {
 };
 
 ModernMenuPage.prototype.renderTahmisciRecipeSummary = function (product) {
-    if (!window.TahmisciCatalog) return;
     const modalDescription = document.getElementById("modalProductDescription");
     if (!modalDescription) return;
 
@@ -15104,8 +15058,6 @@ document.addEventListener("DOMContentLoaded", function () {
 (function () {
     'use strict';
 
-    const apiUrl = getSiteRoot() + '/yeppanel/db/ajax/web/categories.php';
-
     function getSelectionParams() {
         const branchId = localStorage.getItem('menuBranchId');
         const orderType = localStorage.getItem('menuOrderType');
@@ -15121,19 +15073,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
     async function loadCategories() {
         try {
-            const query = getSelectionParams();
-            const url = `${apiUrl}?${query}`;
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const result = await response.json();
-
-            if (result.success && result.data && result.data.categories) {
-                // Store categories globally for menu-products-loader to use
-                window.MenuCategories = result.data.categories;
-                renderCategories(result.data.categories);
-            }
+            const provider = window.TahmisciPublicData;
+            if (!provider) throw new Error('Public veri sağlayıcısı bulunamadı.');
+            await provider.ready;
+            const categories = provider.getCategories();
+            window.MenuCategories = categories;
+            renderCategories(categories);
         } catch (error) {
             console.error('Error loading categories:', error);
         }
@@ -15212,6 +15157,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     document.addEventListener('menuSelectionChanged', loadCategories);
     window.addEventListener('languageChanged', loadCategories);
+    window.addEventListener('publicBootstrapUpdated', loadCategories);
 })();
 
 // ========== DRAG TO SCROLL (filter-categories & filter-subcategories) - sadece masaüstü ==========
@@ -15420,7 +15366,6 @@ document.addEventListener("DOMContentLoaded", function () {
 (function () {
     'use strict';
 
-    const apiUrl = getSiteRoot() + '/yeppanel/db/ajax/web/menu-products.php';
     /** Seçili kategori id (0 = tümü, sadece alt kategorisi olan ana kategoriye tıklanınca set edilir) */
     let currentCategoryId = 0;
     let currentMenuSearchTerm = "";
@@ -15560,45 +15505,21 @@ document.addEventListener("DOMContentLoaded", function () {
     let _menuProductsLoading = false;
 
     async function loadMenuProducts() {
-        const branchId = localStorage.getItem('menuBranchId');
-        const orderType = localStorage.getItem('menuOrderType');
-        if ((!branchId || !orderType) && !window.TahmisciCatalog) {
-            return;
-        }
-        const query = getSelectionParams();
         if (_menuProductsLoading) return;
         _menuProductsLoading = true;
         const loadingState = document.getElementById('loadingState');
         if (loadingState) loadingState.style.display = 'block';
 
         try {
-            const url = query ? `${apiUrl}?${query}` : apiUrl;
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const result = await response.json();
-
-            if (result.success && result.data && result.data.products) {
-                // Store products in APP_CONFIG if available
-                if (window.APP_CONFIG) {
-                    if (!window.APP_CONFIG.menu) {
-                        window.APP_CONFIG.menu = {};
-                    }
-                    window.APP_CONFIG.menu.products = result.data.products;
-                }
-
-                // Store in global for menu.js
-                window.MenuProducts = result.data.products;
-
-                // Render products
-                renderProducts(result.data.products);
-
-                // Dispatch event for menu.js
-                document.dispatchEvent(new CustomEvent('menuProductsLoaded', {
-                    detail: { products: result.data.products }
-                }));
-            }
+            const provider = window.TahmisciPublicData;
+            if (!provider) throw new Error('Public veri sağlayıcısı bulunamadı.');
+            await provider.ready;
+            const products = provider.getProducts();
+            window.APP_CONFIG.menu = window.APP_CONFIG.menu || {};
+            window.APP_CONFIG.menu.products = products;
+            window.MenuProducts = products;
+            renderProducts(products);
+            document.dispatchEvent(new CustomEvent('menuProductsLoaded', { detail: { products } }));
         } catch (error) {
             console.error('Error loading menu products:', error);
             if (loadingState) loadingState.style.display = 'none';
@@ -15897,7 +15818,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         card.setAttribute('data-product-id', product.id);
         card.setAttribute('data-search', buildProductSearchText(product));
-        card.setAttribute('onclick', `openProductModal(${product.id})`);
         card.style.cursor = 'pointer';
 
         const badgeMap = {
@@ -15940,9 +15860,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 ${priceLabel ? `<div class="product-price"><span class="current-price">${priceLabel}</span>${product.oldPrice ? `<span class="old-price">₺${Number(product.oldPrice).toLocaleString('tr-TR')}</span>` : ''}</div>` : ''}
             </div>
             <div class="product-footer">
-                <button class="product-add-btn" onclick="event.stopPropagation(); openProductModal(${product.id})">${actionLabel}</button>
+                <button class="product-add-btn" type="button">${actionLabel}</button>
             </div>
         `;
+
+        card.addEventListener('click', () => window.openProductModal?.(product.id));
+        const actionButton = card.querySelector('.product-add-btn');
+        actionButton?.addEventListener('click', (event) => {
+            event.stopPropagation();
+            window.openProductModal?.(product.id);
+        });
 
         return card;
     }
@@ -15963,6 +15890,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
     window.addEventListener('languageChanged', () => {
+        cachedMenuProducts = [];
+        cachedProductsByCategory = {};
+        currentCategoryId = 0;
+        loadMenuProducts();
+    });
+    window.addEventListener('publicBootstrapUpdated', () => {
         cachedMenuProducts = [];
         cachedProductsByCategory = {};
         currentCategoryId = 0;

@@ -25,8 +25,8 @@
   const SITE_DESIGN_VERSION = "site-20260523a";
   const BRAND_TITLE_FONT = '"Magnolia Script", "Dancing Script", cursive';
   const BRAND_BODY_FONT = '"Tahmisci Poppins", Poppins, Arial, sans-serif';
-  const LIGHT_LOGO = "Tahmisçi_Logo/Logolar/Koyu_Yeşil_Logo/PNG_Logo.png";
-  const DEFAULT_PRODUCT_IMAGE = "../Tahmisçi_Logo/3D_Mockups/Yeşil_Baskı/Yeşil_Baskı_Mockup_1.jpg";
+  const LIGHT_LOGO = "/brand-assets/Logolar/Koyu_Yeşil_Logo/PNG_Logo.png";
+  const DEFAULT_PRODUCT_IMAGE = "/brand-assets/3D_Mockups/Yeşil_Baskı/Yeşil_Baskı_Mockup_1.jpg";
   const SECTION_TITLES = {
     overview: "Genel bakış",
     menu: "Menü düzenleme",
@@ -36,6 +36,7 @@
     bulkPrice: "Toplu fiyat güncelleme",
     menuOutput: "Menü çıktısı",
     recipe: "Reçete Düzenleme",
+    site: "Site Düzenleme",
     staffAccess: "Kullanıcı yetkilendirme",
     feedback: "Dilek & şikayet",
     settings: "Ayarlar"
@@ -268,7 +269,7 @@
     instagram: "https://www.instagram.com/tahmiscicoffee?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
     tiktok: "https://www.tiktok.com/@tahmiscicoffee",
     mapsUrl: "https://www.google.com/maps/search/?api=1&query=Sad%C4%B1k%20%C4%B0leri%20Bulvar%C4%B1%20No%3A%2042%2FB%20Torbal%C4%B1%20%C4%B0zmir",
-    heroImageUrl: "Tahmisçi_Logo/Logolar/Ana_Logo/PNG_Logo.png",
+    heroImageUrl: "/brand-assets/Logolar/Ana_Logo/PNG_Logo.png",
     backgroundColor: PREMIUM_SITE_PALETTE.backgroundColor,
     backgroundSoftColor: PREMIUM_SITE_PALETTE.backgroundSoftColor,
     accentColor: PREMIUM_SITE_PALETTE.accentColor,
@@ -311,7 +312,10 @@
   const state = {
     data: null,
     recipes: null,
+    recipeCatalog: [],
+    recipeLinkReview: [],
     site: null,
+    siteRevisions: [],
     activeSection: "overview",
     selectedCategoryId: "",
     selectedProductId: "",
@@ -428,7 +432,8 @@
       "productKind", "productTemperature", "productPopular", "productActive", "productStyleType", "productColor",
       "productGradientStart", "productGradientEnd", "productGradientAngle", "productImageUrl",
       "productImageOverlay", "productImageFile", "clearProductImage", "productImagePreview", "productCalories",
-      "productAllergens", "productIngredients", "productExcelFile", "productExcelImportButton",
+      "productAllergens", "productIngredients", "productContentMode", "productRecipeId", "productRecipeSize",
+      "productRecipeLinkStatus", "productExcelFile", "productExcelImportButton",
       "productImportSummary", "productImportReport", "productImportStats", "productImportChanges",
       "productImportErrors", "productImportShowErrorsButton", "recipeCategorySelect", "recipeProductSelect",
       "recipeExcelFile", "recipeExcelImportButton", "recipeImportSummary", "recipeImportReport", "recipeImportStats",
@@ -452,7 +457,7 @@
       "addSiteSocialLink", "siteSocialLinksList", "applyPremiumSiteTheme",
       "siteBackgroundColor", "siteSurfaceColor", "siteAccentColor",
       "siteAccentColorTwo", "siteTextColor", "siteMutedColor", "siteTitleFont", "siteBodyFont",
-      "siteTitleSize", "siteBodySize",
+      "siteTitleSize", "siteBodySize", "siteSectionOrder", "siteRevisionRefresh", "siteRevisionList",
       "previewKicker", "previewTitle", "livePreview"
     ];
     ids.forEach((id) => {
@@ -748,6 +753,22 @@
     if (els.siteSocialLinksList) els.siteSocialLinksList.addEventListener("click", removeSiteSocialLink);
     if (els.applyPremiumSiteTheme) els.applyPremiumSiteTheme.addEventListener("click", applyPremiumSiteTheme);
 
+    document.querySelectorAll("[data-site-path]").forEach((input) => {
+      input.addEventListener("input", handleSiteEditorInput);
+      input.addEventListener("change", handleSiteEditorInput);
+    });
+    document.querySelectorAll("[data-site-upload-target]").forEach((input) => {
+      input.addEventListener("change", handleSiteMediaUpload);
+    });
+    if (els.siteSectionOrder) els.siteSectionOrder.addEventListener("change", handleSiteSectionOrder);
+    if (els.siteRevisionRefresh) els.siteRevisionRefresh.addEventListener("click", loadSiteRevisions);
+    if (els.siteRevisionList) els.siteRevisionList.addEventListener("click", handleSiteRevisionRestore);
+    window.addEventListener("beforeunload", (event) => {
+      if (!hasPendingChanges()) return;
+      event.preventDefault();
+      event.returnValue = "";
+    });
+
     [
       "categoryName", "categoryActive", "categoryStyleType", "categoryColor", "categoryGradientStart",
       "categoryGradientEnd", "categoryGradientAngle", "categoryImageUrl", "categoryOverlay"
@@ -761,7 +782,7 @@
       "productStock", "productKind", "productTemperature", "productPopular", "productActive",
       "productStyleType", "productColor", "productGradientStart", "productGradientEnd", "productGradientAngle",
       "productImageUrl", "productImageOverlay", "productCalories", "productAllergens",
-      "productIngredients"
+      "productIngredients", "productContentMode", "productRecipeId", "productRecipeSize"
     ].forEach((id) => {
       els[id].addEventListener("input", updateProductFromForm);
       els[id].addEventListener("change", updateProductFromForm);
@@ -1205,6 +1226,8 @@
       const recipeState = recipeResult.value.recipeState;
       if (hasRecipeContent(recipeState)) {
         state.recipes = normalizeRecipeData(recipeState);
+        state.recipeCatalog = normalizeRecipeCatalog(recipeResult.value.recipeCatalog);
+        state.recipeLinkReview = Array.isArray(recipeResult.value.recipeLinkReview) ? recipeResult.value.recipeLinkReview : [];
         saveRecipesLocalOnly();
         changed = true;
       } else if (hasRecipeContent(state.recipes)) {
@@ -1283,6 +1306,7 @@
           const payload = JSON.parse(event.data);
           if (!hasRecipeContent(payload.recipeState)) return;
           state.recipes = normalizeRecipeData(payload.recipeState);
+          state.recipeCatalog = normalizeRecipeCatalog(payload.recipeCatalog);
           saveRecipesLocalOnly();
           ensureRecipeSelection();
           renderAll();
@@ -1303,17 +1327,8 @@
       });
     }
 
-    if (!state.feedbackEventSource) {
-      state.feedbackEventSource = new EventSource(`${baseUrl}/api/feedback/events`);
-      state.feedbackEventSource.addEventListener("feedback", (event) => {
-        try {
-          const payload = JSON.parse(event.data);
-          if (!Array.isArray(payload.feedbackItems)) return;
-          safeLocalSet(FEEDBACK_STORAGE_KEY, JSON.stringify(payload.feedbackItems));
-          renderFeedbackInbox();
-        } catch (error) {}
-      });
-    }
+    // Geri bildirimler paneldeki Yenile düğmesiyle alınır. Ayrı bir uzun ömürlü
+    // bağlantı açmamak, HTTP/1.1 altında kayıt istekleri için bağlantı bırakır.
   }
 
   function hasMenuContent(menuState) {
@@ -1348,7 +1363,7 @@
     if (els.saveChangesButton) {
       els.saveChangesButton.classList.toggle("is-disabled", state.saving || !pending);
       els.saveChangesButton.setAttribute("aria-disabled", String(state.saving || !pending));
-      els.saveChangesButton.textContent = state.saving ? "Kaydediliyor..." : "Kaydet";
+      els.saveChangesButton.textContent = state.saving ? "Kaydediliyor..." : "Kaydet ve Yayınla";
     }
     if (els.saveState) {
       els.saveState.textContent = message || (pending ? "Kaydedilmedi" : "Hazir");
@@ -1387,6 +1402,10 @@
     }
     if (state.activeSection === "product") {
       updateProductFromForm();
+      return;
+    }
+    if (state.activeSection === "site") {
+      handleSiteSectionOrder();
       return;
     }
     if (state.activeSection === "settings" && els.siteHeroKicker) {
@@ -1451,17 +1470,21 @@
   }
 
   async function saveRecipesToBackend() {
-    await backendRequest("/api/recipes", {
+    const result = await backendRequest("/api/recipes", {
       method: "PUT",
-      body: { recipeState: state.recipes }
+      body: { recipeState: state.recipes, recipeCatalog: state.recipeCatalog }
     });
+    state.recipeCatalog = normalizeRecipeCatalog(result.recipeCatalog);
+    state.recipeLinkReview = Array.isArray(result.recipeLinkReview) ? result.recipeLinkReview : state.recipeLinkReview;
   }
 
   async function saveSiteToBackend() {
-    await backendRequest("/api/site", {
+    const result = await backendRequest("/api/site", {
       method: "PUT",
       body: { siteState: state.site }
     });
+    if (result.siteState) state.site = normalizeSiteSettings(result.siteState);
+    await loadSiteRevisions();
   }
 
   function normalizeRecipeData(raw) {
@@ -1481,6 +1504,16 @@
       });
     });
     return normalized;
+  }
+
+  function normalizeRecipeCatalog(raw) {
+    return Array.isArray(raw) ? raw.map((item) => ({
+      id: String(item && item.id || ""),
+      category: String(item && item.category || ""),
+      product: String(item && item.product || ""),
+      createdAt: String(item && item.createdAt || ""),
+      updatedAt: String(item && item.updatedAt || "")
+    })).filter((item) => item.id && item.category && item.product) : [];
   }
 
   function normalizeRecipeItem(value) {
@@ -1698,6 +1731,12 @@
       popular: Boolean(product.popular),
       kind: product.kind || inferKind("", "", product.name || ""),
       temperature: product.temperature || inferTemperature("", "", product.name || ""),
+      contentMode: ["recipe", "manual", "hidden"].includes(product.contentMode) ? product.contentMode : "manual",
+      recipeId: String(product.recipeId || ""),
+      recipeSize: String(product.recipeSize || ""),
+      manualContent: String(product.manualContent || product.details && product.details.ingredients || product.ingredients || ""),
+      recipeLinkStatus: String(product.recipeLinkStatus || (product.recipeId ? "linked" : "unmatched")),
+      order: Number.isFinite(Number(product.order)) ? Number(product.order) : index,
       details: {
         calories: product.details && product.details.calories || product.calories || "",
         allergens: product.details && product.details.allergens || product.allergens || "",
@@ -1740,6 +1779,7 @@
 
   function normalizeSiteSettings(siteSettings) {
     const source = siteSettings && typeof siteSettings === "object" ? siteSettings : {};
+    if (Number(source.schemaVersion || 0) >= 2) return cloneData(source);
     return migrateSiteSettings(Object.assign({}, DEFAULT_SITE_SETTINGS, source, {
       socialLinks: normalizeSocialLinks(source.socialLinks || DEFAULT_SITE_SETTINGS.socialLinks),
       titleSize: clamp(Number(source.titleSize || DEFAULT_SITE_SETTINGS.titleSize), 34, 92),
@@ -3155,6 +3195,7 @@
     `).join("");
     renderProductNavigation();
     renderSiteSettingsForm();
+    renderSiteEditorForm();
 
     const product = selectedProduct();
     els.deleteProductButton.disabled = !product;
@@ -3191,7 +3232,27 @@
     renderImagePreview(els.productImagePreview, product.imageUrl || product.image, "Ürün görseli yok");
     els.productCalories.value = product.details.calories;
     els.productAllergens.value = product.details.allergens;
-    els.productIngredients.value = product.details.ingredients;
+    els.productIngredients.value = product.manualContent || product.details.ingredients;
+    renderProductRecipeLink(product);
+  }
+
+  function renderProductRecipeLink(product) {
+    if (!els.productContentMode || !els.productRecipeId || !els.productRecipeSize) return;
+    els.productContentMode.value = product.contentMode || "manual";
+    const catalog = normalizeRecipeCatalog(state.recipeCatalog);
+    els.productRecipeId.innerHTML = `<option value="">Bağlantı yok</option>${catalog.map((item) => `
+      <option value="${escapeAttribute(item.id)}">${escapeHTML(item.category)} / ${escapeHTML(item.product)}</option>
+    `).join("")}`;
+    els.productRecipeId.value = catalog.some((item) => item.id === product.recipeId) ? product.recipeId : "";
+    const linked = catalog.find((item) => item.id === els.productRecipeId.value);
+    const sizes = linked && state.recipes[linked.category] && state.recipes[linked.category][linked.product]
+      ? Object.keys(state.recipes[linked.category][linked.product]) : [];
+    els.productRecipeSize.innerHTML = `<option value="">Otomatik (Standart → 16 oz → ilk)</option>${sizes.map((size) => `
+      <option value="${escapeAttribute(size)}">${escapeHTML(size)}</option>
+    `).join("")}`;
+    els.productRecipeSize.value = sizes.includes(product.recipeSize) ? product.recipeSize : "";
+    const status = linked ? `Bağlı: ${linked.category} / ${linked.product}` : "Eşleştirme gerekli veya manuel içerik kullanılmalı.";
+    if (els.productRecipeLinkStatus) els.productRecipeLinkStatus.textContent = status;
   }
 
   function renderSiteSettingsForm() {
@@ -3232,6 +3293,106 @@
     setInputValue("siteTitleSize", site.titleSize);
     setInputValue("siteBodySize", site.bodySize);
     renderSiteSocialLinksList(site.socialLinks || []);
+  }
+
+  function renderSiteEditorForm() {
+    if (!state.site || Number(state.site.schemaVersion || 0) < 2) return;
+    document.querySelectorAll("[data-site-path]").forEach((input) => {
+      const value = getValueAtPath(state.site, input.dataset.sitePath);
+      if (input.dataset.siteType === "boolean") input.checked = value !== false;
+      else if (input.dataset.siteType === "array") input.value = Array.isArray(value) ? value.join(", ") : "";
+      else input.value = value == null ? "" : String(value);
+    });
+    if (els.siteSectionOrder) els.siteSectionOrder.value = Array.isArray(state.site.sectionOrder) ? state.site.sectionOrder.join(", ") : "";
+  }
+
+  function getValueAtPath(source, pathValue) {
+    return String(pathValue || "").split(".").filter(Boolean).reduce((value, key) => value == null ? undefined : value[key], source);
+  }
+
+  function setValueAtPath(target, pathValue, value) {
+    const keys = String(pathValue || "").split(".").filter(Boolean);
+    if (!keys.length) return;
+    let cursor = target;
+    keys.slice(0, -1).forEach((key, index) => {
+      const nextKey = keys[index + 1];
+      if (!cursor[key] || typeof cursor[key] !== "object") cursor[key] = /^\d+$/.test(nextKey) ? [] : {};
+      cursor = cursor[key];
+    });
+    cursor[keys[keys.length - 1]] = value;
+  }
+
+  function handleSiteEditorInput(event) {
+    const input = event.currentTarget;
+    if (!input || !state.site || Number(state.site.schemaVersion || 0) < 2) return;
+    let value = input.value;
+    if (input.dataset.siteType === "boolean") value = input.checked;
+    if (input.dataset.siteType === "number") value = Number(input.value || 0);
+    if (input.dataset.siteType === "array") value = String(input.value || "").split(",").map((item) => item.trim()).filter(Boolean);
+    setValueAtPath(state.site, input.dataset.sitePath, value);
+    saveSiteSettings();
+  }
+
+  function handleSiteSectionOrder() {
+    if (!state.site || Number(state.site.schemaVersion || 0) < 2) return;
+    state.site.sectionOrder = String(els.siteSectionOrder.value || "").split(",").map((item) => item.trim()).filter(Boolean);
+    saveSiteSettings();
+  }
+
+  async function handleSiteMediaUpload(event) {
+    const input = event.currentTarget;
+    const file = input && input.files && input.files[0];
+    if (!file || !state.site) return;
+    input.disabled = true;
+    try {
+      const media = await storeMediaFile(file, file.type.startsWith("video/") ? "video" : "image");
+      setValueAtPath(state.site, input.dataset.siteUploadTarget, media.src);
+      saveSiteSettings();
+      renderSiteEditorForm();
+      updateSaveControls("Medya yüklendi, yayın bekliyor");
+    } catch (error) {
+      alert(`Medya yüklenemedi. ${error.message || "Dosyayı kontrol edin."}`);
+    } finally {
+      input.value = "";
+      input.disabled = false;
+    }
+  }
+
+  async function loadSiteRevisions() {
+    if (!backendBaseUrl() || !els.siteRevisionList) return;
+    els.siteRevisionList.textContent = "Yükleniyor...";
+    try {
+      const result = await backendRequest("/api/admin/site/revisions");
+      state.siteRevisions = Array.isArray(result.revisions) ? result.revisions : [];
+      renderSiteRevisions();
+    } catch (error) {
+      els.siteRevisionList.textContent = error.message || "Revizyonlar alınamadı.";
+    }
+  }
+
+  function renderSiteRevisions() {
+    if (!els.siteRevisionList) return;
+    els.siteRevisionList.innerHTML = state.siteRevisions.length ? state.siteRevisions.map((revision) => `
+      <article class="icon-link-item">
+        <div><strong>${escapeHTML(new Date(revision.createdAt).toLocaleString("tr-TR"))}</strong><small>${escapeHTML(revision.id)}</small></div>
+        <button class="line-action" type="button" data-site-revision-id="${escapeAttribute(revision.id)}">Geri Yükle</button>
+      </article>
+    `).join("") : "Henüz geri alınabilir yayın yok.";
+  }
+
+  async function handleSiteRevisionRestore(event) {
+    const button = event.target.closest("[data-site-revision-id]");
+    if (!button || !confirm("Bu site yayınını geri yüklemek istiyor musunuz?")) return;
+    try {
+      const result = await backendRequest(`/api/admin/site/revisions/${encodeURIComponent(button.dataset.siteRevisionId)}/restore`, { method: "POST" });
+      state.site = normalizeSiteSettings(result.siteState);
+      state.dirtySite = false;
+      renderSiteEditorForm();
+      await loadSiteRevisions();
+      updateSaveControls("Revizyon geri yüklendi");
+    } catch (error) {
+      alert(`Revizyon geri yüklenemedi. ${error.message || ""}`);
+    }
   }
 
   function renderSiteSocialLinksList(links) {
@@ -3285,7 +3446,7 @@
   function applyPremiumSiteTheme() {
     const site = normalizeSiteSettings(state.site || DEFAULT_SITE_SETTINGS);
     state.site = normalizeSiteSettings(Object.assign({}, site, PREMIUM_SITE_PALETTE, {
-      heroImageUrl: "Tahmisçi_Logo/Logolar/Ana_Logo/PNG_Logo.png"
+      heroImageUrl: "/brand-assets/Logolar/Ana_Logo/PNG_Logo.png"
     }));
     saveSiteSettings();
     renderSiteSettingsForm();
@@ -3309,6 +3470,10 @@
     els.productTemperature.value = "none";
     els.productPopular.checked = false;
     els.productActive.checked = true;
+    if (els.productContentMode) els.productContentMode.value = "manual";
+    if (els.productRecipeId) els.productRecipeId.innerHTML = `<option value="">Bağlantı yok</option>`;
+    if (els.productRecipeSize) els.productRecipeSize.innerHTML = `<option value="">Otomatik</option>`;
+    if (els.productRecipeLinkStatus) els.productRecipeLinkStatus.textContent = "Reçete bağlantısı seçilmedi.";
     renderPriceModeFields();
     renderImagePreview(els.productImagePreview, "", "Ürün görseli yok");
   }
@@ -4836,6 +5001,8 @@
       });
       if (result.recipeState) {
         state.recipes = normalizeRecipeData(result.recipeState);
+        state.recipeCatalog = normalizeRecipeCatalog(result.recipeCatalog);
+        state.recipeLinkReview = Array.isArray(result.recipeLinkReview) ? result.recipeLinkReview : state.recipeLinkReview;
         saveRecipesLocalOnly();
         if (state.recipeChannel) state.recipeChannel.postMessage({ type: "recipes-updated", time: Date.now() });
       }
@@ -5046,6 +5213,7 @@
     };
     state.selectedRecipeCategory = name;
     state.selectedRecipeProduct = "14 oz Örnek İçecek";
+    addRecipeCatalogEntry(name, state.selectedRecipeProduct);
     state.selectedRecipePreviewSize = "14 oz";
     saveRecipes({ render: true });
   }
@@ -5075,13 +5243,17 @@
       preparation: "",
       note: ""
     };
+    addRecipeCatalogEntry(state.selectedRecipeCategory, name);
     state.selectedRecipePreviewSize = name;
     saveRecipes({ render: true });
   }
 
   function deleteSelectedRecipeCategory() {
     if (!state.selectedRecipeCategory || recipeCategoryNames().length <= 1) return;
-    if (!confirm(`${state.selectedRecipeCategory} kategorisi ve içindeki reçeteler silinsin mi?`)) return;
+    const ids = state.recipeCatalog.filter((item) => item.category === state.selectedRecipeCategory).map((item) => item.id);
+    const linkedCount = linkedMenuProductsForRecipeIds(ids).length;
+    if (!confirm(`${state.selectedRecipeCategory} kategorisi ve içindeki reçeteler silinsin mi?${linkedCount ? ` ${linkedCount} menü ürünü manuel/boş içerik fallback'ine geçecek.` : ""}`)) return;
+    state.recipeCatalog = state.recipeCatalog.filter((item) => item.category !== state.selectedRecipeCategory);
     delete state.recipes[state.selectedRecipeCategory];
     state.selectedRecipeCategory = "";
     state.selectedRecipeProduct = "";
@@ -5092,7 +5264,10 @@
 
   function deleteSelectedRecipeProduct() {
     if (!state.selectedRecipeCategory || !state.selectedRecipeProduct) return;
-    if (!confirm(`${state.selectedRecipeProduct} ürünü ve ölçüleri silinsin mi?`)) return;
+    const catalogItem = state.recipeCatalog.find((item) => item.category === state.selectedRecipeCategory && item.product === state.selectedRecipeProduct);
+    const linkedCount = linkedMenuProductsForRecipeIds(catalogItem ? [catalogItem.id] : []).length;
+    if (!confirm(`${state.selectedRecipeProduct} ürünü ve ölçüleri silinsin mi?${linkedCount ? ` ${linkedCount} bağlı menü ürünü manuel/boş içerik fallback'ine geçecek.` : ""}`)) return;
+    if (catalogItem) state.recipeCatalog = state.recipeCatalog.filter((item) => item.id !== catalogItem.id);
     delete state.recipes[state.selectedRecipeCategory][state.selectedRecipeProduct];
     state.selectedRecipeProduct = "";
     state.selectedRecipePreviewSize = "";
@@ -5114,6 +5289,9 @@
     }
     state.recipes[nextName] = state.recipes[oldName];
     delete state.recipes[oldName];
+    state.recipeCatalog.forEach((item) => {
+      if (item.category === oldName) item.category = nextName;
+    });
     state.selectedRecipeCategory = nextName;
     saveRecipes({ render: true });
   }
@@ -5133,6 +5311,8 @@
     }
     category[nextName] = category[oldName];
     delete category[oldName];
+    const catalogItem = state.recipeCatalog.find((item) => item.category === state.selectedRecipeCategory && item.product === oldName);
+    if (catalogItem) catalogItem.product = nextName;
     state.selectedRecipeProduct = nextName;
     saveRecipes({ render: true });
   }
@@ -5663,8 +5843,35 @@
     product.imageOverlay = Number(els.productImageOverlay.value || 0);
     product.details.calories = els.productCalories.value.trim();
     product.details.allergens = els.productAllergens.value.trim();
-    product.details.ingredients = els.productIngredients.value.trim();
+    product.manualContent = els.productIngredients.value.trim();
+    product.details.ingredients = product.manualContent;
+    product.contentMode = ["recipe", "manual", "hidden"].includes(els.productContentMode.value) ? els.productContentMode.value : "manual";
+    product.recipeId = els.productRecipeId.value || "";
+    product.recipeSize = els.productRecipeSize.value || "";
+    product.recipeLinkStatus = product.recipeId ? "linked" : "unmatched";
     saveAndRender();
+  }
+
+  function addRecipeCatalogEntry(category, product) {
+    const existing = state.recipeCatalog.find((item) => item.category === category && item.product === product);
+    if (existing) return existing;
+    const now = new Date().toISOString();
+    const item = {
+      id: window.crypto && typeof window.crypto.randomUUID === "function"
+        ? window.crypto.randomUUID()
+        : `recipe-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`,
+      category,
+      product,
+      createdAt: now,
+      updatedAt: now
+    };
+    state.recipeCatalog.push(item);
+    return item;
+  }
+
+  function linkedMenuProductsForRecipeIds(ids) {
+    const wanted = new Set(ids || []);
+    return flatProducts().filter(({ product }) => wanted.has(product.recipeId));
   }
 
   function applyBulkProductImageUrl() {

@@ -34,7 +34,7 @@ const APP_CONFIG = {
         theme: 'yeppos_theme'
     },
 
-    // Hero Slider: varsayılan boş; hero.php'den yüklenecek (heroDataLoaded)
+    // Hero Slider: public bootstrap sağlayıcısından yüklenecek (heroDataLoaded)
     hero: {
         slides: [],
         autoplay: true,
@@ -2724,14 +2724,6 @@ function formatCartItemOptions(options) {
   
   return result.length > 0 ? result.join(', ') : 'Yok';
 }
-// Sepet ürününü tıklayınca modal aç
-function openCartItemModal(itemId) {
-  // Burada menu.html'deki gibi modal açma işlemi yapılacak
-  // Şimdilik sadece console.log
-  console.log('Sepet ürünü düzenleme modalı açılacak:', itemId);
-  // TODO: Modal HTML ve içeriği eklenecek
-}
-
 // Cart Edit Modal Logic
 (function() {
   // Modal elementleri

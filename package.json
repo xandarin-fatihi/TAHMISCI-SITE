@@ -1,0 +1,19 @@
+{
+  "name": "tahmisci-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Tahmisçi birleşik site, panel, reçete ve backend geliştirme komutları",
+  "workspaces": [
+    "TAHMİSÇİ/TAH/backend"
+  ],
+  "scripts": {
+    "dev:local": "node ./TAHMİSÇİ/TAH/backend/scripts/local-dev.js",
+    "local:reset": "node ./TAHMİSÇİ/TAH/backend/scripts/local-reset.js",
+    "test:local": "node ./TAHMİSÇİ/TAH/backend/scripts/local-smoke-test.js",
+    "check": "npm --workspace tahmisci-menu-backend run check",
+    "test": "npm --workspace tahmisci-menu-backend test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

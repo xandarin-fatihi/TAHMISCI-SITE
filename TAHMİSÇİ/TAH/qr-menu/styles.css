@@ -1,27 +1,27 @@
 /* Developer: Uzeyir | System Key: xandar | Stylesheet integrity marker */
 @font-face {
   font-family: "Magnolia Script";
-  src: url("Tahmisçi_Logo/Fontlar/Magnolia_Script_Ana_Font/Magnolia Script.otf") format("opentype");
+  src: url("/brand-assets/Fontlar/Magnolia_Script_Ana_Font/Magnolia Script.otf") format("opentype");
   font-display: swap;
 }
 
 @font-face {
   font-family: "Tahmisci Poppins";
-  src: url("Tahmisçi_Logo/Fontlar/Poppins_Font/Poppins-Regular.ttf") format("truetype");
+  src: url("/brand-assets/Fontlar/Poppins_Font/Poppins-Regular.ttf") format("truetype");
   font-display: swap;
   font-weight: 400;
 }
 
 @font-face {
   font-family: "Tahmisci Poppins";
-  src: url("Tahmisçi_Logo/Fontlar/Poppins_Font/Poppins-SemiBold.ttf") format("truetype");
+  src: url("/brand-assets/Fontlar/Poppins_Font/Poppins-SemiBold.ttf") format("truetype");
   font-display: swap;
   font-weight: 600;
 }
 
 @font-face {
   font-family: "Tahmisci Poppins";
-  src: url("Tahmisçi_Logo/Fontlar/Poppins_Font/Poppins-Bold.ttf") format("truetype");
+  src: url("/brand-assets/Fontlar/Poppins_Font/Poppins-Bold.ttf") format("truetype");
   font-display: swap;
   font-weight: 700;
 }

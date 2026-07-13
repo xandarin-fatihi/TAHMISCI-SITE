@@ -1,23 +1,32 @@
-# Tahmisci Coffee & Roastery Kaynak Kod Paketi
+# Tahmisçi birleşik uygulaması
 
-Bu klasor temizlenmis Tahmisci QR menu, admin paneli, recete arayuzu ve ortak backend kaynak kodlarini icerir.
+Bu dizin production uygulamasının köküdür. Express; yeni siteyi `/`, eski QR menüyü `/qr-menu/`, paneli `/panel/`, reçete ekranını `/recete/` altında servis eder.
 
-## Hizli baslangic
+## Bileşenler
 
-- Ana menu: `index.html`
-- Alternatif ilk ekran: `index-alternatif.html`
-- Admin paneli: `panel/`
-- Recete ekrani: `recete/`
-- Ogretici rehber: `admin-ogretici-index.html`
-- Klasor semasi: `KLASOR-SEMASI.md`
-- Canli kurulum: `DEPLOYMENT-GODADDY-NGINX.md`
+- `site/`: mevcut tasarımı ve hero/reels yerleşimini koruyan yeni site. Menü ve site içeriğini yalnızca public bootstrap API'den alır.
+- `qr-menu/`: aynı `menuState` verisini kullanan eski hafif QR menü.
+- `panel/`: menü, reçete bağlantısı, kullanıcı/eğitim sistemleri ve kontrollü “SİTE DÜZENLEME” CMS'i.
+- `recete/`: yetkili barista/reçete arayüzü.
+- `backend/`: doğrulama, dosya store, migration, medya, public projection, SSE ve static routing.
+- `menu-data.js`, `recipe-data.js`: yalnızca boş store için idempotent ilk seed kaynakları; public static dosya değildir.
 
-## Notlar
+## Tek veri kaynağı
 
-- Eski proje adlari temizlenip Tahmisci adina gore duzenlendi.
-- Ana stil ve menu davranis dosyalari okunur adlarla duzenlendi.
-- Recete ekrani temiz adla `recete/` klasoru icine tasindi.
-- QR gorselleri, eski yedekler ve kullanilmayan kopya klasorler aktarilmadi.
-- Canli kopyada ana menu `https://tahmiscicoffee.com/`, admin paneli `https://tahmiscicoffee.com/panel/`, recete `https://tahmiscicoffee.com/recete/` adresinden acilir. Canli kurulum icin `backend/.env.example` dosyasini `.env` olarak kopyalayip domain ve secret degerlerini doldurun.
-- Panel ve recete sifreleri backend tarafinda ayri hash olarak tutulur. `https://tahmiscicoffee.com/password-reset/` ekraninda ayni yetkili e-posta ile panel veya recete sifresi ayri ayri degistirilebilir.
-- Recete verisi Excel kaynakli guncel formatta `recipe-data.js` icindedir. Hazirlanis bilgisi olan urunlerde recete ekraninda `Hazirlanisi` butonu gorunur. Canli backend store'unu bu veriye tasimak icin sunucuda `cd /var/www/tahmisci-app/index.html/backend && npm run import:recipes` calistirilir.
+- `menuState`: kategori, ürün, fiyat/varyant, görsel, stok, aktiflik, popülerlik, sıralama ve reçete bağlantısı.
+- `recipeState` + `recipeCatalog`: reçete içeriği/hazırlanışı ve değişmeyen reçete kimliği.
+- `siteState`: hero/reels, bölüm metinleri, hakkımızda, QR, ortak iletişim/sosyal, footer, SEO, dil, görünürlük ve sıra.
+- `backend/data/media`: yüklenen kalıcı medya; JSON'a base64 yazılmaz.
+
+## Yayın akışı
+
+Paneldeki değişiklikler yerelde dirty durumda tutulur. “Kaydet ve Yayınla” backend doğrulamasından geçer, site için son 10 revizyondan birini oluşturur, store'u geçici dosya + rename ile atomik yazar ve SSE olayı yayınlar. Site açıkken bootstrap verisini yeniden alarak kendini günceller.
+
+## Komutlar
+
+```bash
+npm install
+npm run dev:local
+```
+
+Komut repo kökünde çalıştırılır ve production'dan ayrı `backend/data/local-dev-*` yollarını kullanır. Lokal ayrıntılar için repo kökündeki `LOCAL-DEVELOPMENT.md`; production migration için [`backend/README.md`](backend/README.md), [`SISTEM-HARITASI.md`](SISTEM-HARITASI.md) ve [`DEPLOYMENT-GODADDY-NGINX.md`](DEPLOYMENT-GODADDY-NGINX.md) kullanılır.
