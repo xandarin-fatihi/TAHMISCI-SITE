@@ -7887,9 +7887,13 @@
     }
   ]
 };
-  const hero = { slides: [
-    { title: "Kahvenin iyi hali", description: "Özenle hazırlanan kahveler ve günün her anına eşlik eden lezzetler.", buttonText: "Menüyü Keşfet", buttonIcon: "fas fa-mug-hot", buttonUrl: "#menu", backgroundImage: "assets/images/hero/hero-1.jpg" },
-    { title: "Soğuk, taze, ferah", description: "Frozen, soğuk kahve ve Tahmisçi özel içecekleri bir arada.", buttonText: "Soğukları Gör", buttonIcon: "fas fa-snowflake", buttonUrl: "#menu", backgroundImage: "assets/images/hero/hero-2.jpg" },
+  const heroMedia = {
+    primary: "assets/images/hero/hero-1.jpg",
+    support: "assets/images/hero/hero-2.jpg"
+  };
+  const hero = { media: heroMedia, slides: [
+    { title: "Kahvenin iyi hali", description: "Özenle hazırlanan kahveler ve günün her anına eşlik eden lezzetler.", buttonText: "Menüyü Keşfet", buttonIcon: "fas fa-mug-hot", buttonUrl: "#menu", backgroundImage: heroMedia.primary },
+    { title: "Soğuk, taze, ferah", description: "Frozen, soğuk kahve ve Tahmisçi özel içecekleri bir arada.", buttonText: "Soğukları Gör", buttonIcon: "fas fa-snowflake", buttonUrl: "#menu", backgroundImage: heroMedia.support },
     { title: "Tatlı bir mola", description: "Kahvenize eşlik edecek tatlı ve sandviç seçeneklerini keşfedin.", buttonText: "Tüm Menü", buttonIcon: "fas fa-cookie-bite", buttonUrl: "#menu", backgroundImage: "assets/images/hero/hero-3.jpg" }
   ], autoplay: true, autoplayInterval: 5500, transitionSpeed: 600 };
   window.TahmisciCatalog = catalog;
@@ -8033,9 +8037,10 @@
     "tahmisci special": "Tahmisci special"
   };
   const heroEn = {
+    media: heroMedia,
     slides: [
-      { title: "Coffee, at its best", description: "Carefully prepared coffees and flavors for every moment of the day.", buttonText: "Explore Menu", buttonIcon: "fas fa-mug-hot", buttonUrl: "#menu", backgroundImage: "assets/images/hero/hero-1.jpg" },
-      { title: "Cold, fresh, refreshing", description: "Frozen drinks, iced coffees and Tahmisçi specials together.", buttonText: "See Cold Drinks", buttonIcon: "fas fa-snowflake", buttonUrl: "#menu", backgroundImage: "assets/images/hero/hero-2.jpg" },
+      { title: "Coffee, at its best", description: "Carefully prepared coffees and flavors for every moment of the day.", buttonText: "Explore Menu", buttonIcon: "fas fa-mug-hot", buttonUrl: "#menu", backgroundImage: heroMedia.primary },
+      { title: "Cold, fresh, refreshing", description: "Frozen drinks, iced coffees and Tahmisçi specials together.", buttonText: "See Cold Drinks", buttonIcon: "fas fa-snowflake", buttonUrl: "#menu", backgroundImage: heroMedia.support },
       { title: "A sweet break", description: "Discover desserts and sandwiches to pair with your coffee.", buttonText: "Full Menu", buttonIcon: "fas fa-cookie-bite", buttonUrl: "#menu", backgroundImage: "assets/images/hero/hero-3.jpg" }
     ],
     autoplay: true,

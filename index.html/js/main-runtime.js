@@ -1817,14 +1817,19 @@ window.generateQR = generateQR;
         return getSiteRoot();
     }
 
+    function resolveHeroMediaUrl(source) {
+        let mediaUrl = String(source || '').trim();
+        if (mediaUrl && !/^https?:\/\//i.test(mediaUrl)) {
+            const base = getHeroBasePath();
+            mediaUrl = (base ? base + '/' : '') + mediaUrl.replace(/^\//, '');
+        }
+        return mediaUrl;
+    }
+
     function createSlideElement(slide, index) {
         const slideDiv = document.createElement('div');
         slideDiv.className = 'hero-slide';
-        let imgUrl = (slide.backgroundImage || '').trim();
-        if (imgUrl && !/^https?:\/\//i.test(imgUrl)) {
-            const base = getHeroBasePath();
-            imgUrl = (base ? base + '/' : '') + imgUrl.replace(/^\//, '');
-        }
+        const imgUrl = resolveHeroMediaUrl(slide.backgroundImage);
         if (imgUrl) {
             slideDiv.style.backgroundImage = `url("${imgUrl}")`;
         }
@@ -1878,6 +1883,22 @@ window.generateQR = generateQR;
         content.appendChild(description);
         content.appendChild(actions);
         slideDiv.appendChild(content);
+
+        const supportMediaUrl = index === 0
+            ? resolveHeroMediaUrl(APP_CONFIG.hero?.media?.support)
+            : '';
+        if (supportMediaUrl) {
+            const supportMedia = document.createElement('div');
+            supportMedia.className = 'hero-support-media';
+            supportMedia.setAttribute('aria-hidden', 'true');
+            const supportImage = document.createElement('img');
+            supportImage.src = supportMediaUrl;
+            supportImage.alt = '';
+            supportImage.loading = 'eager';
+            supportMedia.appendChild(supportImage);
+            slideDiv.appendChild(supportMedia);
+            slideDiv.classList.add('hero-slide--dual-media');
+        }
 
         return slideDiv;
     }
@@ -2170,6 +2191,7 @@ window.HomepageSections = new HomepageSectionsManager();
         const image = String(product.image || '').trim();
         const isLogoFallback = product && product.image_source === 'company_logo';
         const hasImage = Boolean(image) && !isLogoFallback;
+        const viewLabel = window.I18N?.t?.('product_action_view') || 'İncele';
 
         const badgeMap = {
             'popular': 'Çok Satan',
@@ -2200,7 +2222,7 @@ window.HomepageSections = new HomepageSectionsManager();
               <span class="current-price">${priceLabel}</span>
               ${product.oldPrice ? `<span class="old-price">${parseFloat(product.oldPrice || 0).toFixed(2)}</span>` : ''}
             </div>
-            <button class="product-add-btn" data-product-id="${product.id}">İncele</button>
+            <button class="product-add-btn" data-product-id="${product.id}">${viewLabel}</button>
           </div>
         </div>
       </div>
@@ -14976,7 +14998,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const inner = document.createElement('div');
         inner.className = 'filter-categories-inner';
 
-        categories.forEach((category, index) => {
+        categories.forEach((category) => {
             const button = document.createElement('button');
             button.className = 'filter-btn';
             button.setAttribute('data-category', String(category.id));
@@ -14985,8 +15007,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 ${category.name}
             `;
 
-            // First category should be active by default
-            if (index === 0) {
+            if (String(category.id) === 'all') {
                 button.classList.add('active');
             }
 
@@ -15360,14 +15381,13 @@ document.addEventListener("DOMContentLoaded", function () {
         if (orderType) params.set('order_type', orderType);
         if (lang) params.set('lang', lang);
         params.set('include_subcategories', '1');
-        if (currentCategoryId > 0) params.set('category', String(currentCategoryId));
 
         return params.toString();
     }
 
     /** Sadece alt kategorisi olan ana kategori seçildiğinde çağrılır; id=0 veya '' = tüm ürünler. */
     window.loadMenuProductsForCategory = function (id) {
-        currentCategoryId = (id === '' || id === null || id === undefined) ? 0 : (Number(id) || 0);
+        currentCategoryId = normalizeCategoryId(id);
         if (cachedMenuProducts.length) {
             if (currentCategoryId > 0) {
                 renderCategoryProducts(currentCategoryId);
@@ -15433,25 +15453,30 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function normalizeCategoryId(value) {
+        const id = Number(value);
+        return Number.isInteger(id) && id > 0 ? id : 0;
+    }
+
     function getMainCategories() {
-        return (window.MenuCategories || []).filter((cat) => cat && cat.id !== "all" && Number(cat.id) > 0);
+        return (window.MenuCategories || []).filter((cat) => cat && cat.id !== "all" && normalizeCategoryId(cat.id) > 0);
     }
 
     function buildProductsByCategory(products) {
         const productsByCategory = {};
         const validCategoryIds = new Set();
         getMainCategories().forEach((cat) => {
-            const mainId = Number(cat.id);
-            if (Number.isInteger(mainId) && mainId > 0) validCategoryIds.add(mainId);
+            const mainId = normalizeCategoryId(cat.id);
+            if (mainId) validCategoryIds.add(mainId);
             (cat.subcategories || []).forEach((sub) => {
-                const subId = Number(sub && sub.id);
-                if (Number.isInteger(subId) && subId > 0) validCategoryIds.add(subId);
+                const subId = normalizeCategoryId(sub && sub.id);
+                if (subId) validCategoryIds.add(subId);
             });
         });
 
         products.forEach((product) => {
-            const categoryId = Number(product && product.category);
-            if (!Number.isInteger(categoryId) || categoryId <= 0) return;
+            const categoryId = normalizeCategoryId(product && product.category);
+            if (!categoryId) return;
             if (validCategoryIds.size > 0 && !validCategoryIds.has(categoryId)) return;
             const categoryKey = String(categoryId);
             if (!productsByCategory[categoryKey]) productsByCategory[categoryKey] = [];
@@ -15462,12 +15487,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function getCategoryProducts(categoryId) {
-        const id = Number(categoryId) || 0;
+        const id = normalizeCategoryId(categoryId);
         if (!id) return cachedMenuProducts;
-        const mainCategory = getMainCategories().find((cat) => Number(cat.id) === id);
+        const mainCategory = getMainCategories().find((cat) => normalizeCategoryId(cat.id) === id);
         if (mainCategory) {
-            const allowedIds = new Set([id, ...(mainCategory.subcategories || []).map((sub) => Number(sub.id))]);
-            return cachedMenuProducts.filter((product) => Number(product.parentCategory) === id || allowedIds.has(Number(product.category)));
+            const allowedIds = new Set([id, ...(mainCategory.subcategories || []).map((sub) => normalizeCategoryId(sub.id)).filter(Boolean)]);
+            return cachedMenuProducts.filter((product) => {
+                const parentId = normalizeCategoryId(product && product.parentCategory);
+                const productCategoryId = normalizeCategoryId(product && product.category);
+                return parentId ? parentId === id : allowedIds.has(productCategoryId);
+            });
         }
         return cachedProductsByCategory[String(id)] || [];
     }
@@ -15520,8 +15549,7 @@ document.addEventListener("DOMContentLoaded", function () {
             </span>
         `;
         card.addEventListener("click", () => {
-            currentCategoryId = Number(category.id) || 0;
-            renderCategoryProducts(currentCategoryId);
+            window.loadMenuProductsForCategory?.(normalizeCategoryId(category.id));
         });
         return card;
     }
@@ -15549,7 +15577,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const productsGrid = document.getElementById('productsGrid');
         if (!productsGrid) return;
         const searchMode = options.searchMode === true;
-        const selectedId = Number(categoryId) || 0;
+        const selectedId = normalizeCategoryId(categoryId);
         const products = selectedId > 0 ? getCategoryProducts(selectedId) : cachedMenuProducts;
         const title = searchMode ? menuText("search_results_title", "Arama Sonuçları") : (selectedId > 0 ? getCategoryName(selectedId) : menuText("all_products_title", "Tüm Ürünler"));
 
@@ -15740,7 +15768,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const lang = window.I18N?.getPreferredLanguage?.() || 'tr';
         const viewLabel = translations?.[lang]?.product_action_view || 'İncele';
         const addLabel = translations?.[lang]?.product_action_add || 'Ekle';
-        const actionLabel = window.TahmisciCatalog ? 'İncele' : (isOutOfStock ? viewLabel : (orderType === 'tableMenu' ? viewLabel : addLabel));
+        const actionLabel = window.TahmisciCatalog ? viewLabel : (isOutOfStock ? viewLabel : (orderType === 'tableMenu' ? viewLabel : addLabel));
 
         card.innerHTML = `
             ${hasImage ? `<div class="product-image">
@@ -15764,7 +15792,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Ürünler sadece seçim yapıldıktan sonra yüklensin (branch_id + order_type); DOMContentLoaded ile erken çağrı boş sonuç verir.
-    document.addEventListener('menuSelectionChanged', loadMenuProducts);
+    document.addEventListener('menuSelectionChanged', () => {
+        currentCategoryId = 0;
+        currentMenuSearchTerm = "";
+        cachedMenuProducts = [];
+        cachedProductsByCategory = {};
+        loadMenuProducts();
+    });
     // Kategoriler render olur olmaz, ürün yoksa otomatik yükleme yap.
     document.addEventListener('categoriesLoaded', () => {
         if (!Array.isArray(window.MenuProducts) || window.MenuProducts.length === 0) {
