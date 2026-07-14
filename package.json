@@ -2,15 +2,18 @@
   "name": "tahmisci-site",
   "version": "1.0.0",
   "private": true,
-  "description": "Tahmisçi birleşik site, panel, reçete ve backend geliştirme komutları",
+  "description": "Tahmisci website, admin, recipe, QR menu and API workspace",
   "workspaces": [
-    "TAHMİSÇİ/TAH/backend"
+    "apps/api"
   ],
   "scripts": {
-    "dev:local": "node ./TAHMİSÇİ/TAH/backend/scripts/local-dev.js",
-    "local:reset": "node ./TAHMİSÇİ/TAH/backend/scripts/local-reset.js",
-    "test:local": "node ./TAHMİSÇİ/TAH/backend/scripts/local-smoke-test.js",
+    "dev:local": "node ./apps/api/scripts/local-dev.js",
+    "local:reset": "node ./apps/api/scripts/local-reset.js",
+    "test:local": "node ./apps/api/scripts/local-smoke-test.js",
     "check": "npm --workspace tahmisci-menu-backend run check",
+    "check:assets": "npm --workspace tahmisci-menu-backend run check:assets",
+    "check:paths": "npm --workspace tahmisci-menu-backend run check:assets",
+    "check:duplicates": "node ./scripts/check-duplicates.js",
     "test": "npm --workspace tahmisci-menu-backend test"
   },
   "engines": {

@@ -3,10 +3,10 @@
 **/.env.*
 !**/.env.example
 !**/.env.local.example
-**/data/
-**/backups/
-**/local-dev-store.json
-**/local-dev-media/
-**/local-smoke-store.json
-**/local-smoke-media/
+storage/local/*
+storage/media/*
+storage/backups/*
+!storage/local/.gitkeep
+!storage/media/.gitkeep
+!storage/backups/.gitkeep
 *.log

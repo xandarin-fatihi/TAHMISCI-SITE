@@ -1,0 +1,1402 @@
+﻿<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <!-- Developer: Uzeyir | System Key: xandar | Source integrity marker -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tahmisçi Admin Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Bebas+Neue&family=Caveat:wght@500;700&family=Cinzel:wght@500;700&family=Cormorant+Garamond:wght@500;700&family=DM+Sans:wght@400;600;700&family=Dancing+Script:wght@500;700&family=Great+Vibes&family=Inter:wght@400;600;800&family=Josefin+Sans:wght@400;600;700&family=Lato:wght@400;700;900&family=Libre+Baskerville:wght@400;700&family=Lobster&family=Manrope:wght@400;600;800&family=Merriweather:wght@400;700;900&family=Montserrat:wght@300;500;700&family=Nunito:wght@400;700;900&family=Open+Sans:wght@400;700;800&family=Oswald:wght@400;600;700&family=Pacifico&family=Playfair+Display:wght@500;700;900&family=Playfair+Display+SC:wght@700&family=Poppins:wght@400;600;800&family=Quicksand:wght@400;600;700&family=Raleway:wght@400;700;900&family=Roboto:wght@400;700;900&family=Rubik:wght@400;600;800&family=Source+Sans+3:wght@400;700;900&family=Vidaloka&family=Work+Sans:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="/assets/brand/favicon.png?v=20260714">
+  <link rel="stylesheet" href="styles/admin.css?v=20260714">
+  <script src="scripts/app.js?v=20260714" defer></script>
+</head>
+<body>
+  <section class="login-screen" id="loginScreen">
+    <form class="login-card" id="loginForm">
+      <p class="eyebrow">Tahmisçi Coffee</p>
+      <h1>Admin Panel</h1>
+      <p class="muted">Menü içeriklerini, renkleri, görselleri ve ürün detaylarını buradan yönetin.</p>
+      <label>
+        <span>Panel şifresi</span>
+        <input id="passwordInput" type="password" autocomplete="current-password" placeholder="Panel şifresi">
+      </label>
+      <button class="primary-action" type="submit">Panele Gir</button>
+      <a class="login-help-link" href="/password-reset/">Şifremi unuttum</a>
+      <p class="login-error" id="loginError" hidden>Şifre hatalı. Lütfen tekrar deneyin.</p>
+    </form>
+  </section>
+
+  <main class="admin-shell" id="panelShell" hidden>
+    <aside class="sidebar" id="sidebarPanel">
+      <div class="brand-block">
+        <p class="eyebrow">Tahmisçi</p>
+        <h1>Dijital Menü Paneli</h1>
+      </div>
+      <nav class="panel-nav" aria-label="Panel bölümleri">
+        <a href="#overviewGrid" data-panel-section="overview">Genel Bakış</a>
+        <a href="#menuAppearanceCard" data-panel-section="menu">Menü Düzenleme</a>
+        <a href="#bannerSettingsCard" data-panel-section="banner">BANNER Düzenleme</a>
+        <a href="#categoryEditorCard" data-panel-section="category">Kategori Düzenleme</a>
+        <a href="#productEditorCard" data-panel-section="product">Ürün Düzenleme</a>
+        <a href="#bulkPriceCard" data-panel-section="bulkPrice">Toplu Fiyat Güncelleme</a>
+        <a href="#menuOutputCard" data-panel-section="menuOutput">Menü Çıktısı</a>
+        <a href="#recipeEditorCard" data-panel-section="recipe">Reçete Düzenleme</a>
+        <a href="#siteEditorCard" data-panel-section="site">SİTE DÜZENLEME</a>
+        <a href="#staffAccessCard" data-panel-section="staffAccess">Kullanıcı Yetkilendirme</a>
+        <a href="#feedbackCard" data-panel-section="feedback">Dilek & Şikayet</a>
+        <a href="#panelSettingsCard" data-panel-section="settings">Ayarlar</a>
+      </nav>
+      <div class="mini-stats" id="miniStats" hidden></div>
+      <div class="side-section">
+        <div class="section-title">
+          <h2>Kategoriler</h2>
+          <button id="addCategoryButton" type="button">+ Ekle</button>
+        </div>
+        <div class="category-list" id="categoryList"></div>
+      </div>
+      <div class="side-section">
+        <div class="section-title">
+          <h2>Ürünler</h2>
+          <button id="addProductButton" type="button">+ Ürün</button>
+        </div>
+        <div class="product-list" id="productList"></div>
+      </div>
+    </aside>
+
+    <section class="workspace">
+      <header class="topbar">
+        <div class="topbar-main">
+          <button class="icon-button sidebar-toggle" id="sidebarToggle" type="button" aria-label="Panel menüsünü kapat" aria-expanded="true" aria-controls="sidebarPanel">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <div>
+            <p class="eyebrow">Dashboard</p>
+            <h2 id="workspaceTitle">Menü yönetimi ve görsel özelleştirme</h2>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button class="primary-action topbar-save-button" id="saveChangesButton" type="button" aria-disabled="true">Kaydet ve Yayınla</button>
+          <div class="save-state" id="saveState">Hazır</div>
+        </div>
+      </header>
+
+      <section class="overview-grid section-panel" id="overviewGrid" data-section-panel="overview"></section>
+
+      <section class="panel-card section-panel bulk-price-panel" id="bulkPriceCard" data-section-panel="bulkPrice">
+        <div class="card-head">
+          <div>
+            <p class="eyebrow">Fiyat Yönetimi</p>
+            <h3>Toplu Fiyat Güncelleme</h3>
+          </div>
+          <strong class="bulk-price-count" id="bulkPriceSelectedCount">0 ürün seçildi</strong>
+        </div>
+
+        <div class="bulk-price-layout">
+          <div class="bulk-price-selection">
+            <div class="form-grid two">
+              <label>
+                <span>Kategori</span>
+                <select id="bulkPriceCategory"></select>
+              </label>
+              <label>
+                <span>Ürün ara</span>
+                <input id="bulkPriceSearch" type="search" placeholder="Ürün adı">
+              </label>
+            </div>
+            <div class="bulk-price-actions">
+              <button class="line-action" id="bulkPriceSelectVisible" type="button">Görünenlerin Tümünü Seç</button>
+              <button class="line-action" id="bulkPriceClearSelection" type="button">Seçimi Temizle</button>
+            </div>
+            <div class="bulk-price-product-list" id="bulkPriceProductList"></div>
+          </div>
+
+          <div class="bulk-price-operation">
+            <fieldset class="bulk-price-fieldset">
+              <legend>Güncelleme tipi</legend>
+              <div class="segmented-control">
+                <label>
+                  <input type="radio" name="bulkPriceMode" value="fixed" checked>
+                  <span>Belirli miktar</span>
+                </label>
+                <label>
+                  <input type="radio" name="bulkPriceMode" value="percentage">
+                  <span>Yüzdesel</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="bulk-price-fieldset">
+              <legend>İşlem</legend>
+              <div class="segmented-control">
+                <label>
+                  <input type="radio" name="bulkPriceDirection" value="increase" checked>
+                  <span>Artır</span>
+                </label>
+                <label>
+                  <input type="radio" name="bulkPriceDirection" value="decrease">
+                  <span>Azalt</span>
+                </label>
+              </div>
+            </fieldset>
+
+            <label>
+              <span id="bulkPriceValueLabel">Tutar (₺)</span>
+              <input id="bulkPriceValue" type="number" min="0" step="1" inputmode="decimal" placeholder="0">
+            </label>
+
+            <div class="bulk-price-summary" id="bulkPriceSummary" role="status">Ürün seçimi bekleniyor</div>
+            <button class="primary-action bulk-price-apply" id="bulkPriceApply" type="button">Fiyatlara Uygula</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="content-grid" id="contentGrid">
+        <div class="editor-column">
+          <section class="panel-card section-panel" id="panelSettingsCard" data-section-panel="settings">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow">Ayarlar</p>
+                <h3>Panel tercihleri</h3>
+              </div>
+            </div>
+            <div class="settings-action-grid">
+              <button class="line-action" id="panelThemeToggle" type="button">Koyu Tema</button>
+              <button class="line-action" id="mobilePanelToggle" type="button">Mobil Paneli Kullan</button>
+              <button class="line-action" id="saveDefaultButton" type="button">Varsayılan Olarak Kaydet</button>
+              <button class="danger-action" id="resetButton" type="button">Varsayılana Dön</button>
+              <a class="soft-action" href="/" target="_blank" rel="noopener noreferrer">Canlı Siteyi Aç</a>
+              <a class="soft-action" href="/recete/" target="_blank" rel="noopener noreferrer">Reçete Arayüzü</a>
+            </div>
+          </section>
+
+          <section class="panel-card section-panel site-editor-card" id="siteEditorCard" data-section-panel="site">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow">Kontrollü İçerik Yönetimi</p>
+                <h3>Site Düzenleme</h3>
+              </div>
+              <a class="line-action" href="/" target="_blank" rel="noopener noreferrer">Canlı Siteyi Aç</a>
+            </div>
+            <p class="control-note">Değişiklikler yalnızca üstteki “Kaydet ve Yayınla” düğmesine basıldığında doğrulanır ve yayınlanır.</p>
+
+            <details open>
+              <summary>Header navigasyonu</summary>
+              <div class="form-grid two">
+                <label><span>1. etiket (TR)</span><input data-site-path="header.navigation.0.label.tr" type="text"></label>
+                <label><span>1. etiket (EN)</span><input data-site-path="header.navigation.0.label.en" type="text"></label>
+                <label><span>1. URL/hash</span><input data-site-path="header.navigation.0.url" type="text"></label>
+                <label><span>1. ikon</span><input data-site-path="header.navigation.0.icon" type="text" placeholder="fas fa-house"></label>
+                <label><span>1. sıra</span><input data-site-path="header.navigation.0.order" data-site-type="number" type="number" min="0"></label>
+                <label class="toggle-row"><input data-site-path="header.navigation.0.visible" data-site-type="boolean" type="checkbox"><span>1. görünür</span></label>
+
+                <label><span>2. etiket (TR)</span><input data-site-path="header.navigation.1.label.tr" type="text"></label>
+                <label><span>2. etiket (EN)</span><input data-site-path="header.navigation.1.label.en" type="text"></label>
+                <label><span>2. URL/hash</span><input data-site-path="header.navigation.1.url" type="text"></label>
+                <label><span>2. ikon</span><input data-site-path="header.navigation.1.icon" type="text" placeholder="fas fa-utensils"></label>
+                <label><span>2. sıra</span><input data-site-path="header.navigation.1.order" data-site-type="number" type="number" min="0"></label>
+                <label class="toggle-row"><input data-site-path="header.navigation.1.visible" data-site-type="boolean" type="checkbox"><span>2. görünür</span></label>
+
+                <label><span>3. etiket (TR)</span><input data-site-path="header.navigation.2.label.tr" type="text"></label>
+                <label><span>3. etiket (EN)</span><input data-site-path="header.navigation.2.label.en" type="text"></label>
+                <label><span>3. URL/hash</span><input data-site-path="header.navigation.2.url" type="text"></label>
+                <label><span>3. ikon</span><input data-site-path="header.navigation.2.icon" type="text" placeholder="fas fa-mug-hot"></label>
+                <label><span>3. sıra</span><input data-site-path="header.navigation.2.order" data-site-type="number" type="number" min="0"></label>
+                <label class="toggle-row"><input data-site-path="header.navigation.2.visible" data-site-type="boolean" type="checkbox"><span>3. görünür</span></label>
+
+                <label><span>4. etiket (TR)</span><input data-site-path="header.navigation.3.label.tr" type="text"></label>
+                <label><span>4. etiket (EN)</span><input data-site-path="header.navigation.3.label.en" type="text"></label>
+                <label><span>4. URL/hash</span><input data-site-path="header.navigation.3.url" type="text"></label>
+                <label><span>4. ikon</span><input data-site-path="header.navigation.3.icon" type="text" placeholder="fas fa-phone"></label>
+                <label><span>4. sıra</span><input data-site-path="header.navigation.3.order" data-site-type="number" type="number" min="0"></label>
+                <label class="toggle-row"><input data-site-path="header.navigation.3.visible" data-site-type="boolean" type="checkbox"><span>4. görünür</span></label>
+              </div>
+              <div class="form-grid three">
+                <label class="toggle-row"><input data-site-path="header.visible" data-site-type="boolean" type="checkbox"><span>Header görünür</span></label>
+                <label class="toggle-row"><input data-site-path="header.contactVisible" data-site-type="boolean" type="checkbox"><span>Header iletişim görünür</span></label>
+              </div>
+            </details>
+
+            <details open>
+              <summary>Hero ve medya</summary>
+              <div class="form-grid two">
+                <label><span>Marka satırı (TR)</span><input data-site-path="hero.brand.tr" type="text"></label>
+                <label><span>Marka satırı (EN)</span><input data-site-path="hero.brand.en" type="text"></label>
+                <label><span>Başlık (TR)</span><input data-site-path="hero.slides.0.title.tr" type="text"></label>
+                <label><span>Başlık (EN)</span><input data-site-path="hero.slides.0.title.en" type="text"></label>
+                <label><span>Alt başlık (TR)</span><input data-site-path="hero.slides.0.description.tr" type="text"></label>
+                <label><span>Alt başlık (EN)</span><input data-site-path="hero.slides.0.description.en" type="text"></label>
+                <label><span>CTA 1 metni (TR)</span><input data-site-path="hero.slides.0.buttonText.tr" type="text"></label>
+                <label><span>CTA 1 bağlantısı</span><input data-site-path="hero.slides.0.buttonUrl" type="text"></label>
+                <label><span>CTA 2 metni (TR)</span><input data-site-path="hero.secondaryButtonText.tr" type="text"></label>
+                <label><span>CTA 2 bağlantısı</span><input data-site-path="hero.secondaryButtonUrl" type="text"></label>
+                <label><span>Arka plan görseli</span><input data-site-path="hero.slides.0.backgroundImage" type="text"></label>
+                <label><span>Ana barista görseli</span><input data-site-path="hero.media.primary" type="text"></label>
+                <label><span>Detay / mobil görsel</span><input data-site-path="hero.media.detail" type="text"></label>
+                <label><span>Mobil hero görseli</span><input data-site-path="hero.media.mobile" type="text"></label>
+                <label><span>Ürün görseli</span><input data-site-path="hero.media.coldDrinksTop" type="text"></label>
+                <label><span>Alternatif ürün görseli</span><input data-site-path="hero.media.coldDrinksFront" type="text"></label>
+                <label><span>Birincil reel</span><input data-site-path="hero.media.reelPrimary" type="text"></label>
+                <label><span>İkincil reel</span><input data-site-path="hero.media.reelSecondary" type="text"></label>
+                <label><span>Mobil video</span><input data-site-path="hero.media.mobileVideo" type="text"></label>
+                <label><span>Video posteri</span><input data-site-path="hero.media.reelPoster" type="text"></label>
+                <label><span>Büyük panel medya tipi</span><select data-site-path="hero.mediaType"><option value="video">Video / reel</option><option value="image">Ana görsel</option></select></label>
+                <label><span>Overlay (0–0.85)</span><input data-site-path="hero.overlay" data-site-type="number" type="number" min="0" max="0.85" step="0.05"></label>
+                <label><span>Slider süresi (ms)</span><input data-site-path="hero.autoplayInterval" data-site-type="number" type="number" min="2000" step="500"></label>
+                <label><span>Slayt sırası</span><input data-site-path="hero.slides.0.order" data-site-type="number" type="number" min="0"></label>
+              </div>
+              <div class="form-grid three">
+                <label class="toggle-row"><input data-site-path="hero.visible" data-site-type="boolean" type="checkbox"><span>Hero görünür</span></label>
+                <label class="toggle-row"><input data-site-path="hero.sliderEnabled" data-site-type="boolean" type="checkbox"><span>Slider aktif</span></label>
+                <label class="toggle-row"><input data-site-path="hero.autoplay" data-site-type="boolean" type="checkbox"><span>Video otomatik oynat</span></label>
+                <label class="toggle-row"><input data-site-path="hero.slides.0.visible" data-site-type="boolean" type="checkbox"><span>Ana slayt görünür</span></label>
+              </div>
+              <div class="asset-row">
+                <label class="file-button"><span>Arka plan yükle</span><input data-site-upload-target="hero.slides.0.backgroundImage" type="file" accept="image/jpeg,image/png,image/webp"></label>
+                <label class="file-button"><span>Hero görseli yükle</span><input data-site-upload-target="hero.media.primary" type="file" accept="image/jpeg,image/png,image/webp"></label>
+                <label class="file-button"><span>Reel yükle</span><input data-site-upload-target="hero.media.reelPrimary" type="file" accept="video/mp4,video/webm"></label>
+                <label class="file-button"><span>Poster yükle</span><input data-site-upload-target="hero.media.reelPoster" type="file" accept="image/jpeg,image/png,image/webp"></label>
+              </div>
+            </details>
+
+            <details>
+              <summary>Öne çıkanlar ve menü bölümü</summary>
+              <div class="form-grid two">
+                <label><span>Öne çıkan başlığı (TR)</span><input data-site-path="featuredProducts.title.tr" type="text"></label>
+                <label><span>Öne çıkan başlığı (EN)</span><input data-site-path="featuredProducts.title.en" type="text"></label>
+                <label><span>Menü kaşı (TR)</span><input data-site-path="menuSection.eyebrow.tr" type="text"></label>
+                <label><span>Menü başlığı (TR)</span><input data-site-path="menuSection.title.tr" type="text"></label>
+                <label><span>Menü açıklaması (TR)</span><textarea data-site-path="menuSection.description.tr" rows="3"></textarea></label>
+                <label><span>Menü açıklaması (EN)</span><textarea data-site-path="menuSection.description.en" rows="3"></textarea></label>
+                <label><span>Manuel ürün kimlikleri (virgülle)</span><input data-site-path="featuredProducts.productIds" data-site-type="array" type="text"></label>
+                <label><span>Gizli kategori kimlikleri (virgülle)</span><input data-site-path="menuSection.hiddenCategoryIds" data-site-type="array" type="text"></label>
+              </div>
+              <div class="form-grid three">
+                <label class="toggle-row"><input data-site-path="featuredProducts.visible" data-site-type="boolean" type="checkbox"><span>Öne çıkanlar görünür</span></label>
+                <label><span>Öne çıkan ürün kaynağı</span><select data-site-path="featuredProducts.source"><option value="popular">Popüler ürünler</option><option value="manual">Manuel sıralama</option></select></label>
+                <label class="toggle-row"><input data-site-path="menuSection.visible" data-site-type="boolean" type="checkbox"><span>Menü görünür</span></label>
+                <label class="toggle-row"><input data-site-path="menuSection.showSearch" data-site-type="boolean" type="checkbox"><span>Arama göster</span></label>
+                <label class="toggle-row"><input data-site-path="menuSection.showSorting" data-site-type="boolean" type="checkbox"><span>Sıralama göster</span></label>
+                <label class="toggle-row"><input data-site-path="menuSection.showCalories" data-site-type="boolean" type="checkbox"><span>Kalori göster</span></label>
+                <label class="toggle-row"><input data-site-path="menuSection.showAllergens" data-site-type="boolean" type="checkbox"><span>Alerjen göster</span></label>
+                <label class="toggle-row"><input data-site-path="menuSection.showContent" data-site-type="boolean" type="checkbox"><span>İçerik göster</span></label>
+                <label><span>Tükenen ürün</span><select data-site-path="menuSection.soldOutMode"><option value="label">Tükendi etiketi göster</option><option value="hide">Gizle</option></select></label>
+              </div>
+            </details>
+
+            <details>
+              <summary>Hakkımızda ve özellikler</summary>
+              <div class="form-grid two">
+                <label><span>Başlık (TR)</span><input data-site-path="about.title.tr" type="text"></label>
+                <label><span>Başlık (EN)</span><input data-site-path="about.title.en" type="text"></label>
+                <label><span>Açıklama (TR)</span><textarea data-site-path="about.description.tr" rows="5"></textarea></label>
+                <label><span>Açıklama (EN)</span><textarea data-site-path="about.description.en" rows="5"></textarea></label>
+                <label><span>Görsel</span><input data-site-path="about.image" type="text"></label>
+                <label><span>Alternatif metin</span><input data-site-path="about.imageAlt.tr" type="text"></label>
+                <label><span>1. özellik başlığı</span><input data-site-path="about.features.0.title.tr" type="text"></label>
+                <label><span>1. özellik metni</span><input data-site-path="about.features.0.text.tr" type="text"></label>
+                <label><span>2. özellik başlığı</span><input data-site-path="about.features.1.title.tr" type="text"></label>
+                <label><span>2. özellik metni</span><input data-site-path="about.features.1.text.tr" type="text"></label>
+                <label><span>3. özellik başlığı</span><input data-site-path="about.features.2.title.tr" type="text"></label>
+                <label><span>3. özellik metni</span><input data-site-path="about.features.2.text.tr" type="text"></label>
+                <label><span>Buton metni (TR)</span><input data-site-path="about.buttonText.tr" type="text"></label>
+                <label><span>Buton bağlantısı</span><input data-site-path="about.buttonUrl" type="text"></label>
+              </div>
+              <div class="asset-row">
+                <label class="toggle-row"><input data-site-path="about.visible" data-site-type="boolean" type="checkbox"><span>Bölüm görünür</span></label>
+                <label class="file-button"><span>Hakkımızda görseli yükle</span><input data-site-upload-target="about.image" type="file" accept="image/jpeg,image/png,image/webp"></label>
+              </div>
+            </details>
+
+            <details>
+              <summary>QR, iletişim ve ortak sosyal bilgiler</summary>
+              <div class="form-grid two">
+                <label><span>QR başlığı (TR)</span><input data-site-path="qrMenu.title.tr" type="text"></label>
+                <label><span>QR açıklaması (TR)</span><textarea data-site-path="qrMenu.description.tr" rows="3"></textarea></label>
+                <label><span>QR hedefi</span><input data-site-path="qrMenu.targetUrl" type="text"></label>
+                <label><span>QR butonu</span><input data-site-path="qrMenu.buttonText.tr" type="text"></label>
+                <label><span>İşletme adı</span><input data-site-path="contact.businessName" type="text"></label>
+                <label><span>Adres (TR)</span><textarea data-site-path="contact.address.tr" rows="3"></textarea></label>
+                <label><span>Adres (EN)</span><textarea data-site-path="contact.address.en" rows="3"></textarea></label>
+                <label><span>Telefon</span><input data-site-path="contact.phone" type="tel"></label>
+                <label><span>WhatsApp</span><input data-site-path="contact.whatsapp" type="tel"></label>
+                <label><span>E-posta</span><input data-site-path="contact.email" type="email"></label>
+                <label><span>Çalışma saatleri (TR)</span><input data-site-path="contact.hours.tr" type="text"></label>
+                <label><span>Çalışma saatleri (EN)</span><input data-site-path="contact.hours.en" type="text"></label>
+                <label><span>Instagram</span><input data-site-path="contact.instagram" type="url"></label>
+                <label><span>TikTok</span><input data-site-path="contact.tiktok" type="url"></label>
+                <label><span>Google Maps bağlantısı</span><input data-site-path="contact.mapsUrl" type="url"></label>
+                <label><span>Harita embed adresi</span><input data-site-path="contact.mapEmbedUrl" type="url"></label>
+                <label><span>Ek sosyal bağlantı 1 adı</span><input data-site-path="contact.socialLinks.0.label" type="text"></label>
+                <label><span>Ek sosyal bağlantı 1 URL</span><input data-site-path="contact.socialLinks.0.url" type="url"></label>
+                <label><span>Ek sosyal bağlantı 2 adı</span><input data-site-path="contact.socialLinks.1.label" type="text"></label>
+                <label><span>Ek sosyal bağlantı 2 URL</span><input data-site-path="contact.socialLinks.1.url" type="url"></label>
+              </div>
+              <div class="form-grid three">
+                <label class="toggle-row"><input data-site-path="qrMenu.visible" data-site-type="boolean" type="checkbox"><span>QR görünür</span></label>
+                <label class="toggle-row"><input data-site-path="contact.visible" data-site-type="boolean" type="checkbox"><span>İletişim görünür</span></label>
+              </div>
+            </details>
+
+            <details>
+              <summary>Footer, SEO, dil ve bölüm sırası</summary>
+              <div class="form-grid two">
+                <label><span>Footer marka açıklaması (TR)</span><textarea data-site-path="footer.description.tr" rows="3"></textarea></label>
+                <label><span>Footer marka açıklaması (EN)</span><textarea data-site-path="footer.description.en" rows="3"></textarea></label>
+                <label><span>Telif metni (TR)</span><input data-site-path="footer.copyright.tr" type="text"></label>
+                <label><span>Sayfa başlığı (TR)</span><input data-site-path="seo.title.tr" type="text"></label>
+                <label><span>Sayfa başlığı (EN)</span><input data-site-path="seo.title.en" type="text"></label>
+                <label><span>Meta açıklaması (TR)</span><textarea data-site-path="seo.description.tr" rows="3"></textarea></label>
+                <label><span>Anahtar kelimeler</span><input data-site-path="seo.keywords" type="text"></label>
+                <label><span>Open Graph başlığı (TR)</span><input data-site-path="seo.ogTitle.tr" type="text"></label>
+                <label><span>Open Graph açıklaması (TR)</span><textarea data-site-path="seo.ogDescription.tr" rows="3"></textarea></label>
+                <label><span>Open Graph görseli</span><input data-site-path="seo.ogImage" type="text"></label>
+                <label><span>Favicon</span><input data-site-path="seo.favicon" type="text"></label>
+                <label><span>Canonical URL</span><input data-site-path="seo.canonicalUrl" type="url"></label>
+                <label><span>Ana dil</span><select data-site-path="global.defaultLanguage"><option value="tr">Türkçe</option><option value="en">İngilizce</option></select></label>
+                <label><span>Bölüm sırası (virgülle)</span><input id="siteSectionOrder" type="text" placeholder="hero,featuredProducts,menuSection,about,qrMenu,contact"></label>
+              </div>
+              <div class="form-grid three">
+                <label class="toggle-row"><input data-site-path="footer.visible" data-site-type="boolean" type="checkbox"><span>Footer görünür</span></label>
+              </div>
+              <div class="form-grid two">
+                <label><span>Hızlı bağlantı 1 etiketi (TR)</span><input data-site-path="footer.quickLinks.0.label.tr" type="text"></label>
+                <label><span>Hızlı bağlantı 1 URL</span><input data-site-path="footer.quickLinks.0.url" type="text"></label>
+                <label><span>Hızlı bağlantı 2 etiketi (TR)</span><input data-site-path="footer.quickLinks.1.label.tr" type="text"></label>
+                <label><span>Hızlı bağlantı 2 URL</span><input data-site-path="footer.quickLinks.1.url" type="text"></label>
+                <label><span>Hızlı bağlantı 3 etiketi (TR)</span><input data-site-path="footer.quickLinks.2.label.tr" type="text"></label>
+                <label><span>Hızlı bağlantı 3 URL</span><input data-site-path="footer.quickLinks.2.url" type="text"></label>
+                <label><span>Hızlı bağlantı 4 etiketi (TR)</span><input data-site-path="footer.quickLinks.3.label.tr" type="text"></label>
+                <label><span>Hızlı bağlantı 4 URL</span><input data-site-path="footer.quickLinks.3.url" type="text"></label>
+                <label><span>Alt bağlantı 1 etiketi (TR)</span><input data-site-path="footer.bottomLinks.0.label.tr" type="text"></label>
+                <label><span>Alt bağlantı 1 URL</span><input data-site-path="footer.bottomLinks.0.url" type="text"></label>
+                <label><span>Alt bağlantı 2 etiketi (TR)</span><input data-site-path="footer.bottomLinks.1.label.tr" type="text"></label>
+                <label><span>Alt bağlantı 2 URL</span><input data-site-path="footer.bottomLinks.1.url" type="text"></label>
+              </div>
+            </details>
+
+            <details>
+              <summary>Son yayınlar</summary>
+              <div class="asset-row"><button class="line-action" id="siteRevisionRefresh" type="button">Revizyonları Yenile</button></div>
+              <div class="recipe-import-list" id="siteRevisionList">Henüz revizyon yüklenmedi.</div>
+            </details>
+          </section>
+
+          <section class="panel-card section-panel" id="menuAppearanceCard" data-section-panel="menu">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow">Menü Düzenleme</p>
+                <h3>Genel menü görünümü</h3>
+              </div>
+            </div>
+            <div class="form-grid three">
+              <label>
+                <span>Ana arka plan</span>
+                <input id="bgColor" type="color">
+              </label>
+              <label>
+                <span>Karanlık tema</span>
+                <input id="darkBgColor" type="color">
+              </label>
+              <label>
+                <span>Vurgu rengi</span>
+                <input id="accentColor" type="color">
+              </label>
+              <label>
+                <span>Yazı rengi</span>
+                <input id="textColor" type="color">
+              </label>
+              <label>
+                <span>Buton yazı rengi</span>
+                <input id="buttonTextColor" type="color">
+              </label>
+              <label>
+                <span>Varsayılan kart rengi</span>
+                <input id="productCardColor" type="color">
+              </label>
+            </div>
+            <div class="form-grid three">
+              <label>
+                <span>Arka plan tipi</span>
+                <select id="menuBgType">
+                  <option value="solid">Düz renk</option>
+                  <option value="gradient">Gradient</option>
+                  <option value="image">Görsel</option>
+                </select>
+              </label>
+              <label>
+                <span>Gradient başlangıç</span>
+                <input id="menuGradientStart" type="color">
+              </label>
+              <label>
+                <span>Gradient bitiş</span>
+                <input id="menuGradientEnd" type="color">
+              </label>
+              <label>
+                <span>Gradient açı</span>
+                <input id="menuGradientAngle" type="number" min="0" max="360" step="1">
+              </label>
+              <label>
+                <span>Görsel linki</span>
+                <input id="menuBgUrl" type="url" placeholder="https://...">
+              </label>
+              <label>
+                <span>Overlay opaklığı</span>
+                <input id="menuOverlay" type="range" min="0" max="0.85" step="0.05">
+              </label>
+            </div>
+            <div class="asset-row">
+              <label class="file-button">
+                <span>Bilgisayardan arka plan yükle</span>
+                <input id="menuBgFile" type="file" accept="image/*">
+              </label>
+              <button class="line-action" id="clearMenuBg" type="button">Arka plan görselini sil</button>
+            </div>
+            <div class="form-grid three">
+              <label>
+                <span>Menü güncelleme tarihi</span>
+                <input id="menuUpdateDate" type="date">
+              </label>
+              <label>
+                <span>Başlık fontu</span>
+                <select id="titleFont"></select>
+              </label>
+              <label>
+                <span>Kategori fontu</span>
+                <select id="categoryFont"></select>
+              </label>
+              <label>
+                <span>Ürün adı fontu</span>
+                <select id="productFont"></select>
+              </label>
+            </div>
+            <div class="sub-card typography-card">
+              <h4>Toplu metin punto ayarları</h4>
+              <div class="form-grid three">
+                <label>
+                  <span>Menü başlığı</span>
+                  <input id="menuTitleSize" type="number" min="18" max="54" step="1">
+                </label>
+                <label>
+                  <span>Kategori başlığı</span>
+                  <input id="categoryTitleSize" type="number" min="14" max="34" step="1">
+                </label>
+                <label>
+                  <span>Ürün başlığı</span>
+                  <input id="productTitleSize" type="number" min="10" max="28" step="1">
+                </label>
+                <label>
+                  <span>Ürün açıklaması</span>
+                  <input id="productDescSize" type="number" min="8" max="22" step="1">
+                </label>
+                <label>
+                  <span>İçindekiler metni</span>
+                  <input id="productIngredientsSize" type="number" min="8" max="22" step="1">
+                </label>
+                <label>
+                  <span>Fiyat metni</span>
+                  <input id="productPriceSize" type="number" min="8" max="22" step="1">
+                </label>
+              </div>
+            </div>
+          </section>
+
+          
+          <section class="panel-card section-panel" id="bannerSettingsCard" data-section-panel="banner">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow">BANNER Düzenleme</p>
+                <h3>Kategori üstü sunu alanı</h3>
+              </div>
+            </div>
+            <div class="form-grid three">
+              <label>
+                <span>Banner modu</span>
+                <select id="bannerMode">
+                  <option value="random">Rastgele ürünler</option>
+                  <option value="products">Seçili ürün sunusu</option>
+                  <option value="images">Görsel sunu</option>
+                  <option value="video">Video</option>
+                </select>
+              </label>
+              <label>
+                <span>Başlık</span>
+                <input id="bannerTitle" type="text" placeholder="Tahmisçi">
+              </label>
+              <label>
+                <span>Alt metin</span>
+                <input id="bannerSubtitle" type="text" placeholder="Öne çıkan sunu">
+              </label>
+            </div>
+            <div class="asset-row">
+              <label class="file-button">
+                <span>Cihazdan video yükle</span>
+                <input id="bannerVideoFile" type="file" accept="video/mp4,video/webm,video/ogg,video/quicktime,video/x-m4v,.mp4,.webm,.ogv,.ogg,.mov,.m4v" multiple>
+              </label>
+              <button class="line-action" id="clearBannerVideo" type="button">Tüm videoları sil</button>
+            </div>
+            <div class="banner-media-list" id="bannerVideoList"></div>
+            <div class="asset-row">
+              <label class="file-button">
+                <span>Cihazdan görsel yükle</span>
+                <input id="bannerImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif" multiple>
+              </label>
+              <button class="line-action" id="clearBannerImages" type="button">Tüm görselleri sil</button>
+            </div>
+            <div class="banner-media-list" id="bannerImageList"></div>
+            <div class="sub-card">
+              <h4>Seçili ürün sunusu</h4>
+              <div class="form-grid two">
+                <label>
+                  <span>Kategori</span>
+                  <select id="bannerProductCategory"></select>
+                </label>
+                <label>
+                  <span>Ürün ara</span>
+                  <input id="bannerProductSearch" type="search" placeholder="Bu kategoride ara">
+                </label>
+              </div>
+              <div class="banner-product-list" id="bannerProductList"></div>
+            </div>
+          </section>
+
+          <section class="panel-card section-panel" id="bottomActionsCard" data-section-panel="menu">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow">Alt Kutu Ayarları</p>
+                <h3>Popüler Ürünler ve Bana Öner</h3>
+              </div>
+            </div>
+            <div class="quick-box-grid">
+              <div class="sub-card">
+                <h4>Popüler Ürünler</h4>
+                <div class="form-grid three">
+                  <label>
+                    <span>Kutu tipi</span>
+                    <select id="popularBoxType">
+                      <option value="solid">Düz renk</option>
+                      <option value="gradient">Gradyan</option>
+                      <option value="image">Görsel</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Kutu rengi</span>
+                    <input id="popularBoxColor" type="color">
+                  </label>
+                  <label>
+                    <span>Gradyan başlangıç</span>
+                    <input id="popularGradientStart" type="color">
+                  </label>
+                  <label>
+                    <span>Gradyan bitiş</span>
+                    <input id="popularGradientEnd" type="color">
+                  </label>
+                  <label>
+                    <span>Gradyan açı</span>
+                    <input id="popularGradientAngle" type="number" min="0" max="360" step="1">
+                  </label>
+                  <label>
+                    <span>Görsel linki</span>
+                    <input id="popularImageUrl" type="url" placeholder="https://...">
+                  </label>
+                  <label>
+                    <span>Görsel overlay</span>
+                    <input id="popularOverlay" type="range" min="0" max="0.85" step="0.05">
+                  </label>
+                </div>
+                <div class="asset-row">
+                  <label class="file-button">
+                    <span>Popüler kutu görseli yükle</span>
+                    <input id="popularImageFile" type="file" accept="image/*">
+                  </label>
+                  <button class="line-action" id="clearPopularImage" type="button">Görseli sil</button>
+                </div>
+              </div>
+              <div class="sub-card">
+                <h4>Bana Öner</h4>
+                <div class="form-grid three">
+                  <label>
+                    <span>Kutu tipi</span>
+                    <select id="suggestBoxType">
+                      <option value="solid">Düz renk</option>
+                      <option value="gradient">Gradyan</option>
+                      <option value="image">Görsel</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Kutu rengi</span>
+                    <input id="suggestBoxColor" type="color">
+                  </label>
+                  <label>
+                    <span>Gradyan başlangıç</span>
+                    <input id="suggestGradientStart" type="color">
+                  </label>
+                  <label>
+                    <span>Gradyan bitiş</span>
+                    <input id="suggestGradientEnd" type="color">
+                  </label>
+                  <label>
+                    <span>Gradyan açı</span>
+                    <input id="suggestGradientAngle" type="number" min="0" max="360" step="1">
+                  </label>
+                  <label>
+                    <span>Görsel linki</span>
+                    <input id="suggestImageUrl" type="url" placeholder="https://...">
+                  </label>
+                  <label>
+                    <span>Görsel overlay</span>
+                    <input id="suggestOverlay" type="range" min="0" max="0.85" step="0.05">
+                  </label>
+                </div>
+                <div class="asset-row">
+                  <label class="file-button">
+                    <span>Bana Öner kutu görseli yükle</span>
+                    <input id="suggestImageFile" type="file" accept="image/*">
+                  </label>
+                  <button class="line-action" id="clearSuggestImage" type="button">Görseli sil</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel-card section-panel" id="categoryEditorCard" data-section-panel="category">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow">Kategori CRUD</p>
+                <h3 id="categoryEditorTitle">Kategori düzenle</h3>
+              </div>
+              <button class="danger-action" id="deleteCategoryButton" type="button">Kategoriyi Sil</button>
+            </div>
+            <div class="form-grid two">
+              <label>
+                <span>Kategori adı</span>
+                <input id="categoryName" type="text">
+              </label>
+              <label class="toggle-row">
+                <input id="categoryActive" type="checkbox">
+                <span>Menüde göster</span>
+              </label>
+            </div>
+            <div class="form-grid three">
+              <label>
+                <span>Kutu tipi</span>
+                <select id="categoryStyleType">
+                  <option value="solid">Düz renk</option>
+                  <option value="gradient">Gradyan</option>
+                  <option value="image">Görsel</option>
+                </select>
+              </label>
+              <label>
+                <span>Kutu rengi</span>
+                <input id="categoryColor" type="color">
+              </label>
+              <label>
+                <span>Gradient başlangıç</span>
+                <input id="categoryGradientStart" type="color">
+              </label>
+              <label>
+                <span>Gradient bitiş</span>
+                <input id="categoryGradientEnd" type="color">
+              </label>
+              <label>
+                <span>Gradient açı</span>
+                <input id="categoryGradientAngle" type="number" min="0" max="360" step="1">
+              </label>
+              <label>
+                <span>Görsel linki</span>
+                <input id="categoryImageUrl" type="url" placeholder="https://...">
+              </label>
+              <label>
+                <span>Overlay opaklığı</span>
+                <input id="categoryOverlay" type="range" min="0" max="0.85" step="0.05">
+              </label>
+            </div>
+            <div class="asset-row">
+              <label class="file-button">
+                <span>Kategori görseli yükle</span>
+                <input id="categoryImageFile" type="file" accept="image/*">
+              </label>
+              <button class="line-action" id="clearCategoryImage" type="button">Kategori görselini sil</button>
+            </div>
+            <div class="image-preview" id="categoryImagePreview"></div>
+            <div class="bulk-tools">
+              <h4>Bu kategorideki ürünlere toplu uygula</h4>
+              <div class="form-grid three">
+                <label>
+                  <span>Toplu ürün görsel linki</span>
+                  <input id="bulkProductImageUrl" type="url" placeholder="https://...">
+                </label>
+                <label>
+                  <span>Ürün kutu tipi</span>
+                  <select id="bulkProductStyleType">
+                    <option value="solid">Düz renk</option>
+                    <option value="gradient">Gradyan</option>
+                  </select>
+                </label>
+                <label>
+                  <span>Toplu kutu rengi</span>
+                  <input id="bulkProductColor" type="color">
+                </label>
+                <label>
+                  <span>Gradyan başlangıç</span>
+                  <input id="bulkProductGradientStart" type="color">
+                </label>
+                <label>
+                  <span>Gradyan bitiş</span>
+                  <input id="bulkProductGradientEnd" type="color">
+                </label>
+                <label>
+                  <span>Gradyan açı</span>
+                  <input id="bulkProductGradientAngle" type="number" min="0" max="360" step="1">
+                </label>
+              </div>
+              <div class="asset-row">
+                <button class="line-action" id="applyBulkProductImage" type="button">Görsel linkini tüm ürünlere ata</button>
+                <label class="file-button">
+                  <span>Bilgisayardan toplu görsel yükle</span>
+                  <input id="bulkProductImageFile" type="file" accept="image/*">
+                </label>
+                <button class="line-action" id="clearBulkProductImage" type="button">Ürün görsellerini temizle</button>
+                <button class="primary-action" id="applyBulkProductStyle" type="button">Kutu rengini tüm ürünlere uygula</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel-card section-panel" id="productEditorCard" data-section-panel="product">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow">Ürün CRUD</p>
+                <h3 id="productEditorTitle">Ürün düzenle</h3>
+              </div>
+              <button class="danger-action" id="deleteProductButton" type="button">Ürünü Sil</button>
+            </div>
+            <div class="category-tab-strip" id="productCategoryTabs" aria-label="Ürün kategorileri"></div>
+            <div class="product-chip-strip" id="productQuickList" aria-label="Seçili kategorideki ürünler"></div>
+            <div class="form-grid two">
+              <label>
+                <span>Ürün adı</span>
+                <input id="productName" type="text">
+              </label>
+              <label>
+                <span>Kategori</span>
+                <select id="productCategory"></select>
+              </label>
+            </div>
+            <label>
+              <span>Açıklama</span>
+              <textarea id="productDesc" rows="3"></textarea>
+            </label>
+            <div class="form-grid two">
+              <label>
+                <span>Fiyat tipi</span>
+                <select id="priceMode">
+                  <option value="standard">Standart tek fiyat</option>
+                  <option value="sizes">K / O / B fiyat</option>
+                  <option value="singleDouble">Single / Double fiyat</option>
+                </select>
+              </label>
+              <label id="standardPriceField">
+                <span>Standart fiyat</span>
+                <input id="standardPrice" type="number" min="0" step="1">
+              </label>
+            </div>
+            <div class="form-grid three" id="sizePriceFields">
+              <label>
+                <span>K fiyat</span>
+                <input id="priceK" type="number" min="0" step="1">
+              </label>
+              <label>
+                <span>O fiyat</span>
+                <input id="priceO" type="number" min="0" step="1">
+              </label>
+              <label>
+                <span>B fiyat</span>
+                <input id="priceB" type="number" min="0" step="1">
+              </label>
+            </div>
+            <div class="form-grid two" id="singleDoublePriceFields" hidden>
+              <label>
+                <span>Single fiyat</span>
+                <input id="priceSingle" type="number" min="0" step="1">
+              </label>
+              <label>
+                <span>Double fiyat</span>
+                <input id="priceDouble" type="number" min="0" step="1">
+              </label>
+            </div>
+            <div class="form-grid three">
+              <label>
+                <span>Durum</span>
+                <select id="productStock">
+                  <option value="active">Aktif</option>
+                  <option value="sold-out">Tükendi / Gizle</option>
+                </select>
+              </label>
+              <label>
+                <span>Ürün tipi</span>
+                <select id="productKind">
+                  <option value="drink">İçecek</option>
+                  <option value="dessert">Tatlı</option>
+                  <option value="food">Yiyecek</option>
+                </select>
+              </label>
+              <label>
+                <span>Sıcaklık</span>
+                <select id="productTemperature">
+                  <option value="none">Yok</option>
+                  <option value="cold">Soğuk</option>
+                  <option value="hot">Sıcak</option>
+                </select>
+              </label>
+              <label class="toggle-row">
+                <input id="productPopular" type="checkbox">
+                <span>Popüler yıldızı</span>
+              </label>
+              <label class="toggle-row">
+                <input id="productActive" type="checkbox">
+                <span>Menüde göster</span>
+              </label>
+            </div>
+            <div class="form-grid three">
+              <label>
+                <span>Kart tipi</span>
+                <select id="productStyleType">
+                  <option value="solid">Düz renk</option>
+                  <option value="gradient">Gradyan</option>
+                </select>
+              </label>
+              <label>
+                <span>Kart rengi</span>
+                <input id="productColor" type="color">
+              </label>
+              <label>
+                <span>Gradient başlangıç</span>
+                <input id="productGradientStart" type="color">
+              </label>
+              <label>
+                <span>Gradient bitiş</span>
+                <input id="productGradientEnd" type="color">
+              </label>
+              <label>
+                <span>Gradient açı</span>
+                <input id="productGradientAngle" type="number" min="0" max="360" step="1">
+              </label>
+              <label>
+                <span>Ürün görsel linki</span>
+                <input id="productImageUrl" type="url" placeholder="https://...">
+              </label>
+              <label>
+                <span>Görsel overlay</span>
+                <input id="productImageOverlay" type="range" min="0" max="0.85" step="0.05">
+              </label>
+            </div>
+            <div class="asset-row">
+              <label class="file-button">
+                <span>Bilgisayardan ürün görseli yükle</span>
+                <input id="productImageFile" type="file" accept="image/*">
+              </label>
+              <button class="line-action" id="clearProductImage" type="button">Ürün görselini sil</button>
+            </div>
+            <div class="image-preview" id="productImagePreview"></div>
+
+            <div class="detail-grid">
+              <label>
+                <span>Kalori</span>
+                <input id="productCalories" type="text" placeholder="180 kcal">
+              </label>
+              <label>
+                <span>Alerjen</span>
+                <input id="productAllergens" type="text" placeholder="Süt, fındık">
+              </label>
+              <label>
+                <span>Manuel ürün içeriği</span>
+                <input id="productIngredients" type="text" placeholder="Mango, buz, özel frozen bazı">
+              </label>
+            </div>
+            <div class="form-grid three">
+              <label>
+                <span>İçerik kaynağı</span>
+                <select id="productContentMode">
+                  <option value="recipe">Reçeteden otomatik</option>
+                  <option value="manual">Manuel içerik</option>
+                  <option value="hidden">İçeriği gizle</option>
+                </select>
+              </label>
+              <label>
+                <span>Bağlı reçete</span>
+                <select id="productRecipeId"></select>
+              </label>
+              <label>
+                <span>Sitede kullanılacak ölçü</span>
+                <select id="productRecipeSize"></select>
+              </label>
+            </div>
+            <p class="control-note" id="productRecipeLinkStatus">Reçete bağlantısı seçilmedi.</p>
+
+            <div class="recipe-import-box product-import-box">
+              <div class="recipe-import-head">
+                <div>
+                  <h4>Excel'den Ürün Bilgisi Aktar</h4>
+                  <p>Her Excel sayfası bir kategori kabul edilir. Ürün Adı, Ürün Kalorisi, Ürün Alerjeni ve Ürün İçeriği alanları mevcut ürünlerle eşleştirilir.</p>
+                </div>
+                <button class="primary-action" id="productExcelImportButton" type="button">Aktarımı Başlat</button>
+              </div>
+              <div class="asset-row">
+                <label class="file-button recipe-import-file">
+                  <span>Excel dosyası seç</span>
+                  <input id="productExcelFile" type="file" accept=".xlsx,.xls,.csv,.tsv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv,text/tab-separated-values">
+                </label>
+                <div class="recipe-import-last" id="productImportSummary">Son aktarım sonucu yok.</div>
+              </div>
+              <div class="recipe-import-report" id="productImportReport" hidden>
+                <div class="recipe-import-stats" id="productImportStats"></div>
+                <div class="recipe-import-tools">
+                  <button class="line-action" id="productImportShowErrorsButton" type="button">Hatalıları Göster</button>
+                </div>
+                <div class="recipe-import-columns">
+                  <div>
+                    <h5>Değişen ürün bilgileri</h5>
+                    <div class="recipe-import-list" id="productImportChanges"></div>
+                  </div>
+                  <div>
+                    <h5>Hatalı satırlar</h5>
+                    <div class="recipe-import-list" id="productImportErrors"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="panel-card section-panel menu-output-panel" id="menuOutputCard" data-section-panel="menuOutput">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow">TV Menü Çıktısı</p>
+                <h3>Menü Çıktısı</h3>
+              </div>
+              <div class="menu-output-actions">
+                <button class="line-action" id="menuOutputReset" type="button">Sıfırla</button>
+                <button class="line-action" id="menuOutputExportJpg" type="button">JPG İndir</button>
+                <button class="line-action" id="menuOutputExportPdf" type="button">PDF Hazırla</button>
+                <button class="primary-action" id="menuOutputExportPng" type="button">PNG İndir</button>
+              </div>
+            </div>
+
+            <div class="menu-output-grid">
+              <div class="menu-output-controls">
+                <div class="menu-output-control-tabs" id="menuOutputControlTabs" aria-label="Menü çıktısı araçları">
+                  <button class="is-active" type="button" data-menu-output-tab="sections">Alanlar</button>
+                  <button type="button" data-menu-output-tab="style">Stil</button>
+                  <button type="button" data-menu-output-tab="layers">Katmanlar</button>
+                  <button type="button" data-menu-output-tab="templates">Şablonlar</button>
+                  <button type="button" data-menu-output-tab="output">Çıktı</button>
+                </div>
+
+                <section class="menu-output-box" data-menu-output-control-panel="templates">
+                  <h4>Şablon Kütüphanesi</h4>
+                  <div class="form-grid two">
+                    <label>
+                      <span>Şablon adı</span>
+                      <input id="menuOutputTemplateName" type="text" placeholder="Örn. Special TV ekranı">
+                    </label>
+                    <label>
+                      <span>Canva Referans Linki</span>
+                      <input id="menuOutputCanvaLink" type="url" placeholder="https://canva.link/...">
+                    </label>
+                  </div>
+                  <div class="asset-row">
+                    <button class="primary-action" id="menuOutputSaveTemplate" type="button">Şablonu Kaydet</button>
+                    <button class="line-action" id="menuOutputUpdateTemplate" type="button">Güncelle</button>
+                    <button class="line-action" id="menuOutputDuplicateTemplate" type="button">Kopyala</button>
+                    <button class="line-action" id="menuOutputSetDefaultTemplate" type="button">Varsayılan Yap</button>
+                    <button class="line-action" id="menuOutputOpenCanva" type="button">Canva’da Aç</button>
+                    <button class="danger-action" id="menuOutputDeleteTemplate" type="button">Sil</button>
+                  </div>
+                  <div class="menu-output-template-list" id="menuOutputTemplateList"></div>
+                </section>
+
+                <section class="menu-output-box" data-menu-output-control-panel="style">
+                  <h4>Genel Tasarım</h4>
+                  <div class="form-grid three">
+                    <label><span>Arka plan</span><input id="menuOutputBgColor" type="color"></label>
+                    <label><span>Kutu rengi</span><input id="menuOutputBoxColor" type="color"></label>
+                    <label><span>Yazı rengi</span><input id="menuOutputTextColor" type="color"></label>
+                    <label><span>Başlık fontu</span><select id="menuOutputTitleFont"></select></label>
+                    <label><span>Ürün fontu</span><select id="menuOutputBodyFont"></select></label>
+                    <label><span>Fiyat fontu</span><select id="menuOutputPriceFont"></select></label>
+                    <label><span>Ürün puntosu</span><input id="menuOutputProductSize" type="number" min="14" max="54" step="1"></label>
+                    <label><span>Satır aralığı</span><input id="menuOutputRowGap" type="number" min="12" max="70" step="1"></label>
+                    <label><span>Tarih metni</span><input id="menuOutputDate" type="text"></label>
+                  </div>
+                </section>
+
+                <section class="menu-output-box is-active" data-menu-output-control-panel="sections">
+                  <h4>Alan Ekle</h4>
+                  <div class="form-grid three">
+                    <label><span>Alan başlığı</span><input id="menuOutputSectionTitle" type="text" placeholder="SPECIAL"></label>
+                    <label>
+                      <span>Alan tipi</span>
+                      <select id="menuOutputSectionType">
+                        <option value="main">Ana büyük liste</option>
+                        <option value="bottom">Alt yatay kategori</option>
+                        <option value="right">Sağ küçük kategori</option>
+                        <option value="small">Extra/küçük kart</option>
+                      </select>
+                    </label>
+                    <label>
+                      <span>Ürün seçimi</span>
+                      <select id="menuOutputSectionMode">
+                        <option value="category">Tüm kategori ürünlerini çek</option>
+                        <option value="manual">Manuel ürün seçimi</option>
+                        <option value="all">Tüm menüden çek</option>
+                      </select>
+                    </label>
+                    <label><span>Kategori</span><select id="menuOutputSectionCategory"></select></label>
+                  </div>
+                  <button class="primary-action" id="menuOutputAddSection" type="button">Alan Ekle</button>
+                </section>
+
+                <section class="menu-output-box is-active" data-menu-output-control-panel="sections">
+                  <h4>Alanlar</h4>
+                  <div class="menu-output-section-list" id="menuOutputSectionList"></div>
+                </section>
+
+                <section class="menu-output-box" data-menu-output-control-panel="layers">
+                  <h4>Katmanlar</h4>
+                  <p class="control-note">Üstteki kayıt ön plandadır. Alanı seçin, kilitleyin veya sırasını değiştirin.</p>
+                  <div class="menu-output-layer-list" id="menuOutputLayerList"></div>
+                </section>
+
+                <section class="menu-output-box" data-menu-output-control-panel="output">
+                  <h4>Çıktı Kontrolü</h4>
+                  <div class="menu-output-quality-panel" id="menuOutputQualityPanel"></div>
+                  <p class="control-note">Uyarılar exportu engellemez. PNG/JPG/PDF düğmeleri ekranın üstündedir.</p>
+                </section>
+              </div>
+
+              <div class="menu-output-preview-wrap">
+                <div class="menu-output-preview-head">
+                  <div>
+                    <p class="eyebrow">Canlı Önizleme</p>
+                    <h4>1080 x 1920 TV Menü</h4>
+                    <span>Ayarlar anında uygulanır. Çıktı flash bellek/TV kullanımına hazırdır.</span>
+                  </div>
+                  <strong id="menuOutputStatus">Hazır</strong>
+                </div>
+                <div class="menu-output-preview-tools" aria-label="Önizleme kontrolleri">
+                  <button class="line-action" id="menuOutputZoomOut" type="button" title="Uzaklaştır">−</button>
+                  <strong id="menuOutputZoomValue">Sığdır</strong>
+                  <button class="line-action" id="menuOutputZoomIn" type="button" title="Yakınlaştır">+</button>
+                  <button class="line-action" id="menuOutputFitPreview" type="button">Sığdır</button>
+                  <button class="line-action" id="menuOutputZoomActual" type="button">%100</button>
+                  <button class="line-action is-active" id="menuOutputGridToggle" type="button">Grid açık</button>
+                  <button class="line-action is-active" id="menuOutputSafeAreaToggle" type="button">Güvenli alan</button>
+                  <button class="line-action" id="menuOutputFullscreen" type="button">Tam ekran</button>
+                </div>
+                <div class="menu-output-preview-stage" id="menuOutputPreviewStage">
+                  <div class="menu-output-canvas-shell" id="menuOutputCanvasShell">
+                    <div class="menu-output-canvas" id="menuOutputPreview" aria-label="Menü çıktısı önizleme"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+          <section class="panel-card section-panel" id="recipeEditorCard" data-section-panel="recipe">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow">Reçete Yönetimi</p>
+                <h3>Reçete Düzenleme</h3>
+              </div>
+              <a class="line-action" href="/recete/" target="_blank" rel="noopener noreferrer">Arayüzü Aç</a>
+            </div>
+            <div class="form-grid two">
+              <label>
+                <span>Reçete kategorisi</span>
+                <select id="recipeCategorySelect"></select>
+              </label>
+              <label>
+                <span>Reçete ürünü</span>
+                <select id="recipeProductSelect"></select>
+              </label>
+            </div>
+            <div class="asset-row recipe-admin-actions">
+              <button class="line-action" id="addRecipeCategoryButton" type="button">+ Kategori</button>
+              <button class="line-action" id="addRecipeProductButton" type="button">+ Ürün</button>
+              <button class="line-action" id="addRecipeSizeButton" type="button">+ Ölçü</button>
+              <button class="danger-action" id="deleteRecipeProductButton" type="button">Ürünü Sil</button>
+              <button class="danger-action" id="deleteRecipeCategoryButton" type="button">Kategoriyi Sil</button>
+            </div>
+            <div class="form-grid two">
+              <label>
+                <span>Kategori adı</span>
+                <input id="recipeCategoryName" type="text">
+              </label>
+              <label>
+                <span>Ürün adı</span>
+                <input id="recipeProductName" type="text">
+              </label>
+            </div>
+            <div class="recipe-import-box">
+              <div class="recipe-import-head">
+                <div>
+                  <h4>Excel’den Reçete Aktar</h4>
+                  <p>Dosya okunur, mevcut reçeteyle karşılaştırılır ve sadece değişen kayıtlar güncellenir.</p>
+                </div>
+                <button class="primary-action" id="recipeExcelImportButton" type="button">Aktarımı Başlat</button>
+              </div>
+              <div class="form-grid two">
+                <label class="file-button recipe-import-file">
+                  <span>Excel dosyası seç</span>
+                  <input id="recipeExcelFile" type="file" accept=".xlsx,.xls,.csv,.tsv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel,text/csv,text/tab-separated-values">
+                </label>
+                <div class="recipe-import-last" id="recipeImportSummary">Son aktarım sonucu yok.</div>
+              </div>
+              <div class="recipe-import-report" id="recipeImportReport" hidden>
+                <div class="recipe-import-stats" id="recipeImportStats"></div>
+                <div class="recipe-import-columns">
+                  <section>
+                    <h5>Değişen İçerikler</h5>
+                    <div class="recipe-import-list" id="recipeImportChanges"></div>
+                  </section>
+                  <section>
+                    <h5>Hatalı Satırlar</h5>
+                    <div class="recipe-import-list" id="recipeImportErrors"></div>
+                  </section>
+                </div>
+              </div>
+            </div>
+            <div class="recipe-size-list" id="recipeSizeList"></div>
+          </section>
+
+          <section class="panel-card section-panel staff-access-panel" id="staffAccessCard" data-section-panel="staffAccess">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow">Barista Yetkileri</p>
+                <h3>Kullanıcı Yetkilendirme</h3>
+              </div>
+              <button class="line-action" id="staffRefreshButton" type="button">Yenile</button>
+            </div>
+
+            <div class="staff-layout">
+              <section class="staff-box">
+                <div class="staff-box-head">
+                  <h4>Barista Hesabi</h4>
+                  <button class="line-action" id="staffUserResetButton" type="button">Yeni Kullanıcı</button>
+                </div>
+                <div class="form-grid two">
+                  <label>
+                    <span>Ad soyad</span>
+                    <input id="staffUserName" type="text" autocomplete="off">
+                  </label>
+                  <label>
+                    <span>Kullanıcı adı</span>
+                    <input id="staffUsername" type="text" autocomplete="off" placeholder="barista1">
+                  </label>
+                </div>
+                <div class="form-grid two">
+                  <label>
+                    <span>Şifre</span>
+                    <input id="staffPassword" type="password" autocomplete="new-password" placeholder="Yeni kullanıcı için zorunlu">
+                  </label>
+                  <label class="toggle-row">
+                    <input id="staffUserActive" type="checkbox" checked>
+                    <span>Aktif kullanıcı</span>
+                  </label>
+                </div>
+                <button class="primary-action" id="staffUserSaveButton" type="button">Kullanıcıyı Kaydet</button>
+                <p class="staff-message" id="staffUserMessage"></p>
+              </section>
+
+              <section class="staff-box">
+                <div class="staff-box-head">
+                  <h4>Kayıtlı Baristalar</h4>
+                  <span id="staffUserCount">0 kullanıcı</span>
+                </div>
+                <div class="staff-filter" id="staffUserFilter" aria-label="Barista filtreleri">
+                  <button class="is-active" type="button" data-staff-user-filter="active">Aktif</button>
+                  <button type="button" data-staff-user-filter="inactive">Pasif</button>
+                  <button type="button" data-staff-user-filter="all">Tumu</button>
+                </div>
+                <div class="staff-user-list" id="staffUserList"></div>
+              </section>
+
+              <section class="staff-box">
+                <div class="staff-box-head">
+                  <h4>Eğitim / Ödev / Sınav Tanımla</h4>
+                  <span>kapsamlı program</span>
+                </div>
+                <div class="form-grid two">
+                  <label>
+                    <span>Barista</span>
+                    <select id="staffAssignmentUser"></select>
+                  </label>
+                  <label>
+                    <span>Tur</span>
+                    <select id="staffAssignmentKind">
+                      <option value="quick_quiz">Hizli Quiz</option>
+                      <option value="training">Eğitim Paketi</option>
+                      <option value="homework">Çalışma Ödevi</option>
+                      <option value="exam">Hakimiyet Sınavı</option>
+                      <option value="retraining">Tekrar Eğitimi</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Kapsam</span>
+                    <select id="staffScopeType">
+                      <option value="products">Ürünler</option>
+                      <option value="category">Kategori</option>
+                      <option value="all">Tüm reçeteler</option>
+                      <option value="failed_items">Yanlış yapılanlar</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Kategori</span>
+                    <select id="staffAssignmentCategory"></select>
+                  </label>
+                  <label>
+                    <span>Ürün</span>
+                    <select id="staffAssignmentProduct"></select>
+                  </label>
+                  <label>
+                    <span>Ölçü</span>
+                    <select id="staffAssignmentSize"></select>
+                  </label>
+                  <label>
+                    <span>Soru sayısı</span>
+                    <input id="staffQuestionCount" type="number" min="1" max="30" step="1" value="3">
+                  </label>
+                  <label>
+                    <span>Gecme puani</span>
+                    <input id="staffPassingScore" type="number" min="0" max="100" step="1" value="70">
+                  </label>
+                  <label>
+                    <span>Zorluk</span>
+                    <select id="staffDifficulty">
+                      <option value="normal">Normal</option>
+                      <option value="easy">Kolay</option>
+                      <option value="hard">Zor</option>
+                    </select>
+                  </label>
+                  <label class="wide-field">
+                    <span>Çoklu ürün seçimi</span>
+                    <div class="staff-product-picker" id="staffProductPicker"></div>
+                  </label>
+                  <label class="wide-field">
+                    <span>Admin eğitim notu</span>
+                    <textarea id="staffAdminNote" rows="3" placeholder="Baristaya gösterilecek kısa eğitim notu"></textarea>
+                  </label>
+                </div>
+                <button class="primary-action" id="staffAssignmentCreateButton" type="button">Program Ata</button>
+                <p class="staff-message" id="staffAssignmentMessage"></p>
+              </section>
+
+              <section class="staff-box staff-box-wide">
+                <div class="staff-box-head">
+                  <h4>Eğitim / Ödev / Sınav Kayıt Defteri</h4>
+                  <span id="staffAssignmentCount">0 kayıt</span>
+                </div>
+                <div class="staff-summary-grid" id="staffAssignmentSummary"></div>
+                <div class="staff-assignment-list" id="staffAssignmentList"></div>
+                <div class="staff-detail-panel" id="staffAssignmentDetail" hidden></div>
+              </section>
+
+              <section class="staff-box staff-box-wide">
+                <div class="staff-box-head">
+                  <h4>Aktivite Kayıt Defteri</h4>
+                  <span id="staffActivityCount">0 kayıt</span>
+                </div>
+                <div class="staff-filter" id="staffActivityTabs" aria-label="Aktivite filtreleri">
+                  <button class="is-active" type="button" data-staff-activity-tab="login">Giriş Kayıtları</button>
+                  <button type="button" data-staff-activity-tab="recipe">Reçete Görüntüleme</button>
+                  <button type="button" data-staff-activity-tab="training">Eğitim Hareketleri</button>
+                  <button type="button" data-staff-activity-tab="homework">Ödev Hareketleri</button>
+                  <button type="button" data-staff-activity-tab="exam">Sınav Hareketleri</button>
+                  <button type="button" data-staff-activity-tab="security">Guvenlik</button>
+                </div>
+                <div class="staff-activity-list" id="staffActivityList"></div>
+              </section>
+            </div>
+          </section>
+
+          <section class="panel-card section-panel" id="feedbackCard" data-section-panel="feedback">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow">Müşteri Geri Bildirimi</p>
+                <h3>Geri bildirim analizi</h3>
+              </div>
+              <div class="feedback-card-actions">
+                <button class="line-action" id="refreshFeedbackButton" type="button">Yenile</button>
+                <button class="danger-action" id="clearFeedbackButton" type="button">Kayıtları Sıfırla</button>
+              </div>
+            </div>
+            <div class="feedback-insights" id="feedbackInsights"></div>
+            <div class="feedback-tabs" id="feedbackTabs" aria-label="Geri bildirim türleri">
+              <button class="feedback-tab is-active" type="button" data-feedback-filter="all">Tümü</button>
+              <button class="feedback-tab" type="button" data-feedback-filter="puanlama">Puanlama</button>
+              <button class="feedback-tab" type="button" data-feedback-filter="istek">İstek</button>
+              <button class="feedback-tab" type="button" data-feedback-filter="sikayet">Şikayet</button>
+              <button class="feedback-tab" type="button" data-feedback-filter="oneri">Öneri</button>
+              <button class="feedback-tab" type="button" data-feedback-filter="favori">Favoriler</button>
+            </div>
+            <div class="feedback-list" id="feedbackList"></div>
+          </section>
+
+          <section class="panel-card section-panel" id="jsonCard" data-section-panel="json">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow">Veri Yapısı</p>
+                <h3>Canlı JSON çıktısı</h3>
+              </div>
+              <button class="line-action" id="copyJsonButton" type="button">JSON Kopyala</button>
+            </div>
+            <textarea class="json-output" id="jsonOutput" rows="14" readonly></textarea>
+          </section>
+        </div>
+
+        <aside class="preview-column">
+          <section class="panel-card sticky-preview">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow" id="previewKicker">Live Preview</p>
+                <h3 id="previewTitle">Canlı Önizleme</h3>
+              </div>
+            </div>
+            <div class="phone-preview" id="livePreview"></div>
+          </section>
+        </aside>
+      </section>
+    </section>
+  </main>
+
+  <div class="session-warning-modal" id="sessionWarningModal" hidden>
+    <div class="session-warning-dialog" role="dialog" aria-modal="true" aria-labelledby="sessionWarningTitle">
+      <p class="eyebrow">Oturum uyarısı</p>
+      <h2 id="sessionWarningTitle">Oturum süresi dolmak üzere</h2>
+      <p id="sessionWarningText">Oturumunuz 30 saniye içinde sona erecek. Devam etmek için oturumu yenileyin.</p>
+      <div class="session-warning-actions">
+        <button class="primary-action" id="sessionRefreshButton" type="button">Oturumu Yenile</button>
+        <button class="line-action" id="sessionLogoutButton" type="button">Çıkış Yap</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="choice-modal" id="defaultChoiceModal" hidden>
+    <div class="choice-dialog" role="dialog" aria-modal="true" aria-labelledby="defaultChoiceTitle">
+      <p class="eyebrow">Varsayılan seçimi</p>
+      <h2 id="defaultChoiceTitle">Hangi varsayılana dönülsün?</h2>
+      <p class="muted">İlk varsayılan orijinal menü verisidir. Kaydedilen varsayılan, son “Varsayılan Olarak Kaydet” işleminizdeki panel durumudur.</p>
+      <div class="choice-actions">
+        <button class="line-action" type="button" data-default-choice="initial">İlk Varsayılan</button>
+        <button class="primary-action" type="button" data-default-choice="saved">Kaydedilen Varsayılan</button>
+        <button class="soft-action" type="button" data-default-choice="cancel">Vazgeç</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+
+
+
+

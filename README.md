@@ -1,28 +1,35 @@
-# Tahmisçi Coffee & Roastery
+# Tahmisci Site
 
-Bu repo; yeni marka sitesini, hafif QR menüyü, admin panelini, reçete/barista arayüzünü ve Express backend'i tek uygulamada birleştirir. Çalışan uygulama kökü [`TAHMİSÇİ/TAH/`](TAHMİSÇİ/TAH/) dizinidir.
+Tahmisci; public web sitesi, admin paneli, recete/barista arayuzu, QR menu ve Express API uygulamalarini tek repoda toplar.
 
-## Adresler
-
-- `/` — canlı veriye bağlı yeni Tahmisçi sitesi
-- `/#menu` — sitenin menü bölümü
-- `/qr-menu/` — eski hafif QR menü
-- `/panel/` — yetkilendirilmiş admin paneli
-- `/recete/` — yetkilendirilmiş reçete/barista arayüzü
-- `/password-reset/` — şifre yenileme
-- `/api/public/bootstrap` ve `/api/public/events` — güvenli public veri ve canlı güncelleme
-
-## Yerel çalıştırma
+## Hizli Baslangic
 
 ```bash
 npm install
 npm run dev:local
 ```
 
-Tarayıcıdan `http://localhost:8080/` açılır. Lokal store ve medya production verisinden ayrıdır; dolu lokal store yeniden seed edilmez. Giriş bilgileri, reset, farklı port ve smoke test için [`LOCAL-DEVELOPMENT.md`](LOCAL-DEVELOPMENT.md) belgesini kullanın.
+## Komutlar
 
-## Veri akışı
+- `npm run dev:local` - lokal API ve statik uygulamalari baslatir.
+- `npm run local:reset` - yalnizca lokal store ve medyayi sifirlar.
+- `npm run check` - syntax ve statik asset kontrolleri.
+- `npm test` - API ve DOM testleri.
+- `npm run test:local` - lokal smoke test.
 
-Admin paneli `menuState`, `recipeState` ve `siteState` verisini backend'e atomik olarak yayınlar. Backend menü ürününü kalıcı `recipeId` ile reçeteye bağlar, yalnızca yayınlanabilir içerik alanını public projection'a ekler ve SSE ile açık site/QR istemcilerini yeniler. Hazırlanış, barista notu, kullanıcı, ödev, sınav ve aktivite verisi public API'ye çıkmaz.
+## URL'ler
 
-Sistem haritası ve işletim ayrıntıları: [`SISTEM-HARITASI.md`](TAHMİSÇİ/TAH/SISTEM-HARITASI.md), [`backend/README.md`](TAHMİSÇİ/TAH/backend/README.md), [`DEPLOYMENT-GODADDY-NGINX.md`](TAHMİSÇİ/TAH/DEPLOYMENT-GODADDY-NGINX.md).
+- `/` - web sitesi
+- `/#menu` - menu bolumu
+- `/panel/` - admin paneli
+- `/recete/` - recete/barista ekrani
+- `/qr-menu/` - QR menu
+- `/login.html` - admin girisi
+- `/password-reset/` - sifre sifirlama
+
+## Dokumantasyon
+
+- [Dokumantasyon indeksi](docs/index.md)
+- [Klasor yapisi](docs/architecture/directory-structure.md)
+- [Lokal kurulum](docs/development/local-setup.md)
+- [API ozeti](docs/api/overview.md)
