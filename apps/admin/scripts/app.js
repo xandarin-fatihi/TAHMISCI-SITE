@@ -63,6 +63,15 @@
     ["map", "Konum", "PIN"],
     ["web", "Web", "WEB"]
   ];
+  const CATEGORY_ICON_REGISTRY = window.TahmisciCategoryIcons || {
+    inferIconKey: () => "default",
+    getIconClass: () => "fas fa-tags",
+    options: () => [
+      { key: "cold", label: "Soğuklar", mark: "❄" },
+      { key: "hot", label: "Sıcaklar", mark: "♨" },
+      { key: "dessert", label: "Tatlı & Sandwich", mark: "✦" }
+    ]
+  };
   const DEFAULT_HEADER_NAVIGATION = [
     { id: "home", label: { tr: "Ana Sayfa", en: "Home" }, url: "#top", icon: "fas fa-house", visible: true, order: 0 },
     { id: "menu", label: { tr: "Menü", en: "Menu" }, url: "#menu", icon: "fas fa-utensils", visible: true, order: 1 },
@@ -427,7 +436,7 @@
       "bannerVideoUrl", "bannerVideoFile", "clearBannerVideo", "bannerVideoList",
       "bannerImageFile", "clearBannerImages", "bannerImageList", "bannerImages", "bannerProductCategory",
       "bannerProductSearch", "bannerProductList", "categoryEditorTitle", "deleteCategoryButton", "categoryName",
-      "categoryActive", "categoryStyleType", "categoryColor", "categoryGradientStart", "categoryGradientEnd",
+      "categoryActive", "categoryIconKey", "categoryStyleType", "categoryColor", "categoryGradientStart", "categoryGradientEnd",
       "categoryGradientAngle", "categoryImageUrl", "categoryOverlay", "categoryImageFile",
       "clearCategoryImage", "categoryImagePreview", "bulkProductImageUrl", "applyBulkProductImage",
       "bulkProductImageFile", "clearBulkProductImage", "bulkProductStyleType", "bulkProductColor",
@@ -776,7 +785,7 @@
     });
 
     [
-      "categoryName", "categoryActive", "categoryStyleType", "categoryColor", "categoryGradientStart",
+      "categoryName", "categoryActive", "categoryIconKey", "categoryStyleType", "categoryColor", "categoryGradientStart",
       "categoryGradientEnd", "categoryGradientAngle", "categoryImageUrl", "categoryOverlay"
     ].forEach((id) => {
       els[id].addEventListener("input", updateCategoryFromForm);
@@ -1696,6 +1705,8 @@
       id,
       name: category.name || "Kategori",
       active: category.active !== false,
+      iconKey: normalizeCategoryIconKey(category.iconKey || category.icon, category.name),
+      icon: CATEGORY_ICON_REGISTRY.getIconClass(normalizeCategoryIconKey(category.iconKey || category.icon, category.name)),
       color: style.color,
       image: style.image,
       style,
@@ -1703,6 +1714,12 @@
         ? category.products.map((product, productIndex) => normalizeProduct(product, id, productIndex)).filter(Boolean)
         : []
     };
+  }
+
+  function normalizeCategoryIconKey(value, categoryName) {
+    const key = String(value || "").trim();
+    const allowed = CATEGORY_ICON_REGISTRY.options().some((item) => item.key === key);
+    return allowed ? key : CATEGORY_ICON_REGISTRY.inferIconKey(categoryName);
   }
 
   function normalizeProduct(product, categoryId, index) {
@@ -1737,7 +1754,7 @@
       popular: Boolean(product.popular),
       kind: product.kind || inferKind("", "", product.name || ""),
       temperature: product.temperature || inferTemperature("", "", product.name || ""),
-      contentMode: ["recipe", "manual", "hidden"].includes(product.contentMode) ? product.contentMode : "manual",
+      contentMode: ["recipe", "manual", "hidden", "not-required"].includes(product.contentMode) ? product.contentMode : "manual",
       recipeId: String(product.recipeId || ""),
       recipeSize: String(product.recipeSize || ""),
       manualContent: String(product.manualContent || product.details && product.details.ingredients || product.ingredients || ""),
@@ -3216,6 +3233,7 @@
       els.categoryEditorTitle.textContent = `${category.name} kategorisi`;
       els.categoryName.value = category.name;
       els.categoryActive.checked = category.active;
+      renderCategoryIconOptions(category);
       els.categoryStyleType.value = category.style.type || "gradient";
       els.categoryColor.value = toColor(category.style.color || settings.categoryCardColor, DEFAULT_SETTINGS.categoryCardColor);
       els.categoryGradientStart.value = toColor(category.style.gradientStart, DEFAULT_SETTINGS.categoryCardColor);
@@ -3535,6 +3553,15 @@
         </button>
       `).join("")
       : `<button class="product-chip" type="button" disabled>Ürün yok</button>`;
+  }
+
+  function renderCategoryIconOptions(category) {
+    if (!els.categoryIconKey) return;
+    const current = normalizeCategoryIconKey(category.iconKey || category.icon, category.name);
+    els.categoryIconKey.innerHTML = CATEGORY_ICON_REGISTRY.options().map((item) => (
+      `<option value="${escapeAttribute(item.key)}">${escapeHTML(`${item.mark || ""} ${item.label}`.trim())}</option>`
+    )).join("");
+    els.categoryIconKey.value = current;
   }
 
   function handleProductCategoryTabs(event) {
@@ -5835,6 +5862,8 @@
     if (!category) return;
     category.name = els.categoryName.value.trim() || "Kategori";
     category.active = els.categoryActive.checked;
+    category.iconKey = normalizeCategoryIconKey(els.categoryIconKey && els.categoryIconKey.value, category.name);
+    category.icon = CATEGORY_ICON_REGISTRY.getIconClass(category.iconKey);
     category.style.type = els.categoryStyleType.value;
     category.style.color = els.categoryColor.value;
     category.color = category.style.color;
@@ -5886,7 +5915,7 @@
     product.details.allergens = els.productAllergens.value.trim();
     product.manualContent = els.productIngredients.value.trim();
     product.details.ingredients = product.manualContent;
-    product.contentMode = ["recipe", "manual", "hidden"].includes(els.productContentMode.value) ? els.productContentMode.value : "manual";
+    product.contentMode = ["recipe", "manual", "hidden", "not-required"].includes(els.productContentMode.value) ? els.productContentMode.value : "manual";
     product.recipeId = els.productRecipeId.value || "";
     product.recipeSize = els.productRecipeSize.value || "";
     product.recipeLinkStatus = product.recipeId ? "linked" : "unmatched";
@@ -6130,6 +6159,8 @@
       name,
       active: true,
       color: "",
+      iconKey: normalizeCategoryIconKey("", name),
+      icon: CATEGORY_ICON_REGISTRY.getIconClass(normalizeCategoryIconKey("", name)),
       image: "",
       style: normalizeStyle({
         color: DEFAULT_SETTINGS.categoryCardColor,

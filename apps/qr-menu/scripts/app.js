@@ -627,6 +627,9 @@
       id,
       name: category.name || "Kategori",
       active: category.active !== false,
+      iconKey: category.iconKey || "",
+      icon: category.icon || "",
+      iconMark: category.iconMark || "",
       color: category.color || "",
       image: category.image || "",
       style: normalizeStyle(category.style || {
@@ -1385,18 +1388,18 @@
     const categories = visibleCategories();
     const allCount = categories.reduce((sum, category) => sum + visibleProducts(category).length, 0);
     els.categoryTabs.innerHTML = "";
-    els.categoryTabs.appendChild(makeTab("Tümü", "all", allCount));
+    els.categoryTabs.appendChild(makeTab("Tümü", "all", allCount, "▦"));
     categories.forEach((category) => {
-      els.categoryTabs.appendChild(makeTab(category.name, category.id, visibleProducts(category).length));
+      els.categoryTabs.appendChild(makeTab(category.name, category.id, visibleProducts(category).length, category.iconMark || ""));
     });
   }
 
-  function makeTab(label, id, count) {
+  function makeTab(label, id, count, iconMark) {
     const button = document.createElement("button");
     button.type = "button";
     button.className = `tab-item${state.activeCategory === id ? " active" : ""}`;
     button.dataset.categoryTab = id;
-    button.innerHTML = `${escapeHTML(label)} <small>${count}</small>`;
+    button.innerHTML = `${iconMark ? `<span class="tab-icon" aria-hidden="true">${escapeHTML(iconMark)}</span>` : ""}${escapeHTML(label)} <small>${count}</small>`;
     return button;
   }
 
@@ -1430,7 +1433,7 @@
     button.dataset.categoryToggle = category.id;
     button.innerHTML = `
       <div class="cat-info">
-        <h3>${escapeHTML(category.name)}</h3>
+        <h3>${category.iconMark ? `<span aria-hidden="true">${escapeHTML(category.iconMark)}</span> ` : ""}${escapeHTML(category.name)}</h3>
         <span>${visibleProducts(category).length} ürün</span>
       </div>
       <div class="arrow-icon" aria-hidden="true">▼</div>

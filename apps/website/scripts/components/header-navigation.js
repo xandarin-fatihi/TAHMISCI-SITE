@@ -295,6 +295,9 @@ function applySiteConfigFromStorage() {
         if (faviconUrl) {
             applyFavicon(faviconUrl);
         }
+        if (document.body?.classList.contains("tahmisci-static-menu") || isTahmisciBackendCatalogMode()) {
+            return;
+        }
         const hasStoredLogo = localStorage.getItem('yep_logo_type') != null || localStorage.getItem('yep_logo_icon') != null || localStorage.getItem('yep_logo_title') != null || localStorage.getItem('yep_logo_image') != null;
         if (!hasStoredLogo) return;
 

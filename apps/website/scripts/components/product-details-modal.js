@@ -117,7 +117,7 @@
             const modalImageSpinner = document.getElementById('modalImageLoadingSpinner');
 
             modalImage.alt = product.name || '';
-            modalImage.classList.toggle("logo-fallback-image", product.image_source === "company_logo");
+            modalImage.classList.toggle("logo-fallback-image", ["company_logo", "brand-placeholder"].includes(String(product.image_source || "")));
 
             // Reset image state
             modalImage.src = '';
@@ -153,7 +153,7 @@
                     }
                     // Set placeholder image
                     if (modalImage) {
-                        modalImage.src = "assets/brand/favicon.png";
+                        modalImage.src = "/assets/brand/logo-large.png";
                         modalImage.classList.remove('lazy-image');
                         modalImage.classList.add("logo-fallback-image");
                     }
@@ -167,7 +167,9 @@
                     modalImageSpinner.style.display = 'none';
                 }
                 if (modalImage) {
+                    modalImage.src = "/assets/brand/logo-large.png";
                     modalImage.classList.remove('lazy-image');
+                    modalImage.classList.add("logo-fallback-image");
                 }
             }
         }

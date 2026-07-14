@@ -48,6 +48,11 @@
   --shadow-medium: 0 20px 54px rgba(36, 21, 15, 0.14);
   --tahmisci-header-height: 78px;
   --tahmisci-filter-height: 0px;
+  --tahmisci-watermark-logo: url("/assets/brand/logo-large.png");
+  --tahmisci-watermark-opacity: 0.12;
+  --tahmisci-watermark-size: 58vw;
+  --tahmisci-watermark-x: 50%;
+  --tahmisci-watermark-y: 50%;
 }
 
 html {
@@ -64,6 +69,65 @@ body.tahmisci-static-menu {
   color: var(--espresso);
   font-family: Manrope, "Tahmisci Poppins", Poppins, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+body.tahmisci-static-menu.has-brand-watermark::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--tahmisci-watermark-logo);
+  background-repeat: no-repeat;
+  background-position: var(--tahmisci-watermark-x) var(--tahmisci-watermark-y);
+  background-size: min(var(--tahmisci-watermark-size), 760px);
+  opacity: var(--tahmisci-watermark-opacity);
+}
+
+body.tahmisci-static-menu > * {
+  position: relative;
+  z-index: 1;
+}
+
+.tahmisci-static-menu .loading-screen {
+  background:
+    radial-gradient(circle at center, rgba(199, 178, 140, 0.32), transparent 42%),
+    var(--cream);
+  color: var(--espresso);
+  gap: 14px;
+}
+
+.tahmisci-static-menu .loading-brand {
+  width: min(220px, 58vw);
+  aspect-ratio: 2.2 / 1;
+  display: grid;
+  place-items: center;
+  animation: tahmisciLoaderReveal 760ms ease both;
+}
+
+.tahmisci-static-menu .loading-logo {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 12px 24px rgba(36, 21, 15, 0.14));
+}
+
+.tahmisci-static-menu .loading-screen .loading-spinner {
+  width: 34px;
+  height: 34px;
+  border-color: rgba(74, 44, 29, 0.16);
+  border-top-color: var(--coffee);
+}
+
+@keyframes tahmisciLoaderReveal {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .tahmisci-static-menu *,

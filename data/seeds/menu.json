@@ -18,7 +18,13 @@
             "name": "BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Mango + frozen bazı + buz",
+          "calories": "~210 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Mango + frozen bazı + buz"
       },
       {
         "name": "KARADUT FROZEN",
@@ -37,7 +43,13 @@
             "name": " BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Karadut + frozen bazı + buz",
+          "calories": "~210 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Karadut + frozen bazı + buz"
       },
       {
         "name": "BÖĞÜRTLEN FROZEN",
@@ -56,7 +68,13 @@
             "name": "BÖĞÜRTLEN FROZEN BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Böğürtlen + frozen bazı + buz",
+          "calories": "~210 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Böğürtlen + frozen bazı + buz"
       },
       {
         "name": "KARPUZ FROZEN",
@@ -75,7 +93,13 @@
             "name": "KARPUZ FROZEN BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Karpuz + frozen bazı + buz",
+          "calories": "~210 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Karpuz + frozen bazı + buz"
       },
       {
         "name": "ÇİLEK MILKSHAKE",
@@ -94,7 +118,13 @@
             "name": "ÇİLEK MILKSHAKE BÜYÜK",
             "price": 225
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Çi̇lek + süt + dondurma",
+          "calories": "~360 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Çi̇lek + süt + dondurma"
       },
       {
         "name": "VANİLYA MILKSHAKE",
@@ -113,7 +143,13 @@
             "name": "VANİLYA MILKSHAKE BÜYÜK",
             "price": 225
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Vani̇lya + süt + dondurma",
+          "calories": "~360 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Vani̇lya + süt + dondurma"
       },
       {
         "name": "LOTUS MILKSHAKE",
@@ -132,7 +168,13 @@
             "name": "LOTUS MILKSHAKE BÜYÜK",
             "price": 225
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Lotus + süt + dondurma",
+          "calories": "~360 kcal",
+          "allergens": "Süt, Gluten, Sert kabuklu yemiş"
+        },
+        "manualContent": "Lotus + süt + dondurma"
       },
       {
         "name": "CARAMEL MILKSHAKE",
@@ -151,7 +193,13 @@
             "name": "CARAMEL MILKSHAKE BÜYÜK",
             "price": 225
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Caramel + süt + dondurma",
+          "calories": "~360 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Caramel + süt + dondurma"
       },
       {
         "name": "ÇİKOLATA MILKSHAKE",
@@ -170,7 +218,13 @@
             "name": "ÇİKOLATA MILKSHAKE BÜYÜK",
             "price": 225
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Çi̇kolata + süt + dondurma",
+          "calories": "~360 kcal",
+          "allergens": "Süt, Soya"
+        },
+        "manualContent": "Çi̇kolata + süt + dondurma"
       },
       {
         "name": "Cool Lime",
@@ -189,7 +243,13 @@
             "name": "Cool Lime BÜYÜK",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Cool lime + buz",
+          "calories": "~110 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Cool lime + buz"
       },
       {
         "name": "ÇİLEK COOL LIME",
@@ -208,7 +268,13 @@
             "name": "ÇİLEK COOL LIME BÜYÜK",
             "price": 220
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Çi̇lek + cool lime bazı + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Çi̇lek + cool lime bazı + buz"
       },
       {
         "name": "KARPUZ COOL LIME",
@@ -227,7 +293,13 @@
             "name": "KARPUZ COOL LIME BÜYÜK",
             "price": 220
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Karpuz + cool lime bazı + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Karpuz + cool lime bazı + buz"
       },
       {
         "name": "VİŞNE COOL LIME",
@@ -246,7 +318,13 @@
             "name": "VİŞNE COOL LIME BÜYÜK",
             "price": 220
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Vi̇şne + cool lime bazı + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Vi̇şne + cool lime bazı + buz"
       },
       {
         "name": "KARADUT COOL LIME",
@@ -265,7 +343,13 @@
             "name": "KARADUT COOL LIME BÜYÜK",
             "price": 220
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Karadut + cool lime bazı + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Karadut + cool lime bazı + buz"
       },
       {
         "name": "BÖĞÜRTLEN COOL LIME",
@@ -284,7 +368,13 @@
             "name": "BÖĞÜRTLEN COOL LIME BÜYÜK",
             "price": 220
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Böğürtlen + cool lime bazı + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Böğürtlen + cool lime bazı + buz"
       },
       {
         "name": "BERRY HIBISCUS",
@@ -303,7 +393,13 @@
             "name": "BERRY HIBISCUS BÜYÜK",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Berry çayı + limon + orman meyveleri",
+          "calories": "~95 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Berry çayı + limon + orman meyveleri"
       },
       {
         "name": "LİMONATA",
@@ -322,7 +418,13 @@
             "name": "LİMONATA BÜYÜK",
             "price": 170
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Limon + portakal + şeker + su",
+          "calories": "~95 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Limon + portakal + şeker + su"
       },
       {
         "name": "KARAMEL FRAPPE",
@@ -341,7 +443,13 @@
             "name": "KARAMEL FRAPPE BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Karamel + kahve + süt + buz",
+          "calories": "~300 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Karamel + kahve + süt + buz"
       },
       {
         "name": "VANİLYA FRAPPE",
@@ -360,7 +468,13 @@
             "name": "VANİLYA FRAPPE BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Vani̇lya + kahve + süt + buz",
+          "calories": "~300 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Vani̇lya + kahve + süt + buz"
       },
       {
         "name": "BİSKÜVİ FRAPPE",
@@ -379,7 +493,13 @@
             "name": "BİSKUVİ FRAPPE BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Bi̇sküvi̇ + kahve + süt + buz",
+          "calories": "~300 kcal",
+          "allergens": "Süt, Gluten"
+        },
+        "manualContent": "Bi̇sküvi̇ + kahve + süt + buz"
       },
       {
         "name": "ÇİKOLATA FRAPPE",
@@ -398,7 +518,13 @@
             "name": "ÇİKOLATA FRAPPE BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Çi̇kolata + kahve + süt + buz",
+          "calories": "~300 kcal",
+          "allergens": "Süt, Soya"
+        },
+        "manualContent": "Çi̇kolata + kahve + süt + buz"
       },
       {
         "name": "MUZLU MILKSAHE",
@@ -417,7 +543,13 @@
             "name": "MUZLU MILKSHAKE BÜYÜK",
             "price": 225
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Muzlu + süt + dondurma",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Muzlu + süt + dondurma"
       },
       {
         "name": "FRAMBUAZLI MILKSHAKE",
@@ -436,7 +568,13 @@
             "name": "FRAMBUAZLI MILKSHAKE BÜYÜK",
             "price": 225
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Frambuazli + süt + dondurma",
+          "calories": "~360 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Frambuazli + süt + dondurma"
       }
     ],
     "SOĞUK KAHVELER": [
@@ -444,7 +582,13 @@
         "name": "AFFAGATO",
         "desc": "",
         "price": 170,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Dondurma + espresso",
+          "calories": "~325 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Dondurma + espresso"
       },
       {
         "name": "ICE FİLTRE KAHVE",
@@ -463,7 +607,13 @@
             "name": "ICE FİLTRE KAHVE BÜYÜK",
             "price": 160
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Kahve + su + buz",
+          "calories": "~15 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Kahve + su + buz"
       },
       {
         "name": "ICE AMERICANO",
@@ -482,7 +632,13 @@
             "name": "ICE AMERICANO BÜYÜK",
             "price": 180
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + su + buz",
+          "calories": "~10 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Espresso + su + buz"
       },
       {
         "name": "ICE LATTE",
@@ -501,7 +657,13 @@
             "name": "ICE LATTE BÜYÜK",
             "price": 190
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + süt + buz",
+          "calories": "~180 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + süt + buz"
       },
       {
         "name": "ICE FLAT WHITE",
@@ -520,7 +682,13 @@
             "name": "ICE FLAT WHITE BÜYÜK",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + süt + buz",
+          "calories": "~180 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + süt + buz"
       },
       {
         "name": "ICE CAPPUCINO",
@@ -539,13 +707,25 @@
             "name": "ICE CAPPUCINO BÜYÜK",
             "price": 190
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + süt + süt köpüğü + buz",
+          "calories": "~190 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + süt + süt köpüğü + buz"
       },
       {
         "name": "JAPONESE COLD BREW",
         "desc": "",
         "price": 270,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Kahve + su + buz",
+          "calories": "~15 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Kahve + su + buz"
       },
       {
         "name": "REDEYE",
@@ -564,7 +744,13 @@
             "name": "REDEYE BÜYÜK",
             "price": 185
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Filtre kahve + espresso",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Filtre kahve + espresso"
       },
       {
         "name": "BLACKEYE",
@@ -583,7 +769,13 @@
             "name": "BLACKEYE BÜYÜK",
             "price": 195
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Filtre kahve + double espresso",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Filtre kahve + double espresso"
       }
     ],
     "SOĞUK AROMALI KAHVELER": [
@@ -604,7 +796,13 @@
             "name": "ICE CARAMEL LATTE BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + karamel + süt + buz",
+          "calories": "~290 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + karamel + süt + buz"
       },
       {
         "name": "ICE TOFFENUTT LATTE",
@@ -623,7 +821,13 @@
             "name": "ICE TOFFENUT LATTE BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + toffeenut + süt + buz",
+          "calories": "~290 kcal",
+          "allergens": "Süt, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + toffeenut + süt + buz"
       },
       {
         "name": "ICE VANİLYA LATTE",
@@ -642,7 +846,13 @@
             "name": "ICE VANİLYA LATTE BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + vanilya + süt + buz",
+          "calories": "~190 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + vanilya + süt + buz"
       },
       {
         "name": "ICE COOKIE LATTE",
@@ -661,7 +871,13 @@
             "name": "ICE COOKIE LATTE BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + cookie + süt + buz",
+          "calories": "~265 kcal",
+          "allergens": "Süt, Gluten, Yumurta"
+        },
+        "manualContent": "Espresso + cookie + süt + buz"
       },
       {
         "name": "ICE LOTUS LATTE",
@@ -680,7 +896,13 @@
             "name": "ICE LOTUS LATTE BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + lotus + süt + buz",
+          "calories": "~180 kcal",
+          "allergens": "Süt, Gluten, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + lotus + süt + buz"
       },
       {
         "name": "ICE BADEM LATTE",
@@ -699,7 +921,13 @@
             "name": "ICE BADEM LATTE BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + badem + süt + buz",
+          "calories": "~290 kcal",
+          "allergens": "Süt, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + badem + süt + buz"
       },
       {
         "name": "ICE IRISH CREAM LATTE",
@@ -722,7 +950,13 @@
             "name": "ICE IRISH CREAM LATTE BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + irish cream + süt + buz",
+          "calories": "~190 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + irish cream + süt + buz"
       },
       {
         "name": "ICE COCOUNAT LATTE",
@@ -741,7 +975,13 @@
             "name": "ICE COCONUT LATTE BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + coconut + süt + buz",
+          "calories": "~190 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + coconut + süt + buz"
       },
       {
         "name": "ICE PUMPKIN SPICE",
@@ -760,7 +1000,13 @@
             "name": "ICE PUMPKIN SPICE BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + pumpkin spice + süt + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Espresso + pumpkin spice + süt + buz"
       },
       {
         "name": "ICE ANTEP LATTE",
@@ -779,7 +1025,13 @@
             "name": "ICE ANTEP LATTE BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + antep + süt + buz",
+          "calories": "~225 kcal",
+          "allergens": "Süt, Soya, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + antep + süt + buz"
       },
       {
         "name": "ICE CARAMEL MACHIATO",
@@ -798,7 +1050,13 @@
             "name": "ICE CARAMEL MACHIATO BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + karamel + vanilya + süt + buz",
+          "calories": "~10 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Espresso + karamel + vanilya + süt + buz"
       },
       {
         "name": "ICE MOCHA",
@@ -817,7 +1075,13 @@
             "name": "ICE MOCHA BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + çikolata + süt + buz",
+          "calories": "~240 kcal",
+          "allergens": "Süt, Soya"
+        },
+        "manualContent": "Espresso + çikolata + süt + buz"
       },
       {
         "name": "ICE WHITE MOCHA",
@@ -836,7 +1100,13 @@
             "name": "ICE WHITE MOCHA BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + beyaz çikolata + süt + buz",
+          "calories": "~240 kcal",
+          "allergens": "Süt, Soya"
+        },
+        "manualContent": "Espresso + beyaz çikolata + süt + buz"
       },
       {
         "name": "ICE SALTED CARAMEL",
@@ -855,7 +1125,13 @@
             "name": "ICE SALTED CARAMEL BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + salted caramel + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Espresso + salted caramel + buz"
       },
       {
         "name": "ICE CARAMEL MOCHA",
@@ -874,7 +1150,13 @@
             "name": "ICE CARAMEL MOCHA BÜYÜK",
             "price": 215
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + karamel + çikolata + süt + buz",
+          "calories": "~225 kcal",
+          "allergens": "Süt, Soya"
+        },
+        "manualContent": "Espresso + karamel + çikolata + süt + buz"
       }
     ],
     "MATCHA LATTE": [
@@ -895,7 +1177,13 @@
             "name": "ICE Matcha Latte BÜYÜK",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Matcha + süt",
+          "calories": "~190 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Matcha + süt"
       },
       {
         "name": "ÇİLEKLİ MATCHA LATTE",
@@ -914,7 +1202,13 @@
             "name": "ICE Çilekli Matcha latte 20 oz",
             "price": 270
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Matcha + çilek + süt + buz",
+          "calories": "~290 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Matcha + çilek + süt + buz"
       },
       {
         "name": "VANLİYA MATCHA LATTE",
@@ -933,7 +1227,13 @@
             "name": "ICE Vanilya Match Latte 20 oz",
             "price": 270
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Matcha + vanilya + süt + buz",
+          "calories": "~290 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Matcha + vanilya + süt + buz"
       },
       {
         "name": "FRAMBUAZ MATCHA LATTE",
@@ -952,7 +1252,13 @@
             "name": "ICE Frambuaz Matcha Latte 20 oz",
             "price": 270
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Matcha + frambuaz + süt",
+          "calories": "~290 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Matcha + frambuaz + süt"
       },
       {
         "name": "MANGO MATCHA LATTE",
@@ -971,7 +1277,13 @@
             "name": "ICE Mango Matcha Latte 20 oz",
             "price": 270
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Matcha + mango + süt",
+          "calories": "~290 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Matcha + mango + süt"
       },
       {
         "name": "PASSION FRUIT MATCHA LATTE",
@@ -990,7 +1302,13 @@
             "name": "ICE PASSION FRUIT BÜYÜK",
             "price": 270
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Matcha + passion fruit + süt",
+          "calories": "~190 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Matcha + passion fruit + süt"
       },
       {
         "name": "NAR MATCHA LATTE",
@@ -1009,7 +1327,13 @@
             "name": "ICE NAR MATCHA LATTE BÜYÜK",
             "price": 270
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Matcha + nar + süt + buz",
+          "calories": "~215 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Matcha + nar + süt + buz"
       }
     ],
     "TAHMİSCİ SPECIAL": [
@@ -1030,7 +1354,13 @@
             "name": "TAHMİSCİCY SOĞUK BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Tahmisci special soğuk",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Tahmisci special soğuk"
       },
       {
         "name": "White Nut",
@@ -1049,7 +1379,13 @@
             "name": "Ice White Nut 20 oz",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + beyaz çikolata + fındık + süt + buz",
+          "calories": "~235 kcal",
+          "allergens": "Süt, Soya, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + beyaz çikolata + fındık + süt + buz"
       },
       {
         "name": "KUZU KULAĞI",
@@ -1068,7 +1404,13 @@
             "name": "KUZU KULAĞI BÜYÜK",
             "price": 265
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Kuzu kulağı + limon + soda",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Kuzu kulağı + limon + soda"
       },
       {
         "name": "Mojito",
@@ -1087,7 +1429,13 @@
             "name": "Mojito BÜYÜK",
             "price": 205
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Nane + limon + soda + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Nane + limon + soda + buz"
       },
       {
         "name": "KARADUT MOJITO",
@@ -1106,7 +1454,13 @@
             "name": "KARADUT MOJITO BÜYÜK",
             "price": 225
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Karadut + nane + limon + soda + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Karadut + nane + limon + soda + buz"
       },
       {
         "name": "BÖĞÜRTLEN MOJITO",
@@ -1125,7 +1479,13 @@
             "name": "BÖĞÜRTLEN MOJITO BÜYÜK",
             "price": 225
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Böğürtlen + nane + limon + soda + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Böğürtlen + nane + limon + soda + buz"
       },
       {
         "name": "MANGO MOJITO",
@@ -1144,7 +1504,13 @@
             "name": "MANGO MOJITO BÜYÜK",
             "price": 225
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Mango + nane + limon + soda + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Mango + nane + limon + soda + buz"
       },
       {
         "name": "YABAN MERSİNİ MOJITO",
@@ -1163,7 +1529,13 @@
             "name": "YABAN MERSİNİ MOJITO BÜYÜK",
             "price": 225
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Yaban mersini + nane + limon + soda + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Yaban mersini + nane + limon + soda + buz"
       },
       {
         "name": "FRAMBUAZ MOJITO",
@@ -1182,7 +1554,13 @@
             "name": "FRAMBUAZ MOJITO BÜYÜK",
             "price": 225
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Frambuaz + nane + limon + soda + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Frambuaz + nane + limon + soda + buz"
       },
       {
         "name": "DARK NUT",
@@ -1201,7 +1579,13 @@
             "name": "ICE DARK NUT BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + çikolata + fındık + süt",
+          "calories": "~235 kcal",
+          "allergens": "Süt, Soya, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + çikolata + fındık + süt"
       },
       {
         "name": "REDBERRY",
@@ -1220,7 +1604,13 @@
             "name": "REDBERRY BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Raspberry + çilek + limonata + karpuz Redbull",
+          "calories": "~60 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Raspberry + çilek + limonata + karpuz Redbull"
       },
       {
         "name": "COZERA",
@@ -1239,7 +1629,13 @@
             "name": "COZERA BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Cozera",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Cozera"
       },
       {
         "name": "SWEET LIME",
@@ -1258,7 +1654,13 @@
             "name": "SWEET LIME BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Limonata + turunç + nane + raspberry + buz",
+          "calories": "~95 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Limonata + turunç + nane + raspberry + buz"
       },
       {
         "name": "OREO COFFE LATTE",
@@ -1277,7 +1679,13 @@
             "name": "OREO COFFE LATTE  BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + oreo + süt",
+          "calories": "~190 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + oreo + süt"
       },
       {
         "name": "STRAWBERRY MOCHA",
@@ -1296,7 +1704,13 @@
             "name": "STRAWBERRY MOCHA BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + çilek + çikolata + süt + buz",
+          "calories": "~235 kcal",
+          "allergens": "Süt, Soya"
+        },
+        "manualContent": "Espresso + çilek + çikolata + süt + buz"
       },
       {
         "name": "GOLDEN NUT",
@@ -1315,7 +1729,13 @@
             "name": "GOLDEN NUT BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + badem + toffee",
+          "calories": "~105 kcal",
+          "allergens": "Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + badem + toffee"
       },
       {
         "name": "DARK NUT",
@@ -1334,7 +1754,13 @@
             "name": "DARK NUT BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + çikolata + fındık + süt",
+          "calories": "~235 kcal",
+          "allergens": "Süt, Soya, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + çikolata + fındık + süt"
       },
       {
         "name": "WHITE NUT",
@@ -1353,7 +1779,13 @@
             "name": "WHITE NUT BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + beyaz çikolata + fındık + süt + buz",
+          "calories": "~235 kcal",
+          "allergens": "Süt, Soya, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + beyaz çikolata + fındık + süt + buz"
       },
       {
         "name": "HONEY SPICE",
@@ -1372,7 +1804,13 @@
             "name": "HONEY SPICE BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Bal + baharat + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Bal + baharat + buz"
       },
       {
         "name": "WHITE FOREST",
@@ -1391,7 +1829,13 @@
             "name": "WHITE FOREST BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + white mocha + frambuaz + süt + buz",
+          "calories": "~235 kcal",
+          "allergens": "Süt, Soya"
+        },
+        "manualContent": "Espresso + white mocha + frambuaz + süt + buz"
       },
       {
         "name": "TROPICAL SALT",
@@ -1410,7 +1854,13 @@
             "name": "TROPICAL SALT BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Tropikal meyve + tuz + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Tropikal meyve + tuz + buz"
       },
       {
         "name": "EMERALD NUT",
@@ -1429,7 +1879,13 @@
             "name": "EMERALD NUT BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + cookie + toffee + süt + buz",
+          "calories": "~120 kcal",
+          "allergens": "Gluten, Yumurta, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + cookie + toffee + süt + buz"
       },
       {
         "name": "TİRAMİSU LATTE",
@@ -1448,7 +1904,13 @@
             "name": "TİRAMİSU LATTE BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + tiramisu + süt",
+          "calories": "~265 kcal",
+          "allergens": "Süt, Gluten, Yumurta"
+        },
+        "manualContent": "Espresso + tiramisu + süt"
       },
       {
         "name": "BLUSH LATTE",
@@ -1467,7 +1929,13 @@
             "name": "BLUSH LATTE BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + beyaz çikolata + frambuaz + süt",
+          "calories": "~225 kcal",
+          "allergens": "Süt, Soya"
+        },
+        "manualContent": "Espresso + beyaz çikolata + frambuaz + süt"
       },
       {
         "name": "WINTER MINT",
@@ -1486,7 +1954,13 @@
             "name": "WINTER MINT BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + çikolata + nane + süt",
+          "calories": "~235 kcal",
+          "allergens": "Süt, Soya"
+        },
+        "manualContent": "Espresso + çikolata + nane + süt"
       },
       {
         "name": "ORANGE CHOCALATE",
@@ -1505,7 +1979,13 @@
             "name": "ORANGE CHOCALATE BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Portakal + çikolata + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Portakal + çikolata + buz"
       },
       {
         "name": "PARIS KISS",
@@ -1524,7 +2004,13 @@
             "name": "PARIS KISS BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + cheesecake + çilek + süt + buz",
+          "calories": "~85 kcal",
+          "allergens": "Süt, Gluten, Yumurta"
+        },
+        "manualContent": "Espresso + cheesecake + çilek + süt + buz"
       },
       {
         "name": "COCO CREAM",
@@ -1543,7 +2029,13 @@
             "name": "COCO CREAM BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + hindistan cevizi + vanilya",
+          "calories": "~230 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Espresso + hindistan cevizi + vanilya"
       },
       {
         "name": "WHITE BRULEE",
@@ -1562,7 +2054,13 @@
             "name": "WHITE BRULEE BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "White Mocha sos + Toffeenut Şurup + Espresso",
+          "calories": "~235 kcal",
+          "allergens": "Süt, Soya, Sert kabuklu yemiş"
+        },
+        "manualContent": "White Mocha sos + Toffeenut Şurup + Espresso"
       },
       {
         "name": "BLACK LATTE",
@@ -1581,7 +2079,13 @@
             "name": "BLACK LATTE BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + black latte + süt",
+          "calories": "~190 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + black latte + süt"
       },
       {
         "name": "OREO COFFE LATTE",
@@ -1600,7 +2104,13 @@
             "name": "OREO COFFE LATTE BÜYÜK",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + oreo + süt",
+          "calories": "~190 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + oreo + süt"
       }
     ]
   },
@@ -1683,13 +2193,25 @@
             "name": "Kuşburnu-Hibiskus",
             "price": 150
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Bitki çayı",
+          "calories": "~15 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Bitki çayı"
       },
       {
         "name": "ÇAY",
         "desc": "",
         "price": 50,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Siyah çay",
+          "calories": "~15 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Siyah çay"
       },
       {
         "name": "SICAK ÇİKOLATA",
@@ -1704,7 +2226,13 @@
             "name": "SICAK ÇİKOLATA ORTA",
             "price": 165
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Süt + sıcak çikolata",
+          "calories": "~260 kcal",
+          "allergens": "Süt, Soya"
+        },
+        "manualContent": "Süt + sıcak çikolata"
       },
       {
         "name": "SICAK BEYAZ ÇİKOLATA",
@@ -1719,7 +2247,13 @@
             "name": "SICAK BEYAZ ÇİKOLATA ORTA",
             "price": 165
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Süt + beyaz çikolata",
+          "calories": "~260 kcal",
+          "allergens": "Süt, Soya"
+        },
+        "manualContent": "Süt + beyaz çikolata"
       },
       {
         "name": "SAHLEP",
@@ -1734,7 +2268,13 @@
             "name": "SAHLEP ORTA",
             "price": 165
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Süt + sahlep",
+          "calories": "~230 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Süt + sahlep"
       },
       {
         "name": "CHAI TEA",
@@ -1749,7 +2289,13 @@
             "name": "CHAI TEA  ORTA",
             "price": 180
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Chai tea",
+          "calories": "~190 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Chai tea"
       }
     ],
     "SICAK KAHVELER": [
@@ -1766,7 +2312,13 @@
             "name": "LATTE ORTA",
             "price": 175
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + süt",
+          "calories": "~180 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + süt"
       },
       {
         "name": "FLAT WHITE",
@@ -1781,7 +2333,13 @@
             "name": "FLAT WHITE ORTA",
             "price": 190
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + süt",
+          "calories": "~180 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + süt"
       },
       {
         "name": "CAPPUCINO",
@@ -1796,13 +2354,25 @@
             "name": "CAPPUCINO ORTA",
             "price": 175
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + süt + süt köpüğü",
+          "calories": "~180 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + süt + süt köpüğü"
       },
       {
         "name": "CORTADO",
         "desc": "",
         "price": 150,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Double shot espresso + süt",
+          "calories": "~75 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Double shot espresso + süt"
       },
       {
         "name": "FİLTRE KAHVE",
@@ -1817,7 +2387,13 @@
             "name": "FİLTRE KAHVE ORTA",
             "price": 145
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Kahve + su",
+          "calories": "~10 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Kahve + su"
       },
       {
         "name": "AMERICANO",
@@ -1832,7 +2408,13 @@
             "name": "AMERICANO ORTA",
             "price": 165
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + su",
+          "calories": "~10 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Espresso + su"
       },
       {
         "name": "ESPRESSO MACHIATO",
@@ -1847,7 +2429,13 @@
             "name": "DOUBLE ESPRESSO MACHIATO",
             "price": 160
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Double shot espresso + süt köpüğü",
+          "calories": "~160 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Double shot espresso + süt köpüğü"
       },
       {
         "name": "ESPRESSO PANNA",
@@ -1862,7 +2450,13 @@
             "name": "DOUBLE ESPRESSO PANNA",
             "price": 160
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + krema",
+          "calories": "~80 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Espresso + krema"
       },
       {
         "name": "ESPRESSO",
@@ -1877,19 +2471,37 @@
             "name": "DOUBLE ESPRESSO",
             "price": 150
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso",
+          "calories": "~15 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Espresso"
       },
       {
         "name": "V60 Demleme",
         "desc": "",
         "price": 260,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Kahve + su",
+          "calories": "~10 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Kahve + su"
       },
       {
         "name": "Chemax Demleme",
         "desc": "",
         "price": 260,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Kahve + su",
+          "calories": "~10 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Kahve + su"
       },
       {
         "name": "REDEYE",
@@ -1904,7 +2516,13 @@
             "name": "REDEYE ORTA",
             "price": 175
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Filtre kahve + espresso",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Filtre kahve + espresso"
       },
       {
         "name": "BLACKEYE",
@@ -1919,7 +2537,13 @@
             "name": "BLACKEYE ORTA",
             "price": 185
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Filtre kahve + double espresso",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Filtre kahve + double espresso"
       }
     ],
     "SICAK AROMALI KAHVELER": [
@@ -1936,7 +2560,13 @@
             "name": "TOFFENUT LATTE ORTA",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + toffeenut + süt",
+          "calories": "~290 kcal",
+          "allergens": "Süt, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + toffeenut + süt"
       },
       {
         "name": "VANİLYA LATTE",
@@ -1951,7 +2581,13 @@
             "name": "VANİLYA LATTE ORTA",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + vanilya + süt",
+          "calories": "~290 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + vanilya + süt"
       },
       {
         "name": "Cookie Latte",
@@ -1966,7 +2602,13 @@
             "name": "Cookie Latte ORTA",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + cookie + süt",
+          "calories": "~265 kcal",
+          "allergens": "Süt, Gluten, Yumurta"
+        },
+        "manualContent": "Espresso + cookie + süt"
       },
       {
         "name": "LOTUS LATTE",
@@ -1981,7 +2623,13 @@
             "name": "LOTUS LATTE ORTA",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + lotus + süt",
+          "calories": "~180 kcal",
+          "allergens": "Süt, Gluten, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + lotus + süt"
       },
       {
         "name": "BADEM LATTE",
@@ -1996,7 +2644,13 @@
             "name": "BADEM LATTE ORTA",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + badem + süt",
+          "calories": "~290 kcal",
+          "allergens": "Süt, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + badem + süt"
       },
       {
         "name": "IRISH LATTE",
@@ -2011,7 +2665,13 @@
             "name": "IRISH LATTE ORTA",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + irish cream + süt",
+          "calories": "~290 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + irish cream + süt"
       },
       {
         "name": "COCONUT LATTE",
@@ -2026,7 +2686,13 @@
             "name": "COCONUT LATTE ORTA",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + coconut + süt",
+          "calories": "~290 kcal",
+          "allergens": "Süt, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + coconut + süt"
       },
       {
         "name": "PUMPKIN SPICE LATTE",
@@ -2041,7 +2707,13 @@
             "name": "PUMPKIN SPICE LATTE ORTA",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + pumpkin spice + süt",
+          "calories": "~290 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + pumpkin spice + süt"
       },
       {
         "name": "CARAMEL LATTE",
@@ -2056,7 +2728,13 @@
             "name": "CARAMEL LATTE KÜÇÜK",
             "price": 185
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + karamel + süt",
+          "calories": "~290 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + karamel + süt"
       },
       {
         "name": "ANTEP LATTE",
@@ -2071,7 +2749,13 @@
             "name": "ANTEP LATTE ORTA",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + antep + süt",
+          "calories": "~225 kcal",
+          "allergens": "Süt, Soya, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + antep + süt"
       },
       {
         "name": "caramel macchiato",
@@ -2086,7 +2770,13 @@
             "name": "Caramel Macchiato ORTA",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + karamel + vanilya + süt",
+          "calories": "~10 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Espresso + karamel + vanilya + süt"
       },
       {
         "name": "MOCHA KÜÇÜK",
@@ -2101,7 +2791,13 @@
             "name": "MOCHA ORTA",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + süt + çikolata",
+          "calories": "~190 kcal",
+          "allergens": "Süt, Soya"
+        },
+        "manualContent": "Espresso + süt + çikolata"
       },
       {
         "name": "WHITE MOCHA",
@@ -2116,7 +2812,13 @@
             "name": "WHITE MOCHA ORTA",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + beyaz çikolata + süt",
+          "calories": "~240 kcal",
+          "allergens": "Süt, Soya"
+        },
+        "manualContent": "Espresso + beyaz çikolata + süt"
       },
       {
         "name": "CARAMEL MOCHA",
@@ -2131,7 +2833,13 @@
             "name": "CARAMEL MOCHA ORTA",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + karamel + çikolata + süt",
+          "calories": "~225 kcal",
+          "allergens": "Süt, Soya"
+        },
+        "manualContent": "Espresso + karamel + çikolata + süt"
       },
       {
         "name": "SALTED CARAMEL",
@@ -2146,7 +2854,13 @@
             "name": "SALTED CARAMEL ORTA",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + salted caramel",
+          "calories": "~25 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Espresso + salted caramel"
       },
       {
         "name": "TİRAMİSU LATTE",
@@ -2161,7 +2875,13 @@
             "name": "TİRAMİSU LATTE ORTA",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + tiramisu + süt",
+          "calories": "~265 kcal",
+          "allergens": "Süt, Gluten, Yumurta"
+        },
+        "manualContent": "Espresso + tiramisu + süt"
       },
       {
         "name": "FINDIK LATTE",
@@ -2176,7 +2896,13 @@
             "name": "FINDIK LATTE ORTA",
             "price": 200
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + fındık + süt",
+          "calories": "~290 kcal",
+          "allergens": "Süt, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + fındık + süt"
       }
     ],
     "TAHMİSCİ SPECIAL": [
@@ -2193,7 +2919,13 @@
             "name": "GOLDEN NUT ORTA",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + badem + toffee",
+          "calories": "~105 kcal",
+          "allergens": "Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + badem + toffee"
       },
       {
         "name": "DARK NUT",
@@ -2208,7 +2940,13 @@
             "name": "DARK NUT ORTA",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + çikolata + fındık + süt",
+          "calories": "~235 kcal",
+          "allergens": "Süt, Soya, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + çikolata + fındık + süt"
       },
       {
         "name": "WHITE NUTT",
@@ -2223,7 +2961,13 @@
             "name": "WHITE NUT ORTA",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + beyaz çikolata + fındık + süt",
+          "calories": "~235 kcal",
+          "allergens": "Süt, Soya, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + beyaz çikolata + fındık + süt"
       },
       {
         "name": "HONEY SPICE",
@@ -2238,7 +2982,13 @@
             "name": "HONEY SPICE ORTA",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Bal + baharat + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Bal + baharat + buz"
       },
       {
         "name": "WHITE FOREST",
@@ -2253,7 +3003,13 @@
             "name": "WHITE FOREST ORTA",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + white mocha + frambuaz + süt + buz",
+          "calories": "~235 kcal",
+          "allergens": "Süt, Soya"
+        },
+        "manualContent": "Espresso + white mocha + frambuaz + süt + buz"
       },
       {
         "name": "TROPICAL SALT",
@@ -2268,7 +3024,13 @@
             "name": "TROPICAL SALT ORTA",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Tropikal meyve + tuz + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Tropikal meyve + tuz + buz"
       },
       {
         "name": "EMERALD NUTT",
@@ -2283,7 +3045,13 @@
             "name": "EMERALD NUT ORTA",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + cookie + toffee",
+          "calories": "~120 kcal",
+          "allergens": "Gluten, Yumurta, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + cookie + toffee"
       },
       {
         "name": "TİRAMİSU LATTE",
@@ -2298,7 +3066,13 @@
             "name": "TİRAMİSU LATTE ORTA",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + tiramisu + süt",
+          "calories": "~265 kcal",
+          "allergens": "Süt, Gluten, Yumurta"
+        },
+        "manualContent": "Espresso + tiramisu + süt"
       },
       {
         "name": "BLUSH LATTE",
@@ -2313,7 +3087,13 @@
             "name": "BLUSH LATTE ORTA",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + beyaz çikolata + frambuaz + süt",
+          "calories": "~225 kcal",
+          "allergens": "Süt, Soya"
+        },
+        "manualContent": "Espresso + beyaz çikolata + frambuaz + süt"
       },
       {
         "name": "WINTER MINT",
@@ -2328,7 +3108,13 @@
             "name": "WINTER MINT ORTA",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + çikolata + nane + süt",
+          "calories": "~235 kcal",
+          "allergens": "Süt, Soya"
+        },
+        "manualContent": "Espresso + çikolata + nane + süt"
       },
       {
         "name": "ORANGE CHOCALATE",
@@ -2343,7 +3129,13 @@
             "name": "ORANGE CHOCALATE ORTA",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Portakal + çikolata + buz",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Portakal + çikolata + buz"
       },
       {
         "name": "PARİS KISS",
@@ -2358,7 +3150,13 @@
             "name": "PARİS KISS  ORTA",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + cheesecake + çilek + süt",
+          "calories": "~85 kcal",
+          "allergens": "Süt, Gluten, Yumurta"
+        },
+        "manualContent": "Espresso + cheesecake + çilek + süt"
       },
       {
         "name": "COCO CREAM",
@@ -2373,7 +3171,13 @@
             "name": "COCO CREAM  ORTA",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + hindistan cevizi + vanilya",
+          "calories": "~230 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "Espresso + hindistan cevizi + vanilya"
       },
       {
         "name": "White Brulee",
@@ -2388,7 +3192,13 @@
             "name": "White Brulee ORTA",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + white mocha + toffeenut + süt",
+          "calories": "~235 kcal",
+          "allergens": "Süt, Soya, Sert kabuklu yemiş"
+        },
+        "manualContent": "Espresso + white mocha + toffeenut + süt"
       },
       {
         "name": "BLACK LATTE",
@@ -2403,7 +3213,13 @@
             "name": "BLACK LATTE ORTA",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + black latte + süt",
+          "calories": "~190 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + black latte + süt"
       },
       {
         "name": "OREO COFFE LATTE",
@@ -2418,7 +3234,13 @@
             "name": "OREO COFFE LATTE  ORTA",
             "price": 240
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Espresso + oreo + süt",
+          "calories": "~190 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Espresso + oreo + süt"
       }
     ],
     "MATCHA LATTE": [
@@ -2435,7 +3257,13 @@
             "name": "MATCHA LATTE ORTA",
             "price": 220
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Matcha + süt",
+          "calories": "~190 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Matcha + süt"
       },
       {
         "name": "ÇİLEKLE MATCHA LATTE",
@@ -2450,7 +3278,13 @@
             "name": "ÇİLEKLİ MATCHA LATTE ORTA",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Matcha + çilek + süt",
+          "calories": "~290 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Matcha + çilek + süt"
       },
       {
         "name": "MANGO MATCHA LATTE",
@@ -2465,7 +3299,13 @@
             "name": "MANGO MATCHA LATTE ORTA",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Matcha + mango + süt",
+          "calories": "~290 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Matcha + mango + süt"
       },
       {
         "name": "VANİLYA MATCHA LATTE",
@@ -2480,7 +3320,13 @@
             "name": "VANİLYA MATCHA LATTE ORTA",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Matcha + vanilya + süt",
+          "calories": "~290 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Matcha + vanilya + süt"
       },
       {
         "name": "FRAMBUAZ MATCHA LATTE",
@@ -2495,7 +3341,13 @@
             "name": "FRAMBUAZ MATCHA LATTE ORTA",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Matcha + frambuaz + süt",
+          "calories": "~290 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Matcha + frambuaz + süt"
       },
       {
         "name": "PASSION FRUIT MATCHA LATTE",
@@ -2510,7 +3362,13 @@
             "name": "PASSION FRUIT MATCHA LATTE ORTA",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Matcha + passion fruit + süt",
+          "calories": "~190 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Matcha + passion fruit + süt"
       },
       {
         "name": "NARLI MATCHA LATTE",
@@ -2525,7 +3383,13 @@
             "name": "NARLI MATCHA LATTE ORTA",
             "price": 250
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "Matcha + nar + süt",
+          "calories": "~215 kcal",
+          "allergens": "Süt"
+        },
+        "manualContent": "Matcha + nar + süt"
       }
     ]
   },
@@ -2535,31 +3399,61 @@
         "name": "TÜRK KAHVESİ",
         "desc": "",
         "price": 100,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "TÜRK KAHVESİ",
+          "calories": "~15 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "TÜRK KAHVESİ"
       },
       {
         "name": "DAMLA SAKIZLI",
         "desc": "",
         "price": 130,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "DAMLA SAKIZLI",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "DAMLA SAKIZLI"
       },
       {
         "name": "DİBEK",
         "desc": "",
         "price": 130,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "DİBEK",
+          "calories": "~120 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "DİBEK"
       },
       {
         "name": "MENENGİÇ",
         "desc": "",
         "price": 130,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "MENENGİÇ",
+          "calories": "~120 kcal",
+          "allergens": "Sert kabuklu yemiş"
+        },
+        "manualContent": "MENENGİÇ"
       },
       {
         "name": "KOYU TÜRK KAHVESİ",
         "desc": "",
         "price": 100,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "KOYU TÜRK KAHVESİ",
+          "calories": "~15 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "KOYU TÜRK KAHVESİ"
       }
     ]
   },
@@ -2569,55 +3463,109 @@
         "name": "PANINI DANA JAMBON",
         "desc": "",
         "price": 200,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "PANINI DANA JAMBON",
+          "calories": "~460 kcal",
+          "allergens": "Gluten"
+        },
+        "manualContent": "PANINI DANA JAMBON"
       },
       {
         "name": "3 PEYNİRLİ BAGEL",
         "desc": "",
         "price": 150,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "3 PEYNİRLİ BAGEL",
+          "calories": "~460 kcal",
+          "allergens": "Süt, Gluten"
+        },
+        "manualContent": "3 PEYNİRLİ BAGEL"
       },
       {
         "name": "MIAMI ROASTBEEF BAGEL",
         "desc": "",
         "price": 200,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "MIAMI ROASTBEEF BAGEL",
+          "calories": "~460 kcal",
+          "allergens": "Gluten"
+        },
+        "manualContent": "MIAMI ROASTBEEF BAGEL"
       },
       {
         "name": "KARE MOZZARELLA",
         "desc": "",
         "price": 150,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "KARE MOZZARELLA",
+          "calories": "~460 kcal",
+          "allergens": "Süt, Gluten"
+        },
+        "manualContent": "KARE MOZZARELLA"
       },
       {
         "name": "MONTE CRISTO",
         "desc": "",
         "price": 170,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "MONTE CRISTO",
+          "calories": "~460 kcal",
+          "allergens": "Gluten"
+        },
+        "manualContent": "MONTE CRISTO"
       },
       {
         "name": "Artizan Suda Mozeralla",
         "desc": "",
         "price": 220,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Artizan Suda Mozeralla",
+          "calories": "~460 kcal",
+          "allergens": "Süt, Gluten"
+        },
+        "manualContent": "Artizan Suda Mozeralla"
       },
       {
         "name": "Artizan Izgara Tavuk",
         "desc": "",
         "price": 220,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Artizan Izgara Tavuk",
+          "calories": "~460 kcal",
+          "allergens": "Gluten"
+        },
+        "manualContent": "Artizan Izgara Tavuk"
       },
       {
         "name": "Artizan Dana Jambon Cheddar",
         "desc": "",
         "price": 220,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Artizan Dana Jambon Cheddar",
+          "calories": "~460 kcal",
+          "allergens": "Süt, Gluten"
+        },
+        "manualContent": "Artizan Dana Jambon Cheddar"
       },
       {
         "name": "Dört Peynirli Foccacia",
         "desc": "",
         "price": 180,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Dört Peynirli Foccacia",
+          "calories": "~460 kcal",
+          "allergens": "Süt, Gluten"
+        },
+        "manualContent": "Dört Peynirli Foccacia"
       }
     ],
     "TATLILAR": [
@@ -2625,193 +3573,385 @@
         "name": "Limonlu Cheesecake",
         "desc": "",
         "price": 250,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Limonlu Cheesecake",
+          "calories": "~430 kcal",
+          "allergens": "Süt, Gluten, Yumurta"
+        },
+        "manualContent": "Limonlu Cheesecake"
       },
       {
         "name": "Frambuazlı Cheesecake",
         "desc": "",
         "price": 250,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Frambuazlı Cheesecake",
+          "calories": "~430 kcal",
+          "allergens": "Süt, Gluten, Yumurta"
+        },
+        "manualContent": "Frambuazlı Cheesecake"
       },
       {
         "name": "San Sebastian Cheesecake",
         "desc": "",
         "price": 250,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "San Sebastian Cheesecake",
+          "calories": "~430 kcal",
+          "allergens": "Süt, Gluten, Yumurta"
+        },
+        "manualContent": "San Sebastian Cheesecake"
       },
       {
         "name": "Antep Fıstıklı San Sebastian",
         "desc": "",
         "price": 250,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Antep Fıstıklı San Sebastian",
+          "calories": "~430 kcal",
+          "allergens": "Gluten, Sert kabuklu yemiş"
+        },
+        "manualContent": "Antep Fıstıklı San Sebastian"
       },
       {
         "name": "Belçika Çikolatalı Pasta",
         "desc": "",
         "price": 250,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Belçika Çikolatalı Pasta",
+          "calories": "~430 kcal",
+          "allergens": "Süt, Gluten, Yumurta, Soya"
+        },
+        "manualContent": "Belçika Çikolatalı Pasta"
       },
       {
         "name": "Havuçlu Kremalı Pasta",
         "desc": "",
         "price": 200,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Havuçlu Kremalı Pasta",
+          "calories": "~430 kcal",
+          "allergens": "Süt, Gluten, Yumurta"
+        },
+        "manualContent": "Havuçlu Kremalı Pasta"
       },
       {
         "name": "Antep Cedric",
         "desc": "",
         "price": 280,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Antep Cedric",
+          "calories": "~460 kcal",
+          "allergens": "Gluten, Sert kabuklu yemiş"
+        },
+        "manualContent": "Antep Cedric"
       },
       {
         "name": "Coconut Pasta",
         "desc": "",
         "price": 250,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Coconut Pasta",
+          "calories": "~430 kcal",
+          "allergens": "Süt, Gluten, Yumurta, Sert kabuklu yemiş"
+        },
+        "manualContent": "Coconut Pasta"
       },
       {
         "name": "Kahve Çekirdeği Pasta",
         "desc": "",
         "price": 250,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Kahve Çekirdeği Pasta",
+          "calories": "~430 kcal",
+          "allergens": "Süt, Gluten, Yumurta"
+        },
+        "manualContent": "Kahve Çekirdeği Pasta"
       },
       {
         "name": "White Cascada Mono Pasta",
         "desc": "",
         "price": 250,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "White Cascada Mono Pasta",
+          "calories": "~430 kcal",
+          "allergens": "Süt, Gluten, Yumurta"
+        },
+        "manualContent": "White Cascada Mono Pasta"
       },
       {
         "name": "Tiramisu",
         "desc": "",
         "price": 220,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Tiramisu",
+          "calories": "~430 kcal",
+          "allergens": "Süt, Gluten, Yumurta"
+        },
+        "manualContent": "Tiramisu"
       },
       {
         "name": "Mozaik Pasta",
         "desc": "",
         "price": 200,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Mozaik Pasta",
+          "calories": "~430 kcal",
+          "allergens": "Süt, Gluten, Yumurta"
+        },
+        "manualContent": "Mozaik Pasta"
       },
       {
         "name": "American Brownie Beyaz Çikolata",
         "desc": "",
         "price": 260,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "American Brownie Beyaz Çikolata",
+          "calories": "~430 kcal",
+          "allergens": "Süt, Gluten, Yumurta, Soya"
+        },
+        "manualContent": "American Brownie Beyaz Çikolata"
       },
       {
         "name": "Mermer Kek",
         "desc": "",
         "price": 130,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Mermer Kek",
+          "calories": "~460 kcal",
+          "allergens": "Gluten, Yumurta"
+        },
+        "manualContent": "Mermer Kek"
       },
       {
         "name": "Kakaolu Kek",
         "desc": "",
         "price": 130,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Kakaolu Kek",
+          "calories": "~460 kcal",
+          "allergens": "Gluten, Yumurta"
+        },
+        "manualContent": "Kakaolu Kek"
       },
       {
         "name": "Cookie",
         "desc": "",
         "price": 120,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Cookie",
+          "calories": "~460 kcal",
+          "allergens": "Gluten, Yumurta"
+        },
+        "manualContent": "Cookie"
       },
       {
         "name": "Oreolu Cookie",
         "desc": "",
         "price": 120,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Oreolu Cookie",
+          "calories": "~460 kcal",
+          "allergens": "Gluten, Yumurta"
+        },
+        "manualContent": "Oreolu Cookie"
       },
       {
         "name": "Gurme Kruvasan",
         "desc": "",
         "price": 150,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Gurme Kruvasan",
+          "calories": "~460 kcal",
+          "allergens": "Gluten"
+        },
+        "manualContent": "Gurme Kruvasan"
       },
       {
         "name": "Lotuslu Kruvasan",
         "desc": "",
         "price": 200,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Lotuslu Kruvasan",
+          "calories": "~460 kcal",
+          "allergens": "Gluten, Sert kabuklu yemiş"
+        },
+        "manualContent": "Lotuslu Kruvasan"
       },
       {
         "name": "Nutella-çilek-muz kruvasan",
         "desc": "",
         "price": 230,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Nutella-çilek-muz kruvasan",
+          "calories": "~460 kcal",
+          "allergens": "Gluten, Sert kabuklu yemiş"
+        },
+        "manualContent": "Nutella-çilek-muz kruvasan"
       },
       {
         "name": "Fıstık Dünyası",
         "desc": "",
         "price": 230,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Fıstık Dünyası",
+          "calories": "~460 kcal",
+          "allergens": "Gluten, Sert kabuklu yemiş"
+        },
+        "manualContent": "Fıstık Dünyası"
       },
       {
         "name": "Klasik Marlenka (bal-ceviz)",
         "desc": "",
         "price": 250,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Klasik Marlenka (bal-ceviz)",
+          "calories": "~460 kcal",
+          "allergens": "Gluten"
+        },
+        "manualContent": "Klasik Marlenka (bal-ceviz)"
       },
       {
         "name": "Çikolatalı Marlenka",
         "desc": "",
         "price": 250,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Çikolatalı Marlenka",
+          "calories": "~460 kcal",
+          "allergens": "Süt, Gluten, Soya"
+        },
+        "manualContent": "Çikolatalı Marlenka"
       },
       {
         "name": "Red Velvet",
         "desc": "",
         "price": 230,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Red Velvet",
+          "calories": "~460 kcal",
+          "allergens": "Gluten"
+        },
+        "manualContent": "Red Velvet"
       },
       {
         "name": "Mono Latte",
         "desc": "",
         "price": 230,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Mono + Espresso + Süt",
+          "calories": "~460 kcal",
+          "allergens": "Süt, Gluten"
+        },
+        "manualContent": "Mono + Espresso + Süt"
       },
       {
         "name": "Çikolatalı Muffin",
         "desc": "",
         "price": 180,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Çikolatalı Muffin",
+          "calories": "~460 kcal",
+          "allergens": "Süt, Gluten, Soya"
+        },
+        "manualContent": "Çikolatalı Muffin"
       },
       {
         "name": "Yaban Mersinli Muffin",
         "desc": "",
         "price": 180,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Yaban Mersinli Muffin",
+          "calories": "~460 kcal",
+          "allergens": "Gluten"
+        },
+        "manualContent": "Yaban Mersinli Muffin"
       },
       {
         "name": "Çikolata Dome",
         "desc": "",
         "price": 250,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Çikolata Dome",
+          "calories": "~460 kcal",
+          "allergens": "Süt, Gluten, Soya"
+        },
+        "manualContent": "Çikolata Dome"
       },
       {
         "name": "Kalpli Pasta",
         "desc": "",
         "price": 250,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Kalpli Pasta",
+          "calories": "~430 kcal",
+          "allergens": "Süt, Gluten, Yumurta"
+        },
+        "manualContent": "Kalpli Pasta"
       },
       {
         "name": "Yaban Mersinli Cheesecake",
         "desc": "",
         "price": 250,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Yaban Mersinli Cheesecake",
+          "calories": "~430 kcal",
+          "allergens": "Süt, Gluten, Yumurta"
+        },
+        "manualContent": "Yaban Mersinli Cheesecake"
       },
       {
         "name": "Çilek Rüyası",
         "desc": "",
         "price": 250,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Çilek Rüyası",
+          "calories": "~460 kcal",
+          "allergens": "Gluten"
+        },
+        "manualContent": "Çilek Rüyası"
       },
       {
         "name": "Cocostar",
         "desc": "",
         "price": 250,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Cocostar",
+          "calories": "~460 kcal",
+          "allergens": "Gluten"
+        },
+        "manualContent": "Cocostar"
       }
     ]
   },
@@ -2830,7 +3970,13 @@
             "name": "ULUDAĞ SODA",
             "price": 85
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "ULUDAĞ",
+          "calories": "~90 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "ULUDAĞ"
       },
       {
         "name": "BEYOĞLU",
@@ -2853,7 +3999,13 @@
             "name": "BEYOĞLU CLASSIC",
             "price": 80
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "BEYOĞLU",
+          "calories": "~90 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "BEYOĞLU"
       },
       {
         "name": "REDBUL",
@@ -2888,7 +4040,13 @@
             "name": "REDBULL BLUE",
             "price": 150
           }
-        ]
+        ],
+        "details": {
+          "ingredients": "REDBUL",
+          "calories": "~115 kcal",
+          "allergens": "Belirgin alerjen yok"
+        },
+        "manualContent": "REDBUL"
       }
     ]
   },
@@ -2898,73 +4056,145 @@
         "name": "ZÜBER",
         "desc": "",
         "price": 100,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "ZÜBER",
+          "calories": "~230 kcal",
+          "allergens": "Etiket kontrol edilmeli"
+        },
+        "manualContent": "ZÜBER"
       },
       {
         "name": "WASA SANDWICH",
         "desc": "",
         "price": 100,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "WASA SANDWICH",
+          "calories": "~460 kcal",
+          "allergens": "Gluten, Etiket kontrol edilmeli"
+        },
+        "manualContent": "WASA SANDWICH"
       },
       {
         "name": "BOUNTY",
         "desc": "",
         "price": 100,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "BOUNTY",
+          "calories": "~230 kcal",
+          "allergens": "Süt, Soya, Etiket kontrol edilmeli"
+        },
+        "manualContent": "BOUNTY"
       },
       {
         "name": "ALBENİ",
         "desc": "",
         "price": 80,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "ALBENİ",
+          "calories": "~230 kcal",
+          "allergens": "Süt, Gluten, Soya, Etiket kontrol edilmeli"
+        },
+        "manualContent": "ALBENİ"
       },
       {
         "name": "M&M'S",
         "desc": "",
         "price": 100,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "M&M'S",
+          "calories": "~230 kcal",
+          "allergens": "Soya, Etiket kontrol edilmeli"
+        },
+        "manualContent": "M&M'S"
       },
       {
         "name": "MELLY VEGAN",
         "desc": "",
         "price": 180,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "MELLY VEGAN",
+          "calories": "~120 kcal",
+          "allergens": "Soya, Etiket kontrol edilmeli"
+        },
+        "manualContent": "MELLY VEGAN"
       },
       {
         "name": "POOLS MEYVE",
         "desc": "",
         "price": 190,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "POOLS MEYVE",
+          "calories": "~120 kcal",
+          "allergens": "Etiket kontrol edilmeli"
+        },
+        "manualContent": "POOLS MEYVE"
       },
       {
         "name": "MAKARON 6'LI",
         "desc": "",
         "price": 180,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "MAKARON 6'LI",
+          "calories": "~360 kcal",
+          "allergens": "Yumurta"
+        },
+        "manualContent": "MAKARON 6'LI"
       },
       {
         "name": "BACKHOUSE BADEMLİ",
         "desc": "",
         "price": 200,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "BACKHOUSE BADEMLİ",
+          "calories": "~230 kcal",
+          "allergens": "Gluten, Sert kabuklu yemiş, Etiket kontrol edilmeli"
+        },
+        "manualContent": "BACKHOUSE BADEMLİ"
       },
       {
         "name": "BACKHOUSE HAŞHAŞLI",
         "desc": "",
         "price": 200,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "BACKHOUSE HAŞHAŞLI",
+          "calories": "~230 kcal",
+          "allergens": "Gluten, Etiket kontrol edilmeli"
+        },
+        "manualContent": "BACKHOUSE HAŞHAŞLI"
       },
       {
         "name": "BACKHOUSE ACIBADEM",
         "desc": "",
         "price": 130,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "BACKHOUSE ACIBADEM",
+          "calories": "~230 kcal",
+          "allergens": "Gluten, Sert kabuklu yemiş, Etiket kontrol edilmeli"
+        },
+        "manualContent": "BACKHOUSE ACIBADEM"
       },
       {
         "name": "züber protein",
         "desc": "",
         "price": 150,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "züber protein",
+          "calories": "~230 kcal",
+          "allergens": "Etiket kontrol edilmeli"
+        },
+        "manualContent": "züber protein"
       }
     ]
   },
@@ -2974,31 +4204,61 @@
         "name": "Orta Türk Kahvesi",
         "desc": "",
         "price": 1200,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Orta Türk Kahvesi",
+          "calories": "~15 kcal",
+          "allergens": "Etiket kontrol edilmeli"
+        },
+        "manualContent": "Orta Türk Kahvesi"
       },
       {
         "name": "Koyu Türk Kahvesi",
         "desc": "",
         "price": 1200,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Koyu Türk Kahvesi",
+          "calories": "~15 kcal",
+          "allergens": "Etiket kontrol edilmeli"
+        },
+        "manualContent": "Koyu Türk Kahvesi"
       },
       {
         "name": "Damla sakızlı Türk Kahvesi",
         "desc": "",
         "price": 1500,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Damla sakızlı Türk Kahvesi",
+          "calories": "~15 kcal",
+          "allergens": "Etiket kontrol edilmeli"
+        },
+        "manualContent": "Damla sakızlı Türk Kahvesi"
       },
       {
         "name": "Dibek kahvesi",
         "desc": "",
         "price": 1500,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Dibek kahvesi",
+          "calories": "~15 kcal",
+          "allergens": "Etiket kontrol edilmeli"
+        },
+        "manualContent": "Dibek kahvesi"
       },
       {
         "name": "Menengiç kahvesi",
         "desc": "",
         "price": 1500,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Menengiç kahvesi",
+          "calories": "~15 kcal",
+          "allergens": "Sert kabuklu yemiş, Etiket kontrol edilmeli"
+        },
+        "manualContent": "Menengiç kahvesi"
       }
     ],
     "KAHVE ÇEKİRDEKLERİ": [
@@ -3006,31 +4266,61 @@
         "name": "Kolombiya san rosada",
         "desc": "",
         "price": 2250,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Kolombiya san rosada",
+          "calories": "~120 kcal",
+          "allergens": "Etiket kontrol edilmeli"
+        },
+        "manualContent": "Kolombiya san rosada"
       },
       {
         "name": "Guatemala la pilala",
         "desc": "",
         "price": 3000,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Guatemala la pilala",
+          "calories": "~120 kcal",
+          "allergens": "Etiket kontrol edilmeli"
+        },
+        "manualContent": "Guatemala la pilala"
       },
       {
         "name": "Endonezya frinsa",
         "desc": "",
         "price": 3250,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Endonezya frinsa",
+          "calories": "~120 kcal",
+          "allergens": "Etiket kontrol edilmeli"
+        },
+        "manualContent": "Endonezya frinsa"
       },
       {
         "name": "Tahmisci espresso",
         "desc": "",
         "price": 1800,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Espresso",
+          "calories": "~15 kcal",
+          "allergens": "Etiket kontrol edilmeli"
+        },
+        "manualContent": "Espresso"
       },
       {
         "name": "Filtre kahve çekirdeği",
         "desc": "",
         "price": 1800,
-        "variants": []
+        "variants": [],
+        "details": {
+          "ingredients": "Filtre kahve çekirdeği",
+          "calories": "~15 kcal",
+          "allergens": "Etiket kontrol edilmeli"
+        },
+        "manualContent": "Filtre kahve çekirdeği"
       }
     ]
   }

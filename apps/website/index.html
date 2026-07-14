@@ -51,8 +51,11 @@
  
 <!-- Loading Screen -->
 <div id="loading-screen" class="loading-screen">
+    <div class="loading-brand" aria-hidden="true">
+        <img class="loading-logo" src="/assets/brand/logo-large.png" alt="Tahmisçi Coffee & Roastery" width="220" height="120">
+    </div>
     <div class="loading-spinner"></div>
-    <p data-i18n="loading">...</p>
+    <p data-i18n="loading" role="status" aria-live="polite">Yükleniyor...</p>
 </div>
 <!-- Header -->
 <header class="header modern-header" id="header">
@@ -186,7 +189,7 @@
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                <div class="mobile-auth-section" id="mobileAuth">
+                <div class="mobile-auth-section" id="mobileAuth" hidden aria-hidden="true">
                     <button class="mobile-auth-btn primary" id="mobileMenuBtnLogin" data-i18n="login">
                         Giriş Yap
                     </button>
@@ -736,7 +739,7 @@
 <!-- /Color Palette Switcher -->
 
 <!-- Login Modal -->
-<div id="loginModal" class="auth-modal-overlay">
+<div id="loginModal" class="auth-modal-overlay" hidden aria-hidden="true">
   <div class="auth-modal">
     <button class="auth-modal-close" id="loginModalClose">
       <i class="fas fa-times"></i>
@@ -793,7 +796,7 @@
 </div>
 
 <!-- Register Modal -->
-<div id="registerModal" class="auth-modal-overlay">
+<div id="registerModal" class="auth-modal-overlay" hidden aria-hidden="true">
   <div class="auth-modal register-modal-modern">
     <div class="auth-modal-header-modern">
       <h2 data-i18n="register_title">Kayıt Ol</h2>
@@ -985,7 +988,7 @@
 </div>
 
 <!-- Legal Document Modal (Kullanım Sözleşmesi / Aydınlatma Metni) -->
-<div class="legal-doc-modal-overlay" id="legalDocModal" aria-hidden="true">
+<div class="legal-doc-modal-overlay" id="legalDocModal" hidden aria-hidden="true">
   <div class="legal-doc-modal">
     <div class="legal-doc-modal-header">
       <h2 class="legal-doc-modal-title" id="legalDocModalTitle"></h2>
@@ -1516,7 +1519,6 @@
 <script src="scripts/sections/hero-section.js?v=26"></script>
 <script src="scripts/sections/featured-products.js?v=26"></script>
 <script src="scripts/components/product-details-modal.js?v=26"></script>
-<script src="scripts/auth/auth-modal.js?v=26"></script>
 <script src="scripts/components/header-navigation.js?v=26"></script>
 <script src="scripts/components/language-switcher.js?v=26"></script>
 <script src="scripts/sections/footer.js?v=26"></script>

@@ -44,6 +44,29 @@ const DEFAULT_SITE_STATE = Object.freeze({
     defaultLanguage: "tr",
     supportedLanguages: ["tr", "en"]
   },
+  features: {
+    customerAccountsEnabled: false,
+    orderingEnabled: false
+  },
+  branding: {
+    desktopLogo: "/assets/brand/logo-primary.png",
+    mobileLogo: "/assets/brand/logo-primary.png",
+    loaderLogo: "/assets/brand/logo-large.png",
+    footerLogo: "/assets/brand/logo-light-green.png",
+    favicon: "/assets/brand/favicon.png",
+    logoAlt: { tr: "Tahmisçi Coffee & Roastery", en: "Tahmisçi Coffee & Roastery" }
+  },
+  watermark: {
+    enabled: true,
+    logo: "/assets/brand/logo-large.png",
+    opacity: 0.12,
+    size: 58,
+    x: 50,
+    y: 50
+  },
+  motion: {
+    preset: "balanced"
+  },
   header: {
     visible: true,
     contactVisible: true,
@@ -193,6 +216,10 @@ function migrateSiteState(input) {
   contactMap.forEach((key) => migrateLegacyValue(next, source, key, ["contact", key]));
 
   next.schemaVersion = SITE_SCHEMA_VERSION;
+  next.features = normalizeFeatures(next.features);
+  next.branding = normalizeBranding(next.branding);
+  next.watermark = normalizeWatermark(next.watermark);
+  next.motion = normalizeMotion(next.motion);
   next.hero.slides = Array.isArray(next.hero.slides) ? next.hero.slides : clone(DEFAULT_SITE_STATE.hero.slides);
   next.header.navigation = normalizeHeaderNavigation(next.header.navigation);
   next.about.features = Array.isArray(next.about.features) ? next.about.features.slice(0, 3) : clone(DEFAULT_SITE_STATE.about.features);
@@ -201,6 +228,59 @@ function migrateSiteState(input) {
   next.footer.bottomLinks = Array.isArray(next.footer.bottomLinks) ? next.footer.bottomLinks : [];
   next.sectionOrder = normalizeSectionOrder(next.sectionOrder);
   return next;
+}
+
+function normalizeFeatures(value) {
+  const source = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  return {
+    customerAccountsEnabled: source.customerAccountsEnabled === true,
+    orderingEnabled: source.orderingEnabled === true
+  };
+}
+
+function normalizeBranding(value) {
+  const source = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  const fallback = DEFAULT_SITE_STATE.branding;
+  return {
+    desktopLogo: safeAssetPath(source.desktopLogo, fallback.desktopLogo),
+    mobileLogo: safeAssetPath(source.mobileLogo, fallback.mobileLogo),
+    loaderLogo: safeAssetPath(source.loaderLogo, fallback.loaderLogo),
+    footerLogo: safeAssetPath(source.footerLogo, fallback.footerLogo),
+    favicon: safeAssetPath(source.favicon, fallback.favicon),
+    logoAlt: normalizeLocalizedText(source.logoAlt || fallback.logoAlt)
+  };
+}
+
+function normalizeWatermark(value) {
+  const source = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  const fallback = DEFAULT_SITE_STATE.watermark;
+  return {
+    enabled: source.enabled !== false,
+    logo: safeAssetPath(source.logo, fallback.logo),
+    opacity: clampNumber(source.opacity, fallback.opacity, 0, 0.2),
+    size: clampNumber(source.size, fallback.size, 20, 140),
+    x: clampNumber(source.x, fallback.x, 0, 100),
+    y: clampNumber(source.y, fallback.y, 0, 100)
+  };
+}
+
+function normalizeMotion(value) {
+  const source = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  const preset = String(source.preset || DEFAULT_SITE_STATE.motion.preset);
+  return { preset: ["off", "subtle", "balanced", "cinematic"].includes(preset) ? preset : "balanced" };
+}
+
+function safeAssetPath(value, fallback) {
+  const text = String(value || "").trim();
+  if (!text) return fallback;
+  if (/^https?:\/\//i.test(text) || text.startsWith("/") || text.startsWith("media:")) return text;
+  return fallback;
+}
+
+function clampNumber(value, fallback, min, max) {
+  const number = Number(value);
+  if (!Number.isFinite(number)) return fallback;
+  return Math.min(max, Math.max(min, number));
 }
 
 function normalizeHeaderNavigation(value) {

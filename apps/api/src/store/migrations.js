@@ -2,6 +2,7 @@
 
 const crypto = require("crypto");
 const { migrateSiteState } = require("../site-state");
+const categoryIcons = require("../../../../shared/scripts/category-icons");
 
 const STORE_SCHEMA_VERSION = 2;
 
@@ -52,10 +53,18 @@ function normalizeMenuCategory(category, index) {
     name: String(category.name || `Kategori ${index + 1}`),
     active: category.active !== false,
     order: finiteNumber(category.order, index),
+    iconKey: normalizeCategoryIconKey(category.iconKey || category.icon, category.name),
+    icon: categoryIcons.getIconClass(normalizeCategoryIconKey(category.iconKey || category.icon, category.name)),
     products: Array.isArray(category.products)
       ? category.products.map((product, productIndex) => normalizeMenuProduct(product, id, productIndex)).filter(Boolean)
       : []
   };
+}
+
+function normalizeCategoryIconKey(value, categoryName) {
+  const text = String(value || "").trim();
+  if (text && categoryIcons.ICONS[text]) return text;
+  return categoryIcons.inferIconKey(categoryName);
 }
 
 function normalizeMenuProduct(product, categoryId, index) {
@@ -212,7 +221,7 @@ function stableRecipeId(category, product) {
 }
 
 function normalizeContentMode(mode, recipeId, manualContent) {
-  if (["recipe", "manual", "hidden"].includes(mode)) return mode;
+  if (["recipe", "manual", "hidden", "not-required"].includes(mode)) return mode;
   if (recipeId) return "recipe";
   return manualContent ? "manual" : "hidden";
 }

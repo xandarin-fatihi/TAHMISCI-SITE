@@ -1264,6 +1264,14 @@ class HeaderManager {
         const mobileAuth = document.getElementById('mobileAuth');
         const mobileUserWelcome = document.getElementById('mobileUserWelcome');
 
+        if (!customerAccountsEnabled()) {
+            if (authLinks) authLinks.style.display = 'none';
+            if (userLinks) userLinks.style.display = 'none';
+            if (mobileAuth) mobileAuth.style.display = 'none';
+            if (mobileUserWelcome) mobileUserWelcome.style.display = 'none';
+            return;
+        }
+
         if (isLoggedIn && userData) {
             // Desktop
             if (authLinks) authLinks.style.display = 'none';
@@ -1555,12 +1563,17 @@ class AuthManager {
     }
 }
 
+function customerAccountsEnabled() {
+    return window.TAHMISCI_CUSTOMER_ACCOUNTS_ENABLED === true ||
+        document.documentElement.dataset.customerAccounts === 'enabled';
+}
+
 // ========== APP INITIALIZATION ========== //
 class App {
     constructor() {
         this.headerManager = new HeaderManager();
         this.cartManager = new CartManager();
-        this.authManager = new AuthManager();
+        this.authManager = customerAccountsEnabled() ? new AuthManager() : null;
 
         // DARK MODE TOGGLE
         this.initDarkMode();
@@ -1592,7 +1605,11 @@ class App {
 
         // Connect managers
         this.cartManager.setHeaderManager(this.headerManager);
-        this.authManager.setHeaderManager(this.headerManager);
+        if (this.authManager) {
+            this.authManager.setHeaderManager(this.headerManager);
+        } else if (this.headerManager && typeof this.headerManager.updateUserStatus === 'function') {
+            this.headerManager.updateUserStatus(false, null);
+        }
 
         // Setup global event listeners
         this.setupGlobalEvents();

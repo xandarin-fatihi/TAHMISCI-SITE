@@ -4,6 +4,7 @@ const fs = require("fs/promises");
 const path = require("path");
 const vm = require("vm");
 const crypto = require("crypto");
+const categoryIcons = require("../../../../shared/scripts/category-icons");
 
 async function seedStoreIfEmpty(store, projectRoot) {
   const current = await store.read();
@@ -82,6 +83,8 @@ function legacyMenuToState(menu) {
           ? item.variants.map((variant) => ({ name: String(variant.name || "").trim(), price: price(variant.price) }))
           : [];
         const standard = price(item.price);
+        const details = item.details && typeof item.details === "object" ? item.details : {};
+        const ingredients = String(item.manualContent || details.ingredients || item.ingredients || "").trim();
         products.push({
           id: stableId(categoryId, `${groupName}\u0000${item.name || productIndex}`),
           name: String(item.name || "Ürün"),
@@ -98,8 +101,12 @@ function legacyMenuToState(menu) {
           kind: "drink",
           temperature: "none",
           order: products.length,
-          manualContent: "",
-          details: { calories: "", allergens: "", ingredients: "" }
+          manualContent: ingredients,
+          details: {
+            calories: String(details.calories || item.calories || "").trim(),
+            allergens: String(details.allergens || item.allergens || "").trim(),
+            ingredients
+          }
         });
       });
     });
@@ -109,6 +116,8 @@ function legacyMenuToState(menu) {
       active: true,
       order: categoryIndex,
       color: "",
+      iconKey: categoryIcons.inferIconKey(categoryName),
+      icon: categoryIcons.getIconClass(categoryIcons.inferIconKey(categoryName)),
       image: "",
       style: {},
       products

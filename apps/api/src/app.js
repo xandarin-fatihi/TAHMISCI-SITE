@@ -21,6 +21,7 @@ const { seedStoreIfEmpty } = require("./store/seed-defaults");
 const { reconcileRecipeCatalog } = require("./store/migrations");
 const { buildPublicBootstrap } = require("./public-bootstrap");
 const { migrateSiteState } = require("./site-state");
+const simpleXlsx = require("./simple-xlsx");
 const { validateMenuState, validateRecipeCatalog, validateRecipeState, validateSiteState, validatePassword } = require("./validators");
 
 validateConfig();
@@ -49,6 +50,7 @@ const recipeRoot = path.join(projectRoot, "apps", "recipe");
 const qrMenuRoot = path.join(projectRoot, "apps", "qr-menu");
 const authRoot = path.join(projectRoot, "apps", "auth");
 const assetsRoot = path.join(projectRoot, "public", "assets");
+const sharedRoot = path.join(projectRoot, "shared");
 const staticOptions = {
   dotfiles: "deny",
   etag: true,
@@ -1588,6 +1590,7 @@ app.get("/site", requireMainHost, (_req, res) => res.redirect(301, "/"));
 app.get("/site/", requireMainHost, (_req, res) => res.redirect(301, "/"));
 
 app.use("/assets", requireKnownHost, express.static(assetsRoot, staticOptions));
+app.use("/shared", requireKnownHost, express.static(sharedRoot, staticOptions));
 app.use("/styles", requireMainHost, express.static(path.join(siteRoot, "styles"), staticOptions));
 app.use("/scripts", requireMainHost, express.static(path.join(siteRoot, "scripts"), staticOptions));
 app.get("/sw.js", requireMainHost, sendSiteFile("sw.js"));
@@ -1884,9 +1887,18 @@ function escapeHtml(value) {
 
 function readExcelWorkbook(buffer, fileName) {
   try {
-    if (!xlsxModule) xlsxModule = require("xlsx");
+    if (!xlsxModule) {
+      try {
+        xlsxModule = require("xlsx");
+      } catch (_error) {
+        xlsxModule = {
+          read: simpleXlsx.readWorkbook,
+          utils: { sheet_to_json: simpleXlsx.sheetToJson }
+        };
+      }
+    }
   } catch (error) {
-    error.message = "Excel aktarimi icin xlsx paketi kurulu olmali. Sunucuda npm install calistirin.";
+    error.message = "Excel aktarımı için XLSX okuyucu başlatılamadı.";
     error.status = 500;
     throw error;
   }

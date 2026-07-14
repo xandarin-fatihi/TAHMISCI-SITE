@@ -45,6 +45,7 @@ console.log(`${pages.length} HTML dosyasindaki yerel CSS, JS, gorsel ve video ba
 
 function routeFile(clean) {
   if (clean.startsWith("assets/")) return path.join(projectRoot, "public", clean);
+  if (clean.startsWith("shared/")) return path.join(projectRoot, clean);
   if (clean.startsWith("styles/")) return path.join(projectRoot, "apps", "website", clean);
   if (clean.startsWith("scripts/")) return path.join(projectRoot, "apps", "website", clean);
   if (clean.startsWith("panel/")) return path.join(projectRoot, "apps", "admin", clean.slice("panel/".length));

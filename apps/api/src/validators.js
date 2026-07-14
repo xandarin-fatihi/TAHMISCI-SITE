@@ -39,8 +39,8 @@ function validateMenuState(menuState) {
     for (const product of category.products) {
       if (!product || typeof product !== "object") return "Her urun nesne olmali.";
       if (!product.id || !product.name) return "Her urunde id ve name olmali.";
-      if (product.contentMode && !["recipe", "manual", "hidden"].includes(product.contentMode)) {
-        return "Urun contentMode recipe, manual veya hidden olmali.";
+      if (product.contentMode && !["recipe", "manual", "hidden", "not-required"].includes(product.contentMode)) {
+        return "Urun contentMode recipe, manual, hidden veya not-required olmali.";
       }
     }
   }
@@ -103,10 +103,32 @@ function validateSiteState(siteState) {
   if (siteState.sectionOrder !== undefined && !Array.isArray(siteState.sectionOrder)) {
     return "siteState.sectionOrder dizi olmali.";
   }
-  for (const key of ["global", "header", "hero", "featuredProducts", "menuSection", "about", "qrMenu", "contact", "footer", "seo"]) {
+  for (const key of ["global", "features", "branding", "watermark", "motion", "header", "hero", "featuredProducts", "menuSection", "about", "qrMenu", "contact", "footer", "seo"]) {
     if (siteState[key] !== undefined && (!siteState[key] || typeof siteState[key] !== "object" || Array.isArray(siteState[key]))) {
       return `siteState.${key} nesne olmali.`;
     }
+  }
+  if (siteState.features?.customerAccountsEnabled !== undefined && typeof siteState.features.customerAccountsEnabled !== "boolean") {
+    return "siteState.features.customerAccountsEnabled boolean olmali.";
+  }
+  if (siteState.features?.orderingEnabled !== undefined && typeof siteState.features.orderingEnabled !== "boolean") {
+    return "siteState.features.orderingEnabled boolean olmali.";
+  }
+  if (siteState.watermark?.enabled !== undefined && typeof siteState.watermark.enabled !== "boolean") {
+    return "siteState.watermark.enabled boolean olmali.";
+  }
+  for (const [path, value, min, max] of [
+    ["watermark.opacity", siteState.watermark?.opacity, 0, 0.2],
+    ["watermark.size", siteState.watermark?.size, 24, 120],
+    ["watermark.x", siteState.watermark?.x, 0, 100],
+    ["watermark.y", siteState.watermark?.y, 0, 100]
+  ]) {
+    if (value !== undefined && (!Number.isFinite(Number(value)) || Number(value) < min || Number(value) > max)) {
+      return `siteState.${path} ${min} ile ${max} arasinda sayi olmali.`;
+    }
+  }
+  if (siteState.motion?.preset !== undefined && !["off", "simple", "balanced", "cinematic"].includes(String(siteState.motion.preset))) {
+    return "siteState.motion.preset off, simple, balanced veya cinematic olmali.";
   }
 
   const hero = siteState.hero || {};

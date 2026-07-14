@@ -9,6 +9,14 @@
     { id: "about", label: { tr: "Hakkımızda", en: "About" }, url: "#about", icon: "fas fa-mug-hot", visible: true, order: 2 },
     { id: "contact", label: { tr: "İletişim", en: "Contact" }, url: "#contact", icon: "fas fa-phone", visible: true, order: 3 }
   ];
+  const BRAND_DEFAULTS = {
+    desktopLogo: "/assets/brand/logo-primary.png",
+    mobileLogo: "/assets/brand/logo-primary.png",
+    loaderLogo: "/assets/brand/logo-large.png",
+    footerLogo: "/assets/brand/logo-light-green.png",
+    favicon: "/assets/brand/favicon.png",
+    logoAlt: { tr: "Tahmisçi Coffee & Roastery", en: "Tahmisçi Coffee & Roastery" }
+  };
   const state = {
     bootstrap: null,
     eventSource: null,
@@ -30,6 +38,11 @@
   };
 
   window.TahmisciPublicData = provider;
+  window.TAHMISCI_CUSTOMER_ACCOUNTS_ENABLED = false;
+  applyFeatureFlags({});
+  applyBranding({});
+  applyWatermark({});
+  applyMotion({});
   applyHeader({ header: { visible: true, contactVisible: true, navigation: DEFAULT_NAVIGATION } }, "fallback");
   provider.ready = load();
 
@@ -57,6 +70,10 @@
     window.MenuCategories = mapped.categories;
     window.MenuProducts = mapped.products;
     window.TahmisciCatalog = { categories: mapped.categories, products: mapped.products, source: "public-bootstrap" };
+    applyFeatureFlags(payload.siteState);
+    applyBranding(payload.siteState);
+    applyWatermark(payload.siteState);
+    applyMotion(payload.siteState);
     applyHeader(payload.siteState, reason);
     applyHero(payload.siteState, mapped.products);
     applySiteContent(payload.siteState, payload.menu);
@@ -64,6 +81,98 @@
     const eventName = reason === "initial" ? "publicBootstrapLoaded" : "publicBootstrapUpdated";
     window.dispatchEvent(new CustomEvent(eventName, { detail: { payload, reason } }));
     document.dispatchEvent(new CustomEvent("menuProductsLoaded", { detail: { products: mapped.products } }));
+  }
+
+  function applyFeatureFlags(siteState) {
+    const enabled = siteState?.features?.customerAccountsEnabled === true;
+    window.TAHMISCI_CUSTOMER_ACCOUNTS_ENABLED = enabled;
+    document.documentElement.dataset.customerAccounts = enabled ? "enabled" : "disabled";
+    if (enabled) return;
+    [
+      "#authButtons",
+      "#authLinks",
+      "#userLinks",
+      "#userMenu",
+      "#mobileAuth",
+      "#mobileUserWelcome",
+      "#mobileCartBtn",
+      ".mobile-nav-auth",
+      ".mobile-nav-account-content",
+      "#loginModal",
+      "#registerModal",
+      "#legalDocModal"
+    ].forEach((selector) => {
+      document.querySelectorAll(selector).forEach((element) => {
+        element.hidden = true;
+        element.setAttribute("aria-hidden", "true");
+      });
+    });
+  }
+
+  function applyBranding(siteState) {
+    const brand = { ...BRAND_DEFAULTS, ...(siteState?.branding || {}) };
+    const language = currentLanguage();
+    const alt = localized(brand.logoAlt, language) || "Tahmisçi";
+    setLogo(".header-logo .logo-link", safeAssetUrl(brand.desktopLogo, BRAND_DEFAULTS.desktopLogo), alt);
+    setLogo(".mobile-nav-logo", safeAssetUrl(brand.mobileLogo, BRAND_DEFAULTS.mobileLogo), alt);
+    setLogo(".footer-logo-link, .footer-brand-link", safeAssetUrl(brand.footerLogo, BRAND_DEFAULTS.footerLogo), alt, true);
+    const loadingLogo = document.querySelector("#loading-screen .loading-logo");
+    if (loadingLogo) {
+      loadingLogo.src = safeAssetUrl(brand.loaderLogo, BRAND_DEFAULTS.loaderLogo);
+      loadingLogo.alt = alt;
+    }
+    const faviconUrl = safeAssetUrl(brand.favicon, BRAND_DEFAULTS.favicon);
+    document.querySelectorAll('link[rel="icon"], link[rel="shortcut icon"]').forEach((link) => {
+      link.href = faviconUrl;
+    });
+  }
+
+  function applyWatermark(siteState) {
+    const watermark = siteState?.watermark || {};
+    const enabled = watermark.enabled !== false;
+    const logo = safeAssetUrl(watermark.logo, BRAND_DEFAULTS.loaderLogo);
+    const opacity = clamp(Number(watermark.opacity ?? 0.12), 0, 0.2);
+    const size = clamp(Number(watermark.size ?? 58), 24, 120);
+    const x = clamp(Number(watermark.x ?? 50), 0, 100);
+    const y = clamp(Number(watermark.y ?? 50), 0, 100);
+    document.body?.classList.toggle("has-brand-watermark", enabled);
+    document.documentElement.style.setProperty("--tahmisci-watermark-logo", `url("${logo.replace(/"/g, "%22")}")`);
+    document.documentElement.style.setProperty("--tahmisci-watermark-opacity", String(opacity));
+    document.documentElement.style.setProperty("--tahmisci-watermark-size", `${size}vw`);
+    document.documentElement.style.setProperty("--tahmisci-watermark-x", `${x}%`);
+    document.documentElement.style.setProperty("--tahmisci-watermark-y", `${y}%`);
+  }
+
+  function applyMotion(siteState) {
+    const preset = String(siteState?.motion?.preset || "balanced").toLowerCase();
+    document.documentElement.dataset.motion = ["off", "simple", "balanced", "cinematic"].includes(preset) ? preset : "balanced";
+  }
+
+  function setLogo(selector, src, alt, keepText) {
+    document.querySelectorAll(selector).forEach((link) => {
+      if (!link) return;
+      link.href = link.getAttribute("href") || "#top";
+      const wrapper = link.querySelector(".logo-image-wrapper") || document.createElement("div");
+      wrapper.className = "logo-image-wrapper";
+      let image = wrapper.querySelector("img");
+      if (!image) {
+        image = document.createElement("img");
+        image.className = "logo-image";
+        wrapper.replaceChildren(image);
+      }
+      image.src = src;
+      image.alt = alt;
+      image.decoding = "async";
+      image.loading = "eager";
+      image.onerror = () => {
+        image.remove();
+        wrapper.textContent = "Tahmisçi";
+        wrapper.classList.add("logo-text-fallback");
+      };
+      if (!keepText) link.replaceChildren(wrapper);
+      else if (!link.querySelector(".logo-image-wrapper")) link.prepend(wrapper);
+      link.classList.add("logo-ready");
+    });
   }
 
   function connectEvents() {
@@ -97,13 +206,14 @@
     const categoryIds = new Map(rawCategories.map((category, index) => [String(category.id), index + 1]));
     let productIndex = 0;
     const products = [];
-    const categories = [{ id: "all", name: text("Tümü", "All"), icon: "fas fa-layer-group", subcategories: [] }];
+    const categories = [{ id: "all", name: text("Tümü", "All"), iconKey: "all", icon: "fas fa-layer-group", image: "", subcategories: [] }];
     rawCategories.forEach((category) => {
       const numericId = categoryIds.get(String(category.id));
       categories.push({
         id: numericId,
         sourceId: String(category.id),
         name: category.name,
+        iconKey: category.iconKey || "",
         icon: category.icon || "fas fa-mug-hot",
         image: category.image || "",
         productCount: category.productCount || (category.products || []).length,
@@ -121,21 +231,24 @@
           name: product.name,
           description: product.description || "",
           content: menuSettings.showContent === false ? "" : product.content || "",
-          ingredients: menuSettings.showContent === false ? "" : product.content || "",
           image: product.image || "",
-          image_source: product.image ? "product" : "",
+          image_source: product.imageSource || product.image_source || (product.image ? "product" : ""),
           priceMode: product.priceMode,
           prices: product.prices || {},
           variants: product.variants || [],
           basePrice: Number(product.basePrice || 0),
           price: Number(product.basePrice || 0),
           priceLabel: product.priceLabel || "",
-          products_branches_calories: menuSettings.showCalories === false ? "" : calorieValue(product.calories),
-          products_branches_calories_unit: menuSettings.showCalories === false ? "" : calorieUnit(product.calories),
+          products_branches_calories: menuSettings.showCalories === false ? "" : product.caloriesText || product.calories || "",
+          products_branches_calories_unit: menuSettings.showCalories === false ? "" : product.caloriesUnit || "",
           calories: menuSettings.showCalories === false ? "" : product.calories || "",
+          caloriesText: menuSettings.showCalories === false ? "" : product.caloriesText || product.calories || "",
+          caloriesValue: menuSettings.showCalories === false ? null : product.caloriesValue ?? null,
+          caloriesUnit: menuSettings.showCalories === false ? "" : product.caloriesUnit || "",
           allergens: menuSettings.showAllergens === false ? "" : product.allergens || "",
+          ingredients: menuSettings.showContent === false ? "" : product.ingredients || product.content || "",
           nutrition: [
-            menuSettings.showContent === false ? null : { name: "İçerik", value: product.content || "" },
+            menuSettings.showContent === false ? null : { name: "İçerik", value: product.ingredients || product.content || "" },
             menuSettings.showAllergens === false ? null : { name: "Alerjen", value: product.allergens || "" }
           ].filter((item) => item && item.value),
           popular: Boolean(product.popular),
@@ -570,6 +683,24 @@
 
   function absolute(value) {
     try { return new URL(String(value || ""), window.location.origin).toString(); } catch (_error) { return window.location.origin; }
+  }
+
+  function safeAssetUrl(value, fallback) {
+    const raw = String(value || "").trim();
+    if (!raw) return fallback;
+    if (raw.startsWith("/assets/") || raw.startsWith("/media/")) return raw;
+    try {
+      const url = new URL(raw, window.location.origin);
+      if (url.origin === window.location.origin && (url.pathname.startsWith("/assets/") || url.pathname.startsWith("/media/"))) {
+        return `${url.pathname}${url.search}${url.hash}`;
+      }
+    } catch (_error) {}
+    return fallback;
+  }
+
+  function clamp(value, min, max) {
+    if (!Number.isFinite(value)) return min;
+    return Math.min(max, Math.max(min, value));
   }
 
   function phoneHref(value) {
