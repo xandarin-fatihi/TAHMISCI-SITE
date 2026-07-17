@@ -2,27 +2,49 @@
 
 Bu aşama yalnızca çalışan UI prototipidir. Backend, database, gerçek auth, Google login veya API endpoint içermez.
 
-## Müşteri UI
+## Amaç
+
+Tahmisçi müşterisinin dijital müdavim kartıyla tekrar ziyaret motivasyonunu artırmak. Ana kampanya: 10 içecek tamamlanınca 11. alışverişte yanında tatlı hakkı.
+
+## Müşteri Akışı
 
 - Public URL: `/mudavim`
-- Karşılama, mock giriş/kayıt, profil, QR kart, ilerleme ve ödül alanları vardır.
-- Mock giriş formu sadece arayüz durumunu değiştirir.
-- Müşteri ziyaret veya ödül ekleyemez.
+- Müşteri `Müdavim Kartımı Aç`, `Kayıt Ol` veya `Giriş Yap` akışıyla mock UI durumunu görür.
+- Profil kartında ad, iletişim, seviye, ziyaret ilerlemesi ve müşteri kodu gösterilir.
+- QR kart alanı kasada okutulacak dijital kart hissi verir.
+- Ödül alanında aktif, yaklaşan ve kullanılan ödüller ayrılır.
+- Müşteri kendi kendine ziyaret veya ödül ekleyemez.
 
-## Admin UI
+## Admin Akışı
 
-- Admin panel sidebar içinde `Müdavimler` sekmesi tasarlanır.
-- Mock müşteri listesi, müşteri detayı, ziyaret geçmişi, ödül kuralları, kampanyalar ve ayarlar bulunur.
-- Liste, seviye ve ödül filtresi UI tarafında çalışır.
+- Admin panel sidebar içinde `Müdavimler` sekmesi bulunur.
+- Genel bakış kartları, arama, seviye/ödül filtresi, müşteri listesi ve detay paneli vardır.
+- Müşteri seçildiğinde QR placeholder, ziyaret geçmişi, aktif ödüller ve admin notu güncellenir.
+- `Ziyaret ekle` ve `Ödülü kullandır` butonları sadece local mock state değiştirir; gerçek kayıt oluşturmaz.
+- Ödül kuralları, kampanyalar ve ayarlar alanları UI taslak olarak sunuma hazırdır.
 
-## Ana Kampanya
+## Mock Data
 
-10 içecek tamamlanınca 11. alışverişte yanında tatlı hakkı.
+Prototipte beş örnek müşteri vardır:
 
-## Sonraki Faz
+- Elif Yılmaz: Gold, 6/10, aktif
+- Mehmet Kaya: Silver, 10/10, ödül hazır
+- Ayşe Demir: Yeni, 1/10, yeni kayıt
+- Burak Çelik: Gold, ödül kullanıldı
+- Zeynep Arslan: Silver, 8/10, 2 ziyaret kaldı
 
-1. Canonical müşteri, ziyaret, ödül ve kampanya şeması.
-2. Admin CRUD endpointleri.
-3. QR doğrulama ve personel işlem akışı.
-4. KVKK/onay metinleri ve rate-limit güvenliği.
-5. Public SSE ile profil/ödül güncelleme.
+## Backend Fazına Geçiş
+
+- Müşteri, ziyaret, ödül, kampanya ve ayar şemaları tanımlanmalı.
+- Admin CRUD ve kasada QR doğrulama endpointleri eklenmeli.
+- Gerçek auth, KVKK/onay metinleri, rate limit ve audit log tasarlanmalı.
+- Mock state yerine canonical store/API kullanılmalı.
+- QR kodları tek kullanımlık veya imzalı doğrulama modeliyle güvenceye alınmalı.
+
+## Sonraki Faz Önerileri
+
+1. Store şeması ve migration.
+2. Admin müşteri/ödül CRUD.
+3. Kasada QR okutma ve personel işlem ekranı.
+4. Public müşteri doğrulama ve profil API.
+5. Bildirim, doğum günü kampanyası ve segment bazlı ödüller.

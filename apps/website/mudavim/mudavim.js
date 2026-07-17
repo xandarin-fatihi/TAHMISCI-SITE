@@ -2,23 +2,22 @@
   "use strict";
 
   const member = {
-    name: "Derya Yılmaz",
-    contact: "derya@example.com",
-    level: "Altın",
+    name: "Elif Yılmaz",
+    contact: "elif@example.com",
+    level: "Gold Müdavim",
     visits: 6,
-    totalVisits: 18,
-    earnedRewards: 1,
-    code: "MUD-2406",
+    usedRewards: 0,
+    code: "THM-4821",
     rewards: {
       active: [
-        { title: "Ödülün hazır", text: "10 içecekte 1 tatlı hakkı kasada kullanılabilir." }
+        { title: "Tatlı hakkı", text: "10 içecekte 1 tatlı hakkı" }
       ],
       locked: [
-        { title: "4 ziyaret kaldı", text: "Bir sonraki tatlı hakkına yaklaşiyorsun." },
-        { title: "Doğum günü hediyesi", text: "Doğum günü ayında aktifleşir." }
+        { title: "4 ziyaret kaldı", text: "Bir sonraki tatlı hakkına yaklaşıyorsun." },
+        { title: "Doğum günü hediyesi", text: "Doğum günü ayında açılır." }
       ],
       used: [
-        { title: "Limonlu cheesecake", text: "12 Temmuz 2026 tarihinde kullanıldı." }
+        { title: "Kullanıldı", text: "Geçmiş ödül bulunmuyor." }
       ]
     }
   };
@@ -32,7 +31,7 @@
       const mode = button.dataset.authMode;
       if (authTitle) authTitle.textContent = mode === "register" ? "Müdavim kaydı oluştur" : "Müdavim kartına giriş yap";
       document.getElementById("auth")?.scrollIntoView({ behavior: "smooth", block: "start" });
-      window.setTimeout(() => identity?.focus(), 300);
+      window.setTimeout(() => identity?.focus(), 260);
     });
   });
 
@@ -52,8 +51,8 @@
     setText("memberName", member.name);
     setText("memberContact", member.contact);
     setText("memberLevel", member.level);
-    setText("memberVisits", String(member.totalVisits));
-    setText("memberRewards", String(member.earnedRewards));
+    setText("memberVisits", `${member.visits} / 10`);
+    setText("memberRewards", String(member.usedRewards));
     setText("memberCode", member.code);
     setText("progressCount", String(member.visits));
     setText("progressRemain", `${Math.max(0, 10 - member.visits)} ziyaret kaldı`);

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Tahmisçi Müdavim sadakat kartı prototipi.">
+  <meta name="description" content="Tahmisçi Müdavim dijital sadakat kartı prototipi.">
   <title>Tahmisçi Müdavim</title>
   <link rel="icon" type="image/png" href="/assets/brand/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,10 +14,10 @@
 </head>
 <body>
   <header class="mudavim-header">
-    <a class="mudavim-logo" href="/">
+    <a class="mudavim-logo" href="/" aria-label="Tahmisçi ana sayfa">
       <img src="/assets/brand/logo-primary.png" alt="Tahmisçi">
     </a>
-    <nav aria-label="Müdavim bağlantıları">
+    <nav class="mudavim-nav" aria-label="Müdavim bağlantıları">
       <a href="#profile">Kartım</a>
       <a href="#rewards">Ödüller</a>
       <a href="/">Siteye Dön</a>
@@ -29,17 +29,18 @@
       <div class="mudavim-hero__content">
         <p class="eyebrow">Tahmisçi Coffee & Roastery</p>
         <h1>Tahmisçi Müdavim</h1>
-        <p>Her ziyaretini değerli yapan, kasada kolayca okutulan premium sadakat kartı. 10 içecekte 1 tatlı hakkı seni bekler.</p>
+        <p>Her ziyaretini değerli yapan dijital müdavim kartı. 10 içecekte 1 tatlı hakkı seni bekler.</p>
         <div class="mudavim-actions">
-          <button type="button" class="primary-action" data-auth-mode="login">Giriş Yap</button>
+          <a class="primary-action" href="#profile">Müdavim Kartımı Aç</a>
           <button type="button" class="secondary-action" data-auth-mode="register">Kayıt Ol</button>
-          <a class="ghost-action" href="#profile">Kartımı Gör</a>
+          <button type="button" class="ghost-action" data-auth-mode="login">Giriş Yap</button>
         </div>
       </div>
       <aside class="hero-card" aria-label="Müdavim kampanyası">
+        <div class="hero-card__badge">Ana kampanya</div>
         <span>10 içecekte</span>
         <strong>1 tatlı hakkı</strong>
-        <small>11. alışverişinde yanında tatlı ikramı.</small>
+        <small>11. alışverişinde yanında tatlı hakkı.</small>
       </aside>
     </section>
 
@@ -47,7 +48,7 @@
       <div>
         <p class="eyebrow">Mock giriş</p>
         <h2 id="authTitle">Müdavim kartına giriş yap</h2>
-        <p>Bu prototip gerçek auth yapmaz; sadece arayüz durumunu gösterir.</p>
+        <p>Bu alan gerçek auth yapmaz. Sunum prototipinde sadece arayüz durumunu gösterir.</p>
       </div>
       <form id="mudavimAuthForm">
         <label>
@@ -56,7 +57,7 @@
         </label>
         <div class="verify-box">
           <i class="fas fa-shield-halved" aria-hidden="true"></i>
-          <span>Sade doğrulama ekranı: tek kullanımlık kod burada istenecek.</span>
+          <span>Doğrulama kodu ekranı burada açılacak.</span>
         </div>
         <label class="terms-row">
           <input type="checkbox" checked>
@@ -68,28 +69,29 @@
 
     <section class="mudavim-dashboard" id="profile">
       <article class="profile-summary">
-        <p class="eyebrow">Müdavim Profil</p>
-        <h2 id="memberName">Derya Yılmaz</h2>
-        <p id="memberContact">derya@example.com</p>
+        <p class="eyebrow">Müdavim Kartım</p>
+        <h2 id="memberName">Elif Yılmaz</h2>
+        <p id="memberContact">elif@example.com</p>
         <div class="profile-stats">
-          <span><strong id="memberLevel">Altın</strong> Seviye</span>
-          <span><strong id="memberVisits">6</strong> Toplam ziyaret</span>
-          <span><strong id="memberRewards">1</strong> Kazanılan ödül</span>
+          <span><strong id="memberLevel">Gold Müdavim</strong> Seviye</span>
+          <span><strong id="memberVisits">6 / 10</strong> Ziyaret</span>
+          <span><strong id="memberRewards">0</strong> Kullanılan ödül</span>
         </div>
       </article>
 
       <article class="qr-card" aria-label="Müdavim QR kartı">
         <div class="qr-card__top">
           <span>Müdavim Kartım</span>
-          <strong id="memberCode">MUD-2406</strong>
+          <strong id="memberCode">THM-4821</strong>
         </div>
         <div class="qr-placeholder" aria-label="QR placeholder">
-          <span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
         </div>
-        <p>Kasada kodunu okut. Ziyaret ve ödül işlemleri sadece personel/admin tarafından işlenir.</p>
+        <p>Kasada kodunu okut.</p>
       </article>
     </section>
 
@@ -115,15 +117,15 @@
       </div>
       <div class="reward-columns">
         <section>
-          <h3>Aktif Ödüller</h3>
+          <h3>Aktif Ödül</h3>
           <div id="activeRewards" class="reward-list"></div>
         </section>
         <section>
-          <h3>Yakında Açılacak</h3>
+          <h3>Yaklaşan Ödül</h3>
           <div id="lockedRewards" class="reward-list"></div>
         </section>
         <section>
-          <h3>Geçmiş</h3>
+          <h3>Kullanılan Ödül</h3>
           <div id="usedRewards" class="reward-list"></div>
         </section>
       </div>

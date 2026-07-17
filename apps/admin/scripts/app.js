@@ -82,92 +82,92 @@
   const MUDAVIM_CUSTOMERS = [
     {
       id: "mud-1001",
-      name: "Derya Yılmaz",
-      contact: "0552 295 46 34",
-      level: "Altın",
-      code: "MUD-2406",
-      totalVisits: 18,
-      cycleVisits: 10,
+      name: "Elif Yılmaz",
+      contact: "elif@example.com",
+      level: "Gold",
+      code: "THM-4821",
+      totalVisits: 26,
+      cycleVisits: 6,
       rewardsEarned: 2,
-      rewardStatus: "ready",
+      rewardStatus: "active",
       lastVisit: "2026-07-16",
-      note: "Soğuk kahveleri tercih ediyor. Ödülü hazır.",
-      activeRewards: ["10 içecekte 1 tatlı hakkı"],
+      note: "Gold müdavim. Dört ziyaret sonra yeni tatlı hakkı açılacak.",
+      activeRewards: [],
       visits: [
-        { date: "2026-07-16", type: "İçecek ziyareti", change: "+1 ziyaret", note: "Latte" },
-        { date: "2026-07-10", type: "İçecek ziyareti", change: "+1 ziyaret", note: "Mango frozen" },
-        { date: "2026-07-02", type: "Ödül", change: "Ödül hazır", note: "10. içecek tamamlandı" }
+        { date: "2026-07-16", type: "Ziyaret", change: "+1 ziyaret", note: "Latte" },
+        { date: "2026-07-10", type: "Ziyaret", change: "+1 ziyaret", note: "Mango frozen" },
+        { date: "2026-06-28", type: "Ödül kullanımı", change: "Tatlı hakkı kullanıldı", note: "Limonlu cheesecake" }
       ]
     },
     {
       id: "mud-1002",
-      name: "Mert Aksoy",
-      contact: "mert@example.com",
-      level: "Gümüş",
-      code: "MUD-1832",
-      totalVisits: 11,
-      cycleVisits: 6,
+      name: "Mehmet Kaya",
+      contact: "0555 120 35 80",
+      level: "Silver",
+      code: "THM-7390",
+      totalVisits: 20,
+      cycleVisits: 10,
       rewardsEarned: 1,
-      rewardStatus: "active",
-      lastVisit: "2026-07-14",
-      note: "4 ziyaret kaldı.",
-      activeRewards: [],
+      rewardStatus: "ready",
+      lastVisit: "2026-07-15",
+      note: "Ödül hazır. Kasada tatlı hakkı kullandırılabilir.",
+      activeRewards: ["Tatlı hakkı"],
       visits: [
-        { date: "2026-07-14", type: "İçecek ziyareti", change: "+1 ziyaret", note: "Americano" },
-        { date: "2026-07-08", type: "İçecek ziyareti", change: "+1 ziyaret", note: "Cold brew" }
+        { date: "2026-07-15", type: "Ziyaret", change: "+1 ziyaret", note: "Americano" },
+        { date: "2026-07-12", type: "Ödül", change: "Ödül hazır", note: "10. içecek tamamlandı" }
       ]
     },
     {
       id: "mud-1003",
-      name: "Selin Kara",
-      contact: "selin@example.com",
-      level: "Bronz",
-      code: "MUD-0924",
-      totalVisits: 5,
-      cycleVisits: 5,
-      rewardsEarned: 0,
-      rewardStatus: "active",
-      lastVisit: "2026-07-12",
-      note: "Tatlı kampanyalarına ilgili.",
-      activeRewards: [],
-      visits: [
-        { date: "2026-07-12", type: "İçecek ziyareti", change: "+1 ziyaret", note: "Mocha" },
-        { date: "2026-07-04", type: "İçecek ziyareti", change: "+1 ziyaret", note: "Latte" }
-      ]
-    },
-    {
-      id: "mud-1004",
-      name: "Can Demir",
-      contact: "0532 000 11 22",
-      level: "Altın",
-      code: "MUD-7710",
-      totalVisits: 27,
-      cycleVisits: 2,
-      rewardsEarned: 3,
-      rewardStatus: "used",
-      lastVisit: "2026-07-09",
-      note: "Son ödülünü limonlu cheesecake için kullandı.",
-      activeRewards: [],
-      visits: [
-        { date: "2026-07-09", type: "Ödül kullanımı", change: "Tatlı hakkı kullanıldı", note: "Limonlu cheesecake" },
-        { date: "2026-07-07", type: "İçecek ziyareti", change: "+1 ziyaret", note: "Espresso" }
-      ]
-    },
-    {
-      id: "mud-1005",
-      name: "Ece Arslan",
-      contact: "ece@example.com",
+      name: "Ayşe Demir",
+      contact: "ayse@example.com",
       level: "Yeni",
-      code: "MUD-4301",
+      code: "THM-1042",
       totalVisits: 1,
       cycleVisits: 1,
       rewardsEarned: 0,
       rewardStatus: "new",
-      lastVisit: "2026-07-17",
-      note: "Yeni kayıt, ilk ziyaret işlendi.",
+      lastVisit: "2026-07-12",
+      note: "Yeni kayıt. İlk ziyaret işlendi.",
       activeRewards: [],
       visits: [
-        { date: "2026-07-17", type: "Yeni kayıt", change: "+1 ziyaret", note: "Müdavim kaydı oluşturuldu" }
+        { date: "2026-07-12", type: "Yeni kayıt", change: "+1 ziyaret", note: "Müdavim kaydı oluşturuldu" }
+      ]
+    },
+    {
+      id: "mud-1004",
+      name: "Burak Çelik",
+      contact: "burak@example.com",
+      level: "Gold",
+      code: "THM-6628",
+      totalVisits: 31,
+      cycleVisits: 3,
+      rewardsEarned: 2,
+      rewardStatus: "used",
+      lastVisit: "2026-07-09",
+      note: "Son ödülünü kullandı. Yeni döngü devam ediyor.",
+      activeRewards: [],
+      visits: [
+        { date: "2026-07-09", type: "Ödül kullanımı", change: "Tatlı hakkı kullanıldı", note: "Brownie" },
+        { date: "2026-07-07", type: "Ziyaret", change: "+1 ziyaret", note: "Espresso" }
+      ]
+    },
+    {
+      id: "mud-1005",
+      name: "Zeynep Arslan",
+      contact: "zeynep@example.com",
+      level: "Silver",
+      code: "THM-3157",
+      totalVisits: 18,
+      cycleVisits: 8,
+      rewardsEarned: 1,
+      rewardStatus: "active",
+      lastVisit: "2026-07-17",
+      note: "2 ziyaret kaldı. Soğuk içecekleri tercih ediyor.",
+      activeRewards: [],
+      visits: [
+        { date: "2026-07-17", type: "Ziyaret", change: "+1 ziyaret", note: "Cold brew" },
+        { date: "2026-07-11", type: "Ziyaret", change: "+1 ziyaret", note: "Latte" }
       ]
     }
   ];
@@ -792,6 +792,9 @@
         state.selectedMudavimCustomerId = row.dataset.mudavimCustomerId;
         renderMudavimPanel();
       });
+    }
+    if (els.mudavimCustomerDetail) {
+      els.mudavimCustomerDetail.addEventListener("click", handleMudavimDetailAction);
     }
     window.addEventListener("storage", (event) => {
       if (event.key === FEEDBACK_STORAGE_KEY) renderFeedbackInbox();
@@ -2473,11 +2476,15 @@
         <span><b>${escapeHTML(String(customer.rewardsEarned))}</b> Ödül</span>
       </div>
       <div class="mudavim-admin-qr" aria-label="QR placeholder">
-        ${Array.from({ length: 16 }, (_, index) => `<i class="${index % 3 === 0 ? "is-soft" : ""}"></i>`).join("")}
+        ${Array.from({ length: 25 }, (_, index) => `<i class="${index % 4 === 0 ? "is-soft" : ""}"></i>`).join("")}
       </div>
       <div class="mudavim-progress-line">
         <div><strong>${escapeHTML(String(customer.cycleVisits))} / 10 ziyaret</strong><span>${remain === 0 ? "Ödülün hazır" : `${remain} ziyaret kaldı`}</span></div>
         <div class="mudavim-progress-track"><span style="width:${progress}%"></span></div>
+      </div>
+      <div class="mudavim-detail-actions" aria-label="Müdavim işlem butonları">
+        <button class="primary-action" type="button" data-mudavim-action="add-visit">Ziyaret ekle</button>
+        <button class="line-action" type="button" data-mudavim-action="use-reward">Ödülü kullandır</button>
       </div>
       <section>
         <h5>Aktif ödüller</h5>
@@ -2503,6 +2510,39 @@
         <p class="mudavim-note">${escapeHTML(customer.note)}</p>
       </section>
     `;
+  }
+
+  function handleMudavimDetailAction(event) {
+    const button = event.target.closest("[data-mudavim-action]");
+    if (!button) return;
+    const customer = MUDAVIM_CUSTOMERS.find((item) => item.id === state.selectedMudavimCustomerId);
+    if (!customer) return;
+    const today = mudavimToday();
+    if (button.dataset.mudavimAction === "add-visit") {
+      customer.totalVisits = Number(customer.totalVisits || 0) + 1;
+      customer.cycleVisits = Math.min(10, Number(customer.cycleVisits || 0) + 1);
+      customer.lastVisit = today;
+      customer.rewardStatus = customer.cycleVisits >= 10 ? "ready" : "active";
+      customer.activeRewards = customer.cycleVisits >= 10 ? ["Tatlı hakkı"] : [];
+      customer.note = customer.cycleVisits >= 10 ? "Ödül hazır. Kasada tatlı hakkı kullandırılabilir." : `${10 - customer.cycleVisits} ziyaret kaldı.`;
+      customer.visits = [
+        { date: today, type: "Ziyaret", change: "+1 ziyaret", note: "Admin UI mock işlemi" },
+        ...(customer.visits || [])
+      ].slice(0, 6);
+    }
+    if (button.dataset.mudavimAction === "use-reward" && (customer.cycleVisits >= 10 || (customer.activeRewards || []).length)) {
+      customer.rewardsEarned = Number(customer.rewardsEarned || 0) + 1;
+      customer.cycleVisits = 0;
+      customer.rewardStatus = "used";
+      customer.activeRewards = [];
+      customer.lastVisit = today;
+      customer.note = "Ödül kullandırıldı. Yeni ziyaret döngüsü başladı.";
+      customer.visits = [
+        { date: today, type: "Ödül kullanımı", change: "Tatlı hakkı kullanıldı", note: "Admin UI mock işlemi" },
+        ...(customer.visits || [])
+      ].slice(0, 6);
+    }
+    renderMudavimPanel();
   }
 
   function renderMudavimRewardRules() {
@@ -2545,12 +2585,16 @@
 
   function formatMudavimRewardStatus(status) {
     const labels = {
-      ready: "Ödülü hazır",
-      active: "Aktif ilerleme",
-      used: "Ödül kullanmış",
+      ready: "Ödül hazır",
+      active: "Aktif",
+      used: "Ödül kullanıldı",
       new: "Yeni kayıt"
     };
-    return labels[status] || "Aktif ilerleme";
+    return labels[status] || "Aktif";
+  }
+
+  function mudavimToday() {
+    return new Date().toISOString().slice(0, 10);
   }
 
   function formatMudavimDate(value) {
