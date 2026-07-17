@@ -31,7 +31,7 @@
         <h1>Tahmisçi Müdavim</h1>
         <p>Her ziyaretini değerli yapan dijital müdavim kartı. 10 içecekte 1 tatlı hakkı seni bekler.</p>
         <div class="mudavim-actions">
-          <a class="primary-action" href="#profile">Müdavim Kartımı Aç</a>
+          <button type="button" class="primary-action" data-auth-mode="welcome">Müdavim Kartımı Aç</button>
           <button type="button" class="secondary-action" data-auth-mode="register">Kayıt Ol</button>
           <button type="button" class="ghost-action" data-auth-mode="login">Giriş Yap</button>
         </div>
@@ -42,29 +42,6 @@
         <strong>1 tatlı hakkı</strong>
         <small>11. alışverişinde yanında tatlı hakkı.</small>
       </aside>
-    </section>
-
-    <section class="mudavim-auth-card" id="auth">
-      <div>
-        <p class="eyebrow">Mock giriş</p>
-        <h2 id="authTitle">Müdavim kartına giriş yap</h2>
-        <p>Bu alan gerçek auth yapmaz. Sunum prototipinde sadece arayüz durumunu gösterir.</p>
-      </div>
-      <form id="mudavimAuthForm">
-        <label>
-          <span>Telefon veya e-posta</span>
-          <input id="mudavimIdentity" type="text" autocomplete="email" placeholder="0552 000 00 00 veya mail@ornek.com">
-        </label>
-        <div class="verify-box">
-          <i class="fas fa-shield-halved" aria-hidden="true"></i>
-          <span>Doğrulama kodu ekranı burada açılacak.</span>
-        </div>
-        <label class="terms-row">
-          <input type="checkbox" checked>
-          <span>Üyelik şartlarını ve kampanya bilgilendirmelerini okudum.</span>
-        </label>
-        <button type="submit" class="primary-action">Prototipte Devam Et</button>
-      </form>
     </section>
 
     <section class="mudavim-dashboard" id="profile">
@@ -131,6 +108,116 @@
       </div>
     </section>
   </main>
+
+  <div class="mudavim-auth-overlay" id="mudavimAuthOverlay" hidden>
+    <section class="mudavim-auth-modal" role="dialog" aria-modal="true" aria-labelledby="mudavimAuthTitle">
+      <button class="mudavim-auth-close" type="button" aria-label="Kapat">
+        <i class="fas fa-xmark" aria-hidden="true"></i>
+      </button>
+
+      <div class="mudavim-auth-card" data-auth-step="welcome">
+        <p class="eyebrow">Tahmisçi Müdavim</p>
+        <h2 id="mudavimAuthTitle">Müdavim Kartını Aç</h2>
+        <p>10 içecekte 1 tatlı hakkı. Kasada kodunu okut, ziyaretlerin işlensin.</p>
+        <div class="mudavim-auth-benefits">
+          <span><i class="fas fa-qrcode" aria-hidden="true"></i> QR kart</span>
+          <span><i class="fas fa-chart-line" aria-hidden="true"></i> Ziyaret takibi</span>
+          <span><i class="fas fa-cake-candles" aria-hidden="true"></i> Tatlı hakkı</span>
+          <span><i class="fas fa-gift" aria-hidden="true"></i> Doğum günü sürprizi</span>
+        </div>
+        <div class="mudavim-auth-actions">
+          <button class="mudavim-auth-cta" type="button" data-auth-next="phone">Telefonla Devam Et</button>
+          <button class="mudavim-auth-social" type="button" data-auth-next="profile" data-auth-provider="google">
+            <i class="fab fa-google" aria-hidden="true"></i>
+            Google ile Devam Et
+          </button>
+          <button class="mudavim-auth-link" type="button" data-auth-next="email">E-posta ile giriş yap</button>
+        </div>
+        <small>Zaten üyeysen aynı telefon numarasıyla giriş yapabilirsin.</small>
+      </div>
+
+      <form class="mudavim-auth-card" data-auth-step="phone" hidden>
+        <button class="mudavim-auth-back" type="button" data-auth-next="welcome">Geri</button>
+        <h2>Telefon Numaranı Gir</h2>
+        <p>Bu numara Müdavim Kartınla eşleşir.</p>
+        <label class="mudavim-auth-input">
+          <span>Telefon</span>
+          <input id="mudavimPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="05xx xxx xx xx">
+        </label>
+        <button class="mudavim-auth-cta" type="submit">Kodu Gönder</button>
+      </form>
+
+      <form class="mudavim-auth-card" data-auth-step="email" hidden>
+        <button class="mudavim-auth-back" type="button" data-auth-next="welcome">Geri</button>
+        <h2>E-posta ile giriş</h2>
+        <p>E-posta alternatifi şimdilik mock UI olarak çalışır.</p>
+        <label class="mudavim-auth-input">
+          <span>E-posta</span>
+          <input id="mudavimEmail" type="email" autocomplete="email" placeholder="ornek@email.com">
+        </label>
+        <button class="mudavim-auth-cta" type="submit">Devam Et</button>
+      </form>
+
+      <form class="mudavim-auth-card" data-auth-step="otp" hidden>
+        <h2>Kodu Gir</h2>
+        <p>Telefonuna gelen 6 haneli kodu yaz. Prototipte herhangi 6 haneli kod kabul edilir.</p>
+        <div class="mudavim-otp" aria-label="6 haneli doğrulama kodu">
+          <input type="text" inputmode="numeric" maxlength="1" aria-label="Kod 1">
+          <input type="text" inputmode="numeric" maxlength="1" aria-label="Kod 2">
+          <input type="text" inputmode="numeric" maxlength="1" aria-label="Kod 3">
+          <input type="text" inputmode="numeric" maxlength="1" aria-label="Kod 4">
+          <input type="text" inputmode="numeric" maxlength="1" aria-label="Kod 5">
+          <input type="text" inputmode="numeric" maxlength="1" aria-label="Kod 6">
+        </div>
+        <button class="mudavim-auth-cta" type="submit">Devam Et</button>
+        <div class="mudavim-auth-inline">
+          <button type="button" data-auth-next="phone">Numarayı değiştir</button>
+          <button type="button" data-auth-resend>Kodu tekrar gönder</button>
+        </div>
+      </form>
+
+      <form class="mudavim-auth-card" data-auth-step="profile" hidden>
+        <h2>Son Bir Adım</h2>
+        <p>Kartını kişiselleştirelim. Gerçek kayıt yapılmaz, sadece mock state güncellenir.</p>
+        <label class="mudavim-auth-input">
+          <span>Ad Soyad</span>
+          <input id="mudavimFullName" type="text" autocomplete="name" placeholder="Ad Soyad" required>
+        </label>
+        <label class="mudavim-auth-input">
+          <span>E-posta <em>isteğe bağlı</em></span>
+          <input id="mudavimProfileEmail" type="email" autocomplete="email" placeholder="ornek@email.com">
+        </label>
+        <label class="mudavim-auth-check">
+          <input id="mudavimTerms" type="checkbox" required>
+          <span>Üyelik koşullarını ve KVKK bilgilendirmesini okudum.</span>
+        </label>
+        <label class="mudavim-auth-check">
+          <input id="mudavimCampaigns" type="checkbox">
+          <span>Kampanya ve ödül bildirimlerini almak istiyorum.</span>
+        </label>
+        <button class="mudavim-auth-cta" type="submit">Kartımı Oluştur</button>
+      </form>
+
+      <div class="mudavim-auth-card" data-auth-step="success" hidden>
+        <p class="eyebrow">Kartım hazır</p>
+        <h2>Müdavim Kartın Hazır</h2>
+        <div class="mudavim-auth-success">
+          <strong id="authSuccessName">Elif Yılmaz</strong>
+          <span id="authSuccessCode">THM-4821</span>
+          <div class="mudavim-auth-qr" aria-label="QR placeholder">
+            <i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i><i></i>
+          </div>
+          <b>0 / 10 başlangıç</b>
+          <p>İlk içeceğini kasada kodunu okutarak işlet.</p>
+        </div>
+        <button class="mudavim-auth-cta" type="button" data-auth-finish>Kartımı Gör</button>
+      </div>
+    </section>
+  </div>
 
   <script src="/mudavim/mudavim.js"></script>
 </body>
