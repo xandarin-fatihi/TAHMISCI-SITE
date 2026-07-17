@@ -1,50 +1,76 @@
 # Tahmisçi Müdavim Sistemi
 
-Bu aşama yalnızca çalışan UI prototipidir. Backend, database, gerçek auth, Google login veya API endpoint içermez.
+Bu alan yayın öncesi UI prototipidir. Backend, database, gerçek SMS/OTP, Google auth veya API endpoint içermez.
 
 ## Amaç
 
-Tahmisçi müşterisinin dijital müdavim kartıyla tekrar ziyaret motivasyonunu artırmak. Ana kampanya: 10 içecek tamamlanınca 11. alışverişte yanında tatlı hakkı.
+Tahmisçi müşterisinin dijital müdavim kartıyla ziyaretlerini takip etmesini ve 10 içecekte 1 tatlı hakkı kampanyasını net görmesini sağlamak.
 
-## Müşteri Akışı
+## Girişsiz Landing
 
-- Public URL: `/mudavim`
-- Müşteri `Müdavim Kartımı Aç`, `Kayıt Ol` veya `Giriş Yap` akışıyla mock UI durumunu görür.
-- Profil kartında ad, iletişim, seviye, ziyaret ilerlemesi ve müşteri kodu gösterilir.
-- QR kart alanı kasada okutulacak dijital kart hissi verir.
-- Ödül alanında aktif, yaklaşan ve kullanılan ödüller ayrılır.
-- Müşteri kendi kendine ziyaret veya ödül ekleyemez.
+- `/mudavim` ilk açılışta kart/dashboard göstermez.
+- Ekran sade karşılama, fayda maddeleri ve `Giriş Yap` / `Kayıt Ol` çağrılarıyla açılır.
+- Sağdaki eski büyük kart kaldırıldı; kahve görseli yalnızca yumuşak hero atmosferi olarak kullanılır.
+- Girişsiz header: `Giriş Yap`, `Kayıt Ol`, `Kampanyalar`, `Siteye Dön`.
 
-## Admin Akışı
+## Giriş Akışı
 
-- Admin panel sidebar içinde `Müdavimler` sekmesi bulunur.
-- Genel bakış kartları, arama, seviye/ödül filtresi, müşteri listesi ve detay paneli vardır.
-- Müşteri seçildiğinde QR placeholder, ziyaret geçmişi, aktif ödüller ve admin notu güncellenir.
-- `Ziyaret ekle` ve `Ödülü kullandır` butonları sadece local mock state değiştirir; gerçek kayıt oluşturmaz.
-- Ödül kuralları, kampanyalar ve ayarlar alanları UI taslak olarak sunuma hazırdır.
+- Giriş yöntemi telefon numarası + şifredir.
+- `Beni hatırla`, `Şifremi unuttum?` ve Google ile devam UI seçenekleri bulunur.
+- Telefon ve şifre doluysa mock state giriş başarılı kabul edilir.
 
-## Mock Data
+## Kayıt Akışı
 
-Prototipte beş örnek müşteri vardır:
+1. Telefon numarası alınır.
+2. 6 haneli kod onay ekranı gösterilir.
+3. Şifre ve şifre tekrar alanları doğrulanır.
+4. Profil tamamlanır: ad soyad, profil adı, doğum tarihi, e-posta.
+5. KVKK onayı zorunlu, kampanya bildirimi opsiyoneldir.
+6. Başarı ekranından `Kartımı Gör` ile dashboard açılır.
 
-- Elif Yılmaz: Gold, 6/10, aktif
-- Mehmet Kaya: Silver, 10/10, ödül hazır
-- Ayşe Demir: Yeni, 1/10, yeni kayıt
-- Burak Çelik: Gold, ödül kullanıldı
-- Zeynep Arslan: Silver, 8/10, 2 ziyaret kaldı
+## Dashboard
+
+Giriş sonrası landing kapanır ve Müdavim paneli açılır:
+
+- Müdavim Kartım
+- QR / müşteri kodu
+- Ziyaret ilerlemesi
+- Aktif ödül
+- Ödüllerim
+- Kampanyalar
+- Geçmiş ziyaretler
+- Profil
+
+Kart dili nötr tutulur: kişi adı yerine `Müdavim Kartım`, `Gold Müdavim`, `THM-4821`, `Kasada kodunu okut` gibi ürün dili kullanılır.
+
+## Mock State
+
+Mock state şu alanları taşır:
+
+- `memberCode`
+- `memberLevel`
+- `visitCount`
+- `rewardTarget`
+- `activeReward`
+- `recentVisits`
+- `profile`
+- `campaigns`
+
+Gerçek veri yazılmaz; local UI state yalnızca sunum davranışı sağlar.
+
+## Scroll ve Header
+
+- Header 72-88px aralığında kompakt tutulur.
+- Modal kapalıyken body scroll açıktır.
+- Modal açıkken body scroll kilitlenir, kapanınca tekrar açılır.
+- Mobilde yatay taşma engellenir.
 
 ## Backend Fazına Geçiş
 
-- Müşteri, ziyaret, ödül, kampanya ve ayar şemaları tanımlanmalı.
-- Admin CRUD ve kasada QR doğrulama endpointleri eklenmeli.
-- Gerçek auth, KVKK/onay metinleri, rate limit ve audit log tasarlanmalı.
-- Mock state yerine canonical store/API kullanılmalı.
-- QR kodları tek kullanımlık veya imzalı doğrulama modeliyle güvenceye alınmalı.
-
-## Sonraki Faz Önerileri
-
-1. Store şeması ve migration.
-2. Admin müşteri/ödül CRUD.
-3. Kasada QR okutma ve personel işlem ekranı.
-4. Public müşteri doğrulama ve profil API.
-5. Bildirim, doğum günü kampanyası ve segment bazlı ödüller.
+- Gerçek SMS OTP sağlayıcı entegrasyonu.
+- Telefon + şifre auth ve session yönetimi.
+- KVKK/onay kayıtları.
+- QR doğrulama ve kasada okutma akışı.
+- Admin panelde kampanya ve ödül kuralları yönetimi.
+- Admin panelde “Bugün doğum günü olan müdavimler” alanı.
+- Favori içecek alanı ve kampanya bildirim tercihleri.

@@ -18,13 +18,16 @@
       <img src="/assets/brand/logo-primary.png" alt="Tahmisçi">
     </a>
     <nav class="mudavim-nav" aria-label="Müdavim bağlantıları">
-      <a href="#gate" data-guest-nav>Başlangıç</a>
       <button type="button" data-auth-open="login" data-guest-nav>Giriş Yap</button>
+      <button type="button" data-auth-open="register-phone" data-guest-nav>Kayıt Ol</button>
+      <a href="#campaigns" data-guest-nav>Kampanyalar</a>
       <a href="/" data-guest-nav>Siteye Dön</a>
       <a href="#card" data-member-nav hidden>Kartım</a>
       <a href="#rewards" data-member-nav hidden>Ödüller</a>
       <a href="#history" data-member-nav hidden>Geçmiş</a>
+      <a href="#profile" data-member-nav hidden>Profil</a>
       <button type="button" data-logout data-member-nav hidden>Çıkış</button>
+      <a href="/" data-member-nav hidden>Siteye Dön</a>
     </nav>
   </header>
 
@@ -38,31 +41,18 @@
           <span><i class="fas fa-qrcode" aria-hidden="true"></i> Dijital QR kart</span>
           <span><i class="fas fa-seedling" aria-hidden="true"></i> Ziyaret takibi</span>
           <span><i class="fas fa-cake-candles" aria-hidden="true"></i> Tatlı hakkı</span>
+          <span><i class="fas fa-gift" aria-hidden="true"></i> Doğum günü avantajı</span>
         </div>
         <div class="mudavim-actions">
           <button type="button" class="primary-action" data-auth-open="login">Giriş Yap</button>
-          <button type="button" class="secondary-action" data-auth-open="register">Kayıt Ol</button>
+          <button type="button" class="secondary-action" data-auth-open="register-phone">Kayıt Ol</button>
+        </div>
+        <div class="landing-campaigns" id="campaigns" aria-label="Müdavim kampanyaları">
+          <span>İlk kayıt bonusu</span>
+          <span>Çift puan günleri</span>
+          <span>Favori içeceğini hatırla</span>
         </div>
       </div>
-
-      <aside class="gate-entry-card" aria-label="Müdavim giriş kapısı">
-        <div class="gate-entry-visual">
-          <img src="/assets/brand/logo-compact.png" alt="" aria-hidden="true">
-          <span>10 içecekte</span>
-          <strong>1 tatlı hakkı</strong>
-        </div>
-        <div class="gate-entry-content">
-          <p class="eyebrow">Müdavim Kartını Aç</p>
-          <h2>Kasada kodunu okut</h2>
-          <p>Telefonla hızlı giriş yapabilir, Google ya da e-posta ile devam edebilirsin.</p>
-          <button class="mudavim-auth-cta" type="button" data-auth-open="phone">Telefonla Devam Et</button>
-          <button class="mudavim-auth-social" type="button" data-auth-open="google">
-            <i class="fab fa-google" aria-hidden="true"></i>
-            Google ile Devam Et
-          </button>
-          <button class="mudavim-auth-link" type="button" data-auth-open="login">E-posta ile giriş yap</button>
-        </div>
-      </aside>
     </section>
 
     <section class="mudavim-app" id="app" hidden>
@@ -123,13 +113,24 @@
           <div id="visitHistory" class="visit-list"></div>
         </article>
 
+        <article class="campaigns-card" id="dashboardCampaigns">
+          <div class="section-head">
+            <p class="eyebrow">Kampanyalar</p>
+            <h2>Müdavim fırsatları</h2>
+          </div>
+          <div id="campaignList" class="campaign-list"></div>
+        </article>
+
         <article class="profile-card" id="profile">
           <p class="eyebrow">Profil</p>
           <h2>Müdavim Profili</h2>
           <dl>
             <div><dt>Seviye</dt><dd id="profileLevel">Gold Müdavim</dd></div>
             <div><dt>Kod</dt><dd id="profileCode">THM-4821</dd></div>
-            <div><dt>Bildirim</dt><dd id="profileContact">Mock UI</dd></div>
+            <div><dt>Profil adı</dt><dd id="profileAlias">Belirtilmedi</dd></div>
+            <div><dt>Telefon</dt><dd id="profilePhone">Belirtilmedi</dd></div>
+            <div><dt>Doğum tarihi</dt><dd id="profileBirthDate">Belirtilmedi</dd></div>
+            <div><dt>E-posta</dt><dd id="profileEmail">Belirtilmedi</dd></div>
           </dl>
         </article>
       </div>
@@ -154,8 +155,8 @@
         <h2 id="mudavimAuthTitle">Giriş Yap</h2>
         <p>Hesabına giriş yap, kartını ve ödül ilerlemeni gör.</p>
         <label class="mudavim-auth-input">
-          <span>E-posta veya telefon</span>
-          <input id="loginIdentity" type="text" autocomplete="username" placeholder="mail@ornek.com veya 05xx xxx xx xx" required>
+          <span>Telefon numarası</span>
+          <input id="loginPhone" type="tel" inputmode="tel" autocomplete="username" placeholder="05xx xxx xx xx" required>
         </label>
         <label class="mudavim-auth-input">
           <span>Şifre</span>
@@ -173,28 +174,74 @@
           <i class="fab fa-google" aria-hidden="true"></i>
           Google ile Devam Et
         </button>
-        <button class="mudavim-auth-link" type="button" data-auth-open="register">Hesabın yok mu? Kayıt Ol</button>
+        <button class="mudavim-auth-link" type="button" data-auth-open="register-phone">Hesabın yok mu? Kayıt Ol</button>
       </form>
 
-      <form class="mudavim-auth-card" data-auth-step="register" hidden>
+      <div class="mudavim-auth-card" data-auth-step="forgot" hidden>
         <button class="mudavim-auth-back" type="button" data-auth-open="login">Geri</button>
-        <h2>Kayıt Ol</h2>
-        <p>Müdavim Kartını oluştur. Bu prototip gerçek kayıt yapmaz.</p>
-        <label class="mudavim-auth-input">
-          <span>Ad Soyad</span>
-          <input id="registerName" type="text" autocomplete="name" placeholder="Ad Soyad">
-        </label>
+        <h2>Şifre Sıfırlama</h2>
+        <p>Telefon numaranla şifre yenileme adımını başlatabilirsin.</p>
+        <button class="mudavim-auth-cta" type="button" data-auth-open="login">Girişe Dön</button>
+      </div>
+
+      <form class="mudavim-auth-card" data-auth-step="register-phone" hidden>
+        <button class="mudavim-auth-back" type="button" data-auth-open="login">Geri</button>
+        <h2>Telefon Numaranı Gir</h2>
+        <p>Bu numara Müdavim Kartın için kullanılacak.</p>
         <label class="mudavim-auth-input">
           <span>Telefon</span>
           <input id="registerPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="05xx xxx xx xx" required>
         </label>
-        <label class="mudavim-auth-input">
-          <span>E-posta</span>
-          <input id="registerEmail" type="email" autocomplete="email" placeholder="mail@ornek.com">
-        </label>
+        <button class="mudavim-auth-cta" type="submit">Kodu Gönder</button>
+      </form>
+
+      <form class="mudavim-auth-card" data-auth-step="register-otp" hidden>
+        <h2>Kodu Onayla</h2>
+        <p>Telefonuna gelen 6 haneli kodu gir.</p>
+        <div class="mudavim-otp" data-otp-group="register" aria-label="6 haneli kayıt doğrulama kodu">
+          <input type="text" inputmode="numeric" maxlength="1" aria-label="Kod 1">
+          <input type="text" inputmode="numeric" maxlength="1" aria-label="Kod 2">
+          <input type="text" inputmode="numeric" maxlength="1" aria-label="Kod 3">
+          <input type="text" inputmode="numeric" maxlength="1" aria-label="Kod 4">
+          <input type="text" inputmode="numeric" maxlength="1" aria-label="Kod 5">
+          <input type="text" inputmode="numeric" maxlength="1" aria-label="Kod 6">
+        </div>
+        <button class="mudavim-auth-cta" type="submit">Devam Et</button>
+      </form>
+
+      <form class="mudavim-auth-card" data-auth-step="register-password" hidden>
+        <h2>Şifre Oluştur</h2>
+        <p class="auth-hint">En az 6 karakter. Tekrar şifre eşleşmeli.</p>
         <label class="mudavim-auth-input">
           <span>Şifre</span>
           <input id="registerPassword" type="password" autocomplete="new-password" placeholder="En az 6 karakter" required>
+        </label>
+        <label class="mudavim-auth-input">
+          <span>Şifre tekrar</span>
+          <input id="registerPasswordConfirm" type="password" autocomplete="new-password" placeholder="Şifreni tekrar yaz" required>
+        </label>
+        <p class="auth-error" id="passwordError" hidden>Şifreler eşleşmeli ve en az 6 karakter olmalı.</p>
+        <button class="mudavim-auth-cta" type="submit">Devam Et</button>
+      </form>
+
+      <form class="mudavim-auth-card" data-auth-step="register-profile" hidden>
+        <h2>Profilini Tamamla</h2>
+        <p>Doğum gününde sana özel avantajlar sunabiliriz.</p>
+        <label class="mudavim-auth-input">
+          <span>Ad Soyad</span>
+          <input id="registerName" type="text" autocomplete="name" placeholder="Ad Soyad" required>
+        </label>
+        <label class="mudavim-auth-input">
+          <span>Profil adı</span>
+          <input id="registerAlias" type="text" placeholder="Profil adı" required>
+        </label>
+        <label class="mudavim-auth-input">
+          <span>Doğum tarihi</span>
+          <input id="registerBirthDate" type="date" required>
+        </label>
+        <label class="mudavim-auth-input">
+          <span>E-posta <em>isteğe bağlı</em></span>
+          <input id="registerEmail" type="email" autocomplete="email" placeholder="mail@ornek.com">
         </label>
         <label class="mudavim-auth-check">
           <input id="registerTerms" type="checkbox" required>
@@ -204,7 +251,7 @@
           <input id="registerCampaigns" type="checkbox">
           <span>Kampanya ve ödül bildirimlerini almak istiyorum.</span>
         </label>
-        <button class="mudavim-auth-cta" type="submit">Kartımı Oluştur</button>
+        <button class="mudavim-auth-cta" type="submit">Müdavim Kartımı Oluştur</button>
       </form>
 
       <form class="mudavim-auth-card" data-auth-step="phone" hidden>
@@ -219,9 +266,9 @@
       </form>
 
       <form class="mudavim-auth-card" data-auth-step="otp" hidden>
-        <h2>Kodu Gir</h2>
-        <p>Prototipte herhangi 6 haneli kod kabul edilir.</p>
-        <div class="mudavim-otp" aria-label="6 haneli doğrulama kodu">
+        <h2>Kodu Onayla</h2>
+        <p>Telefonuna gelen 6 haneli kodu gir.</p>
+        <div class="mudavim-otp" data-otp-group="login" aria-label="6 haneli doğrulama kodu">
           <input type="text" inputmode="numeric" maxlength="1" aria-label="Kod 1">
           <input type="text" inputmode="numeric" maxlength="1" aria-label="Kod 2">
           <input type="text" inputmode="numeric" maxlength="1" aria-label="Kod 3">

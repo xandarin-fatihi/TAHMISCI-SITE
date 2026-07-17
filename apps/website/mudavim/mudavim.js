@@ -6,24 +6,34 @@
     level: "Gold Müdavim",
     visitCount: 6,
     rewardTarget: 10,
-    activeReward: "Tatlı hakkı",
-    contactLabel: "Mock UI",
+    activeReward: "10 içecekte 1 tatlı hakkı",
+    profile: {
+      fullName: "",
+      alias: "",
+      phone: "",
+      birthDate: "",
+      email: ""
+    },
     recentVisits: [
-      { title: "Ziyaret işlendi", text: "+1 içecek" },
-      { title: "Ödül ilerlemesi", text: "6 / 10 ziyaret" },
-      { title: "Kasada okutuldu", text: "Müdavim kodu kullanıldı" }
+      { title: "12 Mayıs 2025", text: "Americano" },
+      { title: "9 Mayıs 2025", text: "Latte" },
+      { title: "6 Mayıs 2025", text: "Cappuccino" }
     ],
     rewards: [
-      { title: "Tatlı hakkı", text: "10 içecekte 1 tatlı hakkı" },
-      { title: "Doğum günü sürprizi", text: "Doğum günü ayında açılır" },
-      { title: "Özel dönem kampanyası", text: "Aktif olduğunda burada görünür" }
+      { title: "10 içecekte 1 tatlı hakkı", text: "Ödülüne az kaldı." },
+      { title: "Doğum günü avantajı", text: "Doğum gününde kasada özel avantajını sor." },
+      { title: "İlk kayıt bonusu", text: "Kartını ilk kullanımda aktif hale getir." }
+    ],
+    campaigns: [
+      { title: "Doğum günü avantajı", text: "Doğum gününde kasada özel avantajını sor." },
+      { title: "Çift puan günleri", text: "Seçili günlerde ziyaretlerin daha hızlı ilerler." },
+      { title: "Müdavimlere özel tatlı indirimi", text: "Aktif kampanyalar burada görünür." }
     ]
   };
 
   const auth = {
     isAuthenticated: false,
-    mode: "login",
-    pendingMode: "login",
+    registrationPhone: "",
     lastFocus: null
   };
 
@@ -33,16 +43,17 @@
   const gate = document.getElementById("gate");
   const app = document.getElementById("app");
   const bottomNav = document.querySelector(".mudavim-bottom-nav");
-  const otpInputs = overlay ? Array.from(overlay.querySelectorAll(".mudavim-otp input")) : [];
 
   document.querySelectorAll("[data-auth-open]").forEach((trigger) => {
+    if (trigger.closest("#mudavimAuthOverlay")) return;
     trigger.addEventListener("click", () => {
       const target = trigger.dataset.authOpen || "login";
       if (target === "google") {
-        openAuth("success", trigger, "login");
+        completeAuth("existing");
+        openAuth("success", trigger);
         return;
       }
-      openAuth(target, trigger, target);
+      openAuth(target, trigger);
     });
   });
 
@@ -63,6 +74,11 @@
   overlay?.querySelectorAll("[data-auth-open]").forEach((button) => {
     button.addEventListener("click", () => {
       const target = button.dataset.authOpen || "login";
+      if (target === "google") {
+        completeAuth("existing");
+        showAuthStep("success");
+        return;
+      }
       showAuthStep(target);
     });
   });
@@ -76,41 +92,72 @@
 
   overlay?.querySelector("[data-auth-step='login']")?.addEventListener("submit", (event) => {
     event.preventDefault();
+    const phone = readValue("loginPhone");
+    const password = readValue("loginPassword");
+    if (!phone || !password) return focusFirstEmpty(["loginPhone", "loginPassword"]);
     memberState.visitCount = 6;
     memberState.level = "Gold Müdavim";
-    memberState.contactLabel = readValue("loginIdentity") || "Müdavim hesabı";
+    memberState.profile.phone = phone;
     completeAuth("existing");
   });
 
-  overlay?.querySelector("[data-auth-step='register']")?.addEventListener("submit", (event) => {
+  overlay?.querySelector("[data-auth-step='register-phone']")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const phone = readValue("registerPhone");
+    if (!phone) return focusById("registerPhone");
+    auth.registrationPhone = phone;
+    clearOtp("register");
+    showAuthStep("register-otp");
+  });
+
+  overlay?.querySelector("[data-auth-step='register-otp']")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!isOtpComplete("register")) return focusFirstOtp("register");
+    showAuthStep("register-password");
+  });
+
+  overlay?.querySelector("[data-auth-step='register-password']")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const password = readValue("registerPassword");
+    const confirm = readValue("registerPasswordConfirm");
+    const error = document.getElementById("passwordError");
+    const valid = password.length >= 6 && password === confirm;
+    if (error) error.hidden = valid;
+    if (!valid) return focusById(password.length < 6 ? "registerPassword" : "registerPasswordConfirm");
+    showAuthStep("register-profile");
+  });
+
+  overlay?.querySelector("[data-auth-step='register-profile']")?.addEventListener("submit", (event) => {
     event.preventDefault();
     const terms = document.getElementById("registerTerms");
+    const required = ["registerName", "registerAlias", "registerBirthDate"];
+    if (!required.every(readValue)) return focusFirstEmpty(required);
     if (terms && !terms.checked) {
       terms.focus();
       return;
     }
-    memberState.visitCount = 0;
-    memberState.level = "Yeni Müdavim";
-    memberState.contactLabel = readValue("registerPhone") || readValue("registerEmail") || "Yeni müdavim";
+    memberState.profile = {
+      fullName: readValue("registerName"),
+      alias: readValue("registerAlias"),
+      phone: auth.registrationPhone,
+      birthDate: readValue("registerBirthDate"),
+      email: readValue("registerEmail") || "Belirtilmedi"
+    };
     completeAuth("new");
   });
 
   overlay?.querySelector("[data-auth-step='phone']")?.addEventListener("submit", (event) => {
     event.preventDefault();
-    memberState.contactLabel = readValue("mudavimPhone") || "Telefon doğrulandı";
-    auth.pendingMode = "phone";
-    clearOtp();
+    const phone = readValue("mudavimPhone");
+    if (!phone) return focusById("mudavimPhone");
+    memberState.profile.phone = phone;
+    clearOtp("login");
     showAuthStep("otp");
   });
 
   overlay?.querySelector("[data-auth-step='otp']")?.addEventListener("submit", (event) => {
     event.preventDefault();
-    const code = otpInputs.map((input) => input.value).join("");
-    if (code.length < 6) {
-      const firstEmpty = otpInputs.find((input) => !input.value) || otpInputs[0];
-      firstEmpty?.focus();
-      return;
-    }
+    if (!isOtpComplete("login")) return focusFirstOtp("login");
     memberState.visitCount = 6;
     memberState.level = "Gold Müdavim";
     completeAuth("existing");
@@ -122,30 +169,10 @@
     document.getElementById("card")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
-  otpInputs.forEach((input, index) => {
-    input.addEventListener("input", () => {
-      input.value = input.value.replace(/\D/g, "").slice(0, 1);
-      if (input.value && otpInputs[index + 1]) otpInputs[index + 1].focus();
-    });
-    input.addEventListener("keydown", (event) => {
-      if (event.key === "Backspace" && !input.value && otpInputs[index - 1]) {
-        otpInputs[index - 1].focus();
-      }
-    });
-    input.addEventListener("paste", (event) => {
-      const text = event.clipboardData?.getData("text")?.replace(/\D/g, "").slice(0, 6);
-      if (!text) return;
-      event.preventDefault();
-      otpInputs.forEach((field, fieldIndex) => {
-        field.value = text[fieldIndex] || "";
-      });
-      otpInputs[Math.min(text.length, 6) - 1]?.focus();
-    });
-  });
+  initOtpInputs();
 
-  function openAuth(step, trigger, mode) {
+  function openAuth(step, trigger) {
     if (!overlay) return;
-    auth.mode = mode || step || "login";
     auth.lastFocus = trigger || document.activeElement;
     overlay.hidden = false;
     document.body.classList.add("auth-open");
@@ -172,8 +199,11 @@
   }
 
   function completeAuth(kind) {
-    const isNew = kind === "new";
-    const progressText = isNew ? "0 / 10 başlangıç" : `${memberState.visitCount} / ${memberState.rewardTarget} ziyaret`;
+    if (kind === "new") {
+      memberState.visitCount = 0;
+      memberState.level = "Gold Müdavim";
+    }
+    const progressText = `${memberState.visitCount} / ${memberState.rewardTarget} ziyaret`;
     setText("authSuccessCode", memberState.code);
     setText("authSuccessProgress", progressText);
     renderDashboard();
@@ -210,11 +240,14 @@
     setText("progressCount", String(memberState.visitCount));
     setText("progressRemain", remainingText);
     setText("progressText", remainingText);
-    setText("activeRewardTitle", remaining === 0 ? "Ödülün hazır" : memberState.activeReward);
-    setText("activeRewardText", remaining === 0 ? "Tatlı hakkını kasada kullanabilirsin." : `${remaining} ziyaret sonra ödülün hazır.`);
+    setText("activeRewardTitle", memberState.activeReward);
+    setText("activeRewardText", remaining === 0 ? "Tatlı hakkını kasada kullanabilirsin." : `Ödülüne az kaldı. ${remaining} ziyaret kaldı.`);
     setText("profileLevel", memberState.level);
     setText("profileCode", memberState.code);
-    setText("profileContact", memberState.contactLabel);
+    setText("profileAlias", memberState.profile.alias || "Belirtilmedi");
+    setText("profilePhone", memberState.profile.phone || "Belirtilmedi");
+    setText("profileBirthDate", formatDate(memberState.profile.birthDate));
+    setText("profileEmail", memberState.profile.email || "Belirtilmedi");
 
     const bar = document.getElementById("progressBar");
     if (bar) bar.style.width = `${percent}%`;
@@ -228,6 +261,7 @@
 
     renderCards("rewardList", memberState.rewards, "reward-card");
     renderCards("visitHistory", memberState.recentVisits, "visit-item");
+    renderCards("campaignList", memberState.campaigns, "campaign-card");
   }
 
   function renderCards(id, items, className) {
@@ -241,14 +275,70 @@
     )).join("");
   }
 
-  function clearOtp() {
-    otpInputs.forEach((input) => {
+  function initOtpInputs() {
+    if (!overlay) return;
+    overlay.querySelectorAll(".mudavim-otp").forEach((group) => {
+      const inputs = Array.from(group.querySelectorAll("input"));
+      inputs.forEach((input, index) => {
+        input.addEventListener("input", () => {
+          input.value = input.value.replace(/\D/g, "").slice(0, 1);
+          if (input.value && inputs[index + 1]) inputs[index + 1].focus();
+        });
+        input.addEventListener("keydown", (event) => {
+          if (event.key === "Backspace" && !input.value && inputs[index - 1]) {
+            inputs[index - 1].focus();
+          }
+        });
+        input.addEventListener("paste", (event) => {
+          const text = event.clipboardData?.getData("text")?.replace(/\D/g, "").slice(0, inputs.length);
+          if (!text) return;
+          event.preventDefault();
+          inputs.forEach((field, fieldIndex) => {
+            field.value = text[fieldIndex] || "";
+          });
+          inputs[Math.min(text.length, inputs.length) - 1]?.focus();
+        });
+      });
+    });
+  }
+
+  function otpInputs(groupName) {
+    return Array.from(overlay?.querySelectorAll(`[data-otp-group='${groupName}'] input`) || []);
+  }
+
+  function clearOtp(groupName) {
+    otpInputs(groupName).forEach((input) => {
       input.value = "";
     });
   }
 
+  function isOtpComplete(groupName) {
+    return otpInputs(groupName).map((input) => input.value).join("").length === 6;
+  }
+
+  function focusFirstOtp(groupName) {
+    const target = otpInputs(groupName).find((input) => !input.value) || otpInputs(groupName)[0];
+    target?.focus();
+  }
+
+  function focusFirstEmpty(ids) {
+    const targetId = ids.find((id) => !readValue(id));
+    if (targetId) focusById(targetId);
+  }
+
+  function focusById(id) {
+    document.getElementById(id)?.focus();
+  }
+
   function readValue(id) {
     return document.getElementById(id)?.value.trim() || "";
+  }
+
+  function formatDate(value) {
+    if (!value) return "Belirtilmedi";
+    const date = new Date(`${value}T12:00:00`);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleDateString("tr-TR", { day: "2-digit", month: "long", year: "numeric" });
   }
 
   function setText(id, value) {
