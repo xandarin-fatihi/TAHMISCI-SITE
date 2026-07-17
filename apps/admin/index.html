@@ -46,6 +46,7 @@
         <a href="#recipeEditorCard" data-panel-section="recipe">Reçete Düzenleme</a>
         <a href="#siteEditorCard" data-panel-section="site">SİTE DÜZENLEME</a>
         <a href="#staffAccessCard" data-panel-section="staffAccess">Kullanıcı Yetkilendirme</a>
+        <a href="#mudavimCard" data-panel-section="mudavim">Müdavimler</a>
         <a href="#feedbackCard" data-panel-section="feedback">Dilek & Şikayet</a>
         <a href="#panelSettingsCard" data-panel-section="settings">Ayarlar</a>
       </nav>
@@ -1321,6 +1322,82 @@
                   <button type="button" data-staff-activity-tab="security">Guvenlik</button>
                 </div>
                 <div class="staff-activity-list" id="staffActivityList"></div>
+              </section>
+            </div>
+          </section>
+
+          <section class="panel-card section-panel mudavim-admin-panel" id="mudavimCard" data-section-panel="mudavim">
+            <div class="card-head">
+              <div>
+                <p class="eyebrow">Sadakat Sistemi</p>
+                <h3>Müdavimler</h3>
+              </div>
+              <a class="line-action" href="/mudavim" target="_blank" rel="noopener noreferrer">Müşteri Ekranı</a>
+            </div>
+
+            <div class="mudavim-stat-grid" id="mudavimStats"></div>
+
+            <div class="mudavim-admin-layout">
+              <section class="mudavim-list-panel">
+                <div class="mudavim-panel-head">
+                  <div>
+                    <h4>Müşteri listesi</h4>
+                    <span>Mock data ile çalışan UI prototipi</span>
+                  </div>
+                </div>
+                <div class="form-grid three mudavim-filters">
+                  <label>
+                    <span>Arama</span>
+                    <input id="mudavimSearch" type="search" placeholder="Ad, telefon, kod ara">
+                  </label>
+                  <label>
+                    <span>Seviye</span>
+                    <select id="mudavimLevelFilter">
+                      <option value="all">Tüm seviyeler</option>
+                      <option value="Bronz">Bronz</option>
+                      <option value="Gümüş">Gümüş</option>
+                      <option value="Altın">Altın</option>
+                      <option value="Yeni">Yeni</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Ödül durumu</span>
+                    <select id="mudavimRewardFilter">
+                      <option value="all">Tümü</option>
+                      <option value="ready">Ödülü hazır</option>
+                      <option value="active">Aktif ilerleme</option>
+                      <option value="used">Ödül kullanmış</option>
+                      <option value="new">Yeni kayıt</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="mudavim-customer-list" id="mudavimCustomerList"></div>
+              </section>
+
+              <aside class="mudavim-detail-panel" id="mudavimCustomerDetail"></aside>
+            </div>
+
+            <div class="mudavim-admin-grid">
+              <section class="mudavim-config-card">
+                <div class="mudavim-panel-head">
+                  <h4>Ödül kuralları</h4>
+                  <span>UI taslak</span>
+                </div>
+                <div id="mudavimRewardRules"></div>
+              </section>
+              <section class="mudavim-config-card">
+                <div class="mudavim-panel-head">
+                  <h4>Kampanyalar</h4>
+                  <span>UI taslak</span>
+                </div>
+                <div id="mudavimCampaigns"></div>
+              </section>
+              <section class="mudavim-config-card">
+                <div class="mudavim-panel-head">
+                  <h4>Ayarlar</h4>
+                  <span>UI taslak</span>
+                </div>
+                <div id="mudavimSettings"></div>
               </section>
             </div>
           </section>

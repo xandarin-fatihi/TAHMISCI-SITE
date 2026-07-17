@@ -350,6 +350,7 @@ body[data-panel-theme="dark"] select {
 .panel-nav a[data-panel-section="menuOutput"]::before { content: "TV"; font-size: 10px; }
 .panel-nav a[data-panel-section="recipe"]::before { content: "R"; }
 .panel-nav a[data-panel-section="staffAccess"]::before { content: "U"; }
+.panel-nav a[data-panel-section="mudavim"]::before { content: "M"; }
 .panel-nav a[data-panel-section="feedback"]::before { content: "!"; }
 .panel-nav a[data-panel-section="settings"]::before { content: "⚙"; }
 
@@ -3123,4 +3124,334 @@ body[data-panel-theme="dark"] .line-action {
 .site-editor-card details > .asset-row,
 .site-editor-card details > .toggle-row {
   margin-top: 14px;
+}
+
+/* Mudavim UI prototype */
+.mudavim-admin-panel {
+  display: grid;
+  gap: 16px;
+}
+
+.mudavim-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mudavim-stat-card,
+.mudavim-list-panel,
+.mudavim-detail-panel,
+.mudavim-config-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-soft);
+  box-shadow: var(--shadow);
+}
+
+.mudavim-stat-card {
+  min-height: 96px;
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  padding: 16px;
+}
+
+.mudavim-stat-card span,
+.mudavim-panel-head span,
+.mudavim-customer-row small,
+.mudavim-row-meta small,
+.mudavim-detail-head span,
+.mudavim-detail-grid span,
+.mudavim-visit-list small,
+.mudavim-note,
+.mudavim-rule-card span,
+.mudavim-campaign-card span {
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.mudavim-stat-card strong {
+  color: var(--ink);
+  font-size: 28px;
+  line-height: 1;
+}
+
+.mudavim-admin-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(340px, 0.95fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.mudavim-list-panel,
+.mudavim-detail-panel,
+.mudavim-config-card {
+  padding: 14px;
+}
+
+.mudavim-panel-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.mudavim-panel-head h4 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 15px;
+}
+
+.mudavim-filters {
+  margin-bottom: 12px;
+}
+
+.mudavim-customer-list,
+.mudavim-visit-list,
+#mudavimRewardRules,
+#mudavimCampaigns,
+#mudavimSettings {
+  display: grid;
+  gap: 9px;
+}
+
+.mudavim-customer-list {
+  max-height: min(56vh, 640px);
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.mudavim-customer-row {
+  width: 100%;
+  min-height: 78px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(118px, auto);
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  padding: 11px;
+  text-align: left;
+}
+
+.mudavim-customer-row:hover,
+.mudavim-customer-row.is-active {
+  border-color: var(--brand);
+  background: color-mix(in srgb, var(--brand) 12%, var(--surface));
+}
+
+.mudavim-customer-row > span {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.mudavim-customer-row strong,
+.mudavim-customer-row small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mudavim-customer-row em,
+.mudavim-detail-head > strong,
+.mudavim-chip-list span,
+.mudavim-rule-card em,
+.mudavim-campaign-card em {
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--brand) 16%, transparent);
+  color: var(--brand);
+  padding: 6px 9px;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.mudavim-row-meta {
+  justify-items: end;
+  text-align: right;
+}
+
+.mudavim-row-meta b {
+  color: var(--brand);
+  font-size: 0.78rem;
+}
+
+.mudavim-detail-panel {
+  position: sticky;
+  top: 14px;
+  display: grid;
+  gap: 14px;
+}
+
+.mudavim-detail-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mudavim-detail-head h4 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 22px;
+}
+
+.mudavim-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.mudavim-detail-grid span {
+  display: grid;
+  gap: 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 10px;
+}
+
+.mudavim-detail-grid b {
+  color: var(--ink);
+  font-size: 18px;
+}
+
+.mudavim-admin-qr {
+  width: min(190px, 100%);
+  aspect-ratio: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 7px;
+  place-self: center;
+  border-radius: 14px;
+  background: var(--brand);
+  padding: 14px;
+}
+
+.mudavim-admin-qr i {
+  border-radius: 5px;
+  background: var(--on-brand);
+}
+
+.mudavim-admin-qr i.is-soft {
+  opacity: 0.18;
+}
+
+.mudavim-progress-line {
+  display: grid;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.mudavim-progress-line > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.mudavim-progress-line strong {
+  color: var(--ink);
+}
+
+.mudavim-progress-track {
+  overflow: hidden;
+  height: 10px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--brand) 14%, var(--surface));
+}
+
+.mudavim-progress-track > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--brand);
+}
+
+.mudavim-detail-panel h5 {
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+
+.mudavim-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.mudavim-visit-list article,
+.mudavim-rule-card,
+.mudavim-campaign-card,
+.mudavim-empty {
+  display: grid;
+  gap: 5px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 11px;
+}
+
+.mudavim-visit-list time {
+  color: var(--brand);
+  font-size: 0.76rem;
+  font-weight: 900;
+}
+
+.mudavim-visit-list strong,
+.mudavim-rule-card strong,
+.mudavim-campaign-card strong {
+  color: var(--ink);
+}
+
+.mudavim-note {
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  padding: 11px;
+  line-height: 1.5;
+}
+
+.mudavim-admin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.mudavim-config-card label {
+  margin-top: 8px;
+}
+
+@media (max-width: 1180px) {
+  .mudavim-stat-grid,
+  .mudavim-admin-layout,
+  .mudavim-admin-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mudavim-detail-panel {
+    position: static;
+  }
+}
+
+@media (max-width: 760px) {
+  .mudavim-stat-grid,
+  .mudavim-detail-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mudavim-customer-row {
+    grid-template-columns: 1fr;
+  }
+
+  .mudavim-row-meta {
+    justify-items: start;
+    text-align: left;
+  }
 }

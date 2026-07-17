@@ -6,6 +6,7 @@ const path = require("path");
 const projectRoot = path.resolve(__dirname, "..", "..", "..");
 const pages = [
   "apps/website/index.html",
+  "apps/website/mudavim/index.html",
   "apps/admin/index.html",
   "apps/qr-menu/index.html",
   "apps/recipe/index.html",
@@ -48,6 +49,7 @@ function routeFile(clean) {
   if (clean.startsWith("shared/")) return path.join(projectRoot, clean);
   if (clean.startsWith("styles/")) return path.join(projectRoot, "apps", "website", clean);
   if (clean.startsWith("scripts/")) return path.join(projectRoot, "apps", "website", clean);
+  if (clean.startsWith("mudavim/")) return path.join(projectRoot, "apps", "website", clean);
   if (clean.startsWith("panel/")) return path.join(projectRoot, "apps", "admin", clean.slice("panel/".length));
   if (clean.startsWith("recete/")) return path.join(projectRoot, "apps", "recipe", clean.slice("recete/".length));
   if (clean.startsWith("qr-menu/")) return path.join(projectRoot, "apps", "qr-menu", clean.slice("qr-menu/".length));

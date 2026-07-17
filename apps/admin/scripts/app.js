@@ -38,6 +38,7 @@
     recipe: "Reçete Düzenleme",
     site: "Site Düzenleme",
     staffAccess: "Kullanıcı yetkilendirme",
+    mudavim: "Müdavimler",
     feedback: "Dilek & şikayet",
     settings: "Ayarlar"
   };
@@ -77,6 +78,98 @@
     { id: "menu", label: { tr: "Menü", en: "Menu" }, url: "#menu", icon: "fas fa-utensils", visible: true, order: 1 },
     { id: "about", label: { tr: "Hakkımızda", en: "About" }, url: "#about", icon: "fas fa-mug-hot", visible: true, order: 2 },
     { id: "contact", label: { tr: "İletişim", en: "Contact" }, url: "#contact", icon: "fas fa-phone", visible: true, order: 3 }
+  ];
+  const MUDAVIM_CUSTOMERS = [
+    {
+      id: "mud-1001",
+      name: "Derya Yılmaz",
+      contact: "0552 295 46 34",
+      level: "Altın",
+      code: "MUD-2406",
+      totalVisits: 18,
+      cycleVisits: 10,
+      rewardsEarned: 2,
+      rewardStatus: "ready",
+      lastVisit: "2026-07-16",
+      note: "Soğuk kahveleri tercih ediyor. Ödülü hazır.",
+      activeRewards: ["10 içecekte 1 tatlı hakkı"],
+      visits: [
+        { date: "2026-07-16", type: "İçecek ziyareti", change: "+1 ziyaret", note: "Latte" },
+        { date: "2026-07-10", type: "İçecek ziyareti", change: "+1 ziyaret", note: "Mango frozen" },
+        { date: "2026-07-02", type: "Ödül", change: "Ödül hazır", note: "10. içecek tamamlandı" }
+      ]
+    },
+    {
+      id: "mud-1002",
+      name: "Mert Aksoy",
+      contact: "mert@example.com",
+      level: "Gümüş",
+      code: "MUD-1832",
+      totalVisits: 11,
+      cycleVisits: 6,
+      rewardsEarned: 1,
+      rewardStatus: "active",
+      lastVisit: "2026-07-14",
+      note: "4 ziyaret kaldı.",
+      activeRewards: [],
+      visits: [
+        { date: "2026-07-14", type: "İçecek ziyareti", change: "+1 ziyaret", note: "Americano" },
+        { date: "2026-07-08", type: "İçecek ziyareti", change: "+1 ziyaret", note: "Cold brew" }
+      ]
+    },
+    {
+      id: "mud-1003",
+      name: "Selin Kara",
+      contact: "selin@example.com",
+      level: "Bronz",
+      code: "MUD-0924",
+      totalVisits: 5,
+      cycleVisits: 5,
+      rewardsEarned: 0,
+      rewardStatus: "active",
+      lastVisit: "2026-07-12",
+      note: "Tatlı kampanyalarına ilgili.",
+      activeRewards: [],
+      visits: [
+        { date: "2026-07-12", type: "İçecek ziyareti", change: "+1 ziyaret", note: "Mocha" },
+        { date: "2026-07-04", type: "İçecek ziyareti", change: "+1 ziyaret", note: "Latte" }
+      ]
+    },
+    {
+      id: "mud-1004",
+      name: "Can Demir",
+      contact: "0532 000 11 22",
+      level: "Altın",
+      code: "MUD-7710",
+      totalVisits: 27,
+      cycleVisits: 2,
+      rewardsEarned: 3,
+      rewardStatus: "used",
+      lastVisit: "2026-07-09",
+      note: "Son ödülünü limonlu cheesecake için kullandı.",
+      activeRewards: [],
+      visits: [
+        { date: "2026-07-09", type: "Ödül kullanımı", change: "Tatlı hakkı kullanıldı", note: "Limonlu cheesecake" },
+        { date: "2026-07-07", type: "İçecek ziyareti", change: "+1 ziyaret", note: "Espresso" }
+      ]
+    },
+    {
+      id: "mud-1005",
+      name: "Ece Arslan",
+      contact: "ece@example.com",
+      level: "Yeni",
+      code: "MUD-4301",
+      totalVisits: 1,
+      cycleVisits: 1,
+      rewardsEarned: 0,
+      rewardStatus: "new",
+      lastVisit: "2026-07-17",
+      note: "Yeni kayıt, ilk ziyaret işlendi.",
+      activeRewards: [],
+      visits: [
+        { date: "2026-07-17", type: "Yeni kayıt", change: "+1 ziyaret", note: "Müdavim kaydı oluşturuldu" }
+      ]
+    }
   ];
   const memoryStore = {};
   const FONT_OPTIONS = [
@@ -363,6 +456,10 @@
     staffUserFilter: "active",
     staffActivityTab: "login",
     staffMessage: "",
+    mudavimSearch: "",
+    mudavimLevelFilter: "all",
+    mudavimRewardFilter: "all",
+    selectedMudavimCustomerId: "mud-1001",
     selectedMenuOutputSectionId: "",
     menuOutputZoom: 0,
     menuOutputControlTab: "sections",
@@ -462,6 +559,8 @@
       "staffDifficulty", "staffProductPicker", "staffAdminNote", "staffAssignmentCreateButton", "staffAssignmentMessage",
       "staffAssignmentSummary", "staffAssignmentList", "staffAssignmentCount", "staffAssignmentDetail",
       "staffActivityTabs", "staffActivityList", "staffActivityCount",
+      "mudavimStats", "mudavimSearch", "mudavimLevelFilter", "mudavimRewardFilter", "mudavimCustomerList",
+      "mudavimCustomerDetail", "mudavimRewardRules", "mudavimCampaigns", "mudavimSettings",
       "feedbackInsights", "feedbackTabs", "feedbackList", "refreshFeedbackButton", "clearFeedbackButton", "jsonOutput", "copyJsonButton",
       "siteHeroKicker", "siteHeroTitle", "siteHeroSubtitle", "siteHeroImageUrl",
       "siteStoryTitle", "siteStoryText", "siteStoryPointOneTitle", "siteStoryPointOneText",
@@ -668,6 +767,32 @@
     els.feedbackTabs.addEventListener("click", handleFeedbackTabs);
     els.refreshFeedbackButton.addEventListener("click", refreshFeedbackInbox);
     if (els.clearFeedbackButton) els.clearFeedbackButton.addEventListener("click", clearFeedbackItems);
+    if (els.mudavimSearch) {
+      els.mudavimSearch.addEventListener("input", () => {
+        state.mudavimSearch = els.mudavimSearch.value.trim();
+        renderMudavimPanel();
+      });
+    }
+    if (els.mudavimLevelFilter) {
+      els.mudavimLevelFilter.addEventListener("change", () => {
+        state.mudavimLevelFilter = els.mudavimLevelFilter.value || "all";
+        renderMudavimPanel();
+      });
+    }
+    if (els.mudavimRewardFilter) {
+      els.mudavimRewardFilter.addEventListener("change", () => {
+        state.mudavimRewardFilter = els.mudavimRewardFilter.value || "all";
+        renderMudavimPanel();
+      });
+    }
+    if (els.mudavimCustomerList) {
+      els.mudavimCustomerList.addEventListener("click", (event) => {
+        const row = event.target.closest("[data-mudavim-customer-id]");
+        if (!row) return;
+        state.selectedMudavimCustomerId = row.dataset.mudavimCustomerId;
+        renderMudavimPanel();
+      });
+    }
     window.addEventListener("storage", (event) => {
       if (event.key === FEEDBACK_STORAGE_KEY) renderFeedbackInbox();
     });
@@ -2035,6 +2160,7 @@
     renderForms();
     renderRecipeEditor();
     renderStaffAccess();
+    renderMudavimPanel();
     renderMenuOutput();
     renderProductImportReport();
     renderRecipeImportReport();
@@ -2055,7 +2181,7 @@
     if (els.contentGrid) els.contentGrid.hidden = activeSection === "overview" || activeSection === "bulkPrice";
     if (els.panelShell) els.panelShell.dataset.activeSection = activeSection;
     const previewColumn = document.querySelector(".preview-column");
-    const hidePreview = activeSection === "feedback" || activeSection === "site" || activeSection === "staffAccess" || activeSection === "menuOutput";
+    const hidePreview = activeSection === "feedback" || activeSection === "site" || activeSection === "staffAccess" || activeSection === "mudavim" || activeSection === "menuOutput";
     if (previewColumn) previewColumn.hidden = hidePreview;
     if (els.contentGrid) els.contentGrid.classList.toggle("is-wide", hidePreview);
     if (els.workspaceTitle) els.workspaceTitle.textContent = SECTION_TITLES[activeSection];
@@ -2256,6 +2382,182 @@
 
   function formatBulkPriceNumber(value) {
     return new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 2 }).format(Number(value));
+  }
+
+  function renderMudavimPanel() {
+    if (!els.mudavimCustomerList) return;
+    renderMudavimStats();
+    renderMudavimCustomerList();
+    renderMudavimCustomerDetail();
+    renderMudavimRewardRules();
+    renderMudavimCampaigns();
+    renderMudavimSettings();
+  }
+
+  function filteredMudavimCustomers() {
+    const query = normalizeText(state.mudavimSearch || "");
+    const level = state.mudavimLevelFilter || "all";
+    const reward = state.mudavimRewardFilter || "all";
+    return MUDAVIM_CUSTOMERS.filter((customer) => {
+      const searchText = normalizeText(`${customer.name} ${customer.contact} ${customer.code} ${customer.level}`);
+      const matchesQuery = !query || searchText.includes(query);
+      const matchesLevel = level === "all" || customer.level === level;
+      const matchesReward = reward === "all" || customer.rewardStatus === reward;
+      return matchesQuery && matchesLevel && matchesReward;
+    });
+  }
+
+  function renderMudavimStats() {
+    if (!els.mudavimStats) return;
+    const total = MUDAVIM_CUSTOMERS.length;
+    const active = MUDAVIM_CUSTOMERS.filter((customer) => customer.rewardStatus !== "new").length;
+    const monthVisits = MUDAVIM_CUSTOMERS.reduce((sum, customer) => sum + (customer.visits || []).filter((visit) => String(visit.date || "").startsWith("2026-07")).length, 0);
+    const rewards = MUDAVIM_CUSTOMERS.reduce((sum, customer) => sum + Number(customer.rewardsEarned || 0), 0);
+    const stats = [
+      ["Toplam müdavim", total],
+      ["Aktif müşteri", active],
+      ["Bu ay ziyaret", monthVisits],
+      ["Dağıtılan ödül", rewards]
+    ];
+    els.mudavimStats.innerHTML = stats.map(([label, value]) => (
+      `<article class="mudavim-stat-card"><span>${escapeHTML(label)}</span><strong>${escapeHTML(String(value))}</strong></article>`
+    )).join("");
+  }
+
+  function renderMudavimCustomerList() {
+    if (!els.mudavimCustomerList) return;
+    const customers = filteredMudavimCustomers();
+    if (!customers.some((customer) => customer.id === state.selectedMudavimCustomerId)) {
+      state.selectedMudavimCustomerId = customers[0]?.id || MUDAVIM_CUSTOMERS[0]?.id || "";
+    }
+    if (!customers.length) {
+      els.mudavimCustomerList.innerHTML = `<div class="mudavim-empty">Filtreye uygun müdavim yok.</div>`;
+      return;
+    }
+    els.mudavimCustomerList.innerHTML = customers.map((customer) => (
+      `<button class="mudavim-customer-row${customer.id === state.selectedMudavimCustomerId ? " is-active" : ""}" type="button" data-mudavim-customer-id="${escapeAttribute(customer.id)}">
+        <span>
+          <strong>${escapeHTML(customer.name)}</strong>
+          <small>${escapeHTML(customer.contact)}</small>
+        </span>
+        <em>${escapeHTML(customer.level)}</em>
+        <span class="mudavim-row-meta">
+          <b>${escapeHTML(formatMudavimRewardStatus(customer.rewardStatus))}</b>
+          <small>${escapeHTML(formatMudavimDate(customer.lastVisit))}</small>
+        </span>
+      </button>`
+    )).join("");
+  }
+
+  function renderMudavimCustomerDetail() {
+    if (!els.mudavimCustomerDetail) return;
+    const customer = MUDAVIM_CUSTOMERS.find((item) => item.id === state.selectedMudavimCustomerId) || MUDAVIM_CUSTOMERS[0];
+    if (!customer) {
+      els.mudavimCustomerDetail.innerHTML = `<div class="mudavim-empty">Müşteri seçimi bekleniyor.</div>`;
+      return;
+    }
+    const remain = Math.max(0, 10 - Number(customer.cycleVisits || 0));
+    const progress = Math.min(100, Number(customer.cycleVisits || 0) * 10);
+    els.mudavimCustomerDetail.innerHTML = `
+      <div class="mudavim-detail-head">
+        <div>
+          <p class="eyebrow">Müşteri detayı</p>
+          <h4>${escapeHTML(customer.name)}</h4>
+          <span>${escapeHTML(customer.contact)}</span>
+        </div>
+        <strong>${escapeHTML(customer.code)}</strong>
+      </div>
+      <div class="mudavim-detail-grid">
+        <span><b>${escapeHTML(customer.level)}</b> Seviye</span>
+        <span><b>${escapeHTML(String(customer.totalVisits))}</b> Toplam ziyaret</span>
+        <span><b>${escapeHTML(String(customer.rewardsEarned))}</b> Ödül</span>
+      </div>
+      <div class="mudavim-admin-qr" aria-label="QR placeholder">
+        ${Array.from({ length: 16 }, (_, index) => `<i class="${index % 3 === 0 ? "is-soft" : ""}"></i>`).join("")}
+      </div>
+      <div class="mudavim-progress-line">
+        <div><strong>${escapeHTML(String(customer.cycleVisits))} / 10 ziyaret</strong><span>${remain === 0 ? "Ödülün hazır" : `${remain} ziyaret kaldı`}</span></div>
+        <div class="mudavim-progress-track"><span style="width:${progress}%"></span></div>
+      </div>
+      <section>
+        <h5>Aktif ödüller</h5>
+        <div class="mudavim-chip-list">
+          ${(customer.activeRewards || []).length ? customer.activeRewards.map((reward) => `<span>${escapeHTML(reward)}</span>`).join("") : "<span>Aktif ödül yok</span>"}
+        </div>
+      </section>
+      <section>
+        <h5>Ziyaret geçmişi</h5>
+        <div class="mudavim-visit-list">
+          ${(customer.visits || []).map((visit) => `
+            <article>
+              <time>${escapeHTML(formatMudavimDate(visit.date))}</time>
+              <strong>${escapeHTML(visit.type)}</strong>
+              <span>${escapeHTML(visit.change)}</span>
+              <small>${escapeHTML(visit.note)}</small>
+            </article>
+          `).join("")}
+        </div>
+      </section>
+      <section>
+        <h5>Admin notu</h5>
+        <p class="mudavim-note">${escapeHTML(customer.note)}</p>
+      </section>
+    `;
+  }
+
+  function renderMudavimRewardRules() {
+    if (!els.mudavimRewardRules) return;
+    els.mudavimRewardRules.innerHTML = `
+      <article class="mudavim-rule-card">
+        <strong>10 içecek sonrası ödül</strong>
+        <span>11. alışverişte yanında tatlı hakkı.</span>
+        <em>Aktif</em>
+      </article>
+      <article class="mudavim-rule-card">
+        <strong>Kullanım limiti</strong>
+        <span>Ödül, kazanımdan sonra 30 gün içinde kullanılabilir.</span>
+        <em>UI taslak</em>
+      </article>
+    `;
+  }
+
+  function renderMudavimCampaigns() {
+    if (!els.mudavimCampaigns) return;
+    const campaigns = [
+      ["Doğum günü hediyesi", "Doğum günü ayında tek seferlik tatlı sürprizi.", "Planlandı"],
+      ["X ziyaret sonrası ödül", "Belirlenen ziyaret eşiğinde özel kahve teklifi.", "Taslak"],
+      ["Dönemsel kampanya", "Hafta içi sabah ziyaretlerini artıran kampanya.", "Pasif"]
+    ];
+    els.mudavimCampaigns.innerHTML = campaigns.map(([title, text, stateText]) => (
+      `<article class="mudavim-campaign-card"><strong>${escapeHTML(title)}</strong><span>${escapeHTML(text)}</span><em>${escapeHTML(stateText)}</em></article>`
+    )).join("");
+  }
+
+  function renderMudavimSettings() {
+    if (!els.mudavimSettings) return;
+    els.mudavimSettings.innerHTML = `
+      <label class="toggle-row"><input type="checkbox" checked disabled><span>QR kasada okutulsun</span></label>
+      <label class="toggle-row"><input type="checkbox" checked disabled><span>10 içecekte 1 tatlı hakkı gösterilsin</span></label>
+      <label><span>Müşteri ekranı metni</span><input type="text" value="Kasada kodunu okut" disabled></label>
+      <label><span>Seviye kuralı</span><input type="text" value="Bronz / Gümüş / Altın" disabled></label>
+    `;
+  }
+
+  function formatMudavimRewardStatus(status) {
+    const labels = {
+      ready: "Ödülü hazır",
+      active: "Aktif ilerleme",
+      used: "Ödül kullanmış",
+      new: "Yeni kayıt"
+    };
+    return labels[status] || "Aktif ilerleme";
+  }
+
+  function formatMudavimDate(value) {
+    if (!value) return "-";
+    const date = new Date(`${value}T12:00:00`);
+    if (Number.isNaN(date.getTime())) return value;
+    return date.toLocaleDateString("tr-TR", { day: "2-digit", month: "short", year: "numeric" });
   }
 
   function renderFeedbackInbox() {

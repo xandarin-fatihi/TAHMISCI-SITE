@@ -48,6 +48,7 @@ const siteRoot = path.join(projectRoot, "apps", "website");
 const adminRoot = path.join(projectRoot, "apps", "admin");
 const recipeRoot = path.join(projectRoot, "apps", "recipe");
 const qrMenuRoot = path.join(projectRoot, "apps", "qr-menu");
+const mudavimRoot = path.join(siteRoot, "mudavim");
 const authRoot = path.join(projectRoot, "apps", "auth");
 const assetsRoot = path.join(projectRoot, "public", "assets");
 const sharedRoot = path.join(projectRoot, "shared");
@@ -1588,6 +1589,11 @@ app.get("/", (req, res, next) => {
 
 app.get("/site", requireMainHost, (_req, res) => res.redirect(301, "/"));
 app.get("/site/", requireMainHost, (_req, res) => res.redirect(301, "/"));
+
+app.use("/mudavim", requireMainHost, express.static(mudavimRoot, {
+  ...staticOptions,
+  index: "index.html"
+}));
 
 app.use("/assets", requireKnownHost, express.static(assetsRoot, staticOptions));
 app.use("/shared", requireKnownHost, express.static(sharedRoot, staticOptions));
