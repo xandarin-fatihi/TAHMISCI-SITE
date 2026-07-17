@@ -1,48 +1,53 @@
 (function () {
   "use strict";
 
-  const member = {
-    name: "Elif Yılmaz",
-    contact: "elif@example.com",
-    level: "Gold Müdavim",
-    visits: 6,
-    usedRewards: 0,
+  const memberState = {
     code: "THM-4821",
-    rewards: {
-      active: [
-        { title: "Tatlı hakkı", text: "10 içecekte 1 tatlı hakkı" }
-      ],
-      locked: [
-        { title: "4 ziyaret kaldı", text: "Bir sonraki tatlı hakkına yaklaşıyorsun." },
-        { title: "Doğum günü hediyesi", text: "Doğum günü ayında açılır." }
-      ],
-      used: [
-        { title: "Kullanıldı", text: "Geçmiş ödül bulunmuyor." }
-      ]
-    }
+    level: "Gold Müdavim",
+    visitCount: 6,
+    rewardTarget: 10,
+    activeReward: "Tatlı hakkı",
+    contactLabel: "Mock UI",
+    recentVisits: [
+      { title: "Ziyaret işlendi", text: "+1 içecek" },
+      { title: "Ödül ilerlemesi", text: "6 / 10 ziyaret" },
+      { title: "Kasada okutuldu", text: "Müdavim kodu kullanıldı" }
+    ],
+    rewards: [
+      { title: "Tatlı hakkı", text: "10 içecekte 1 tatlı hakkı" },
+      { title: "Doğum günü sürprizi", text: "Doğum günü ayında açılır" },
+      { title: "Özel dönem kampanyası", text: "Aktif olduğunda burada görünür" }
+    ]
   };
 
-  const overlay = document.getElementById("mudavimAuthOverlay");
-  const modal = overlay?.querySelector(".mudavim-auth-modal");
-  const closeButton = overlay?.querySelector(".mudavim-auth-close");
-  const steps = overlay ? Array.from(overlay.querySelectorAll("[data-auth-step]")) : [];
-  const phoneInput = document.getElementById("mudavimPhone");
-  const emailInput = document.getElementById("mudavimEmail");
-  const fullNameInput = document.getElementById("mudavimFullName");
-  const profileEmailInput = document.getElementById("mudavimProfileEmail");
-  const termsInput = document.getElementById("mudavimTerms");
-  const otpInputs = overlay ? Array.from(overlay.querySelectorAll(".mudavim-otp input")) : [];
-  const authState = {
-    contact: member.contact,
-    provider: "phone",
+  const auth = {
+    isAuthenticated: false,
+    mode: "login",
+    pendingMode: "login",
     lastFocus: null
   };
 
-  document.querySelectorAll("[data-auth-mode]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const mode = button.dataset.authMode || "welcome";
-      openAuth(mode === "welcome" ? "welcome" : "phone", button);
+  const overlay = document.getElementById("mudavimAuthOverlay");
+  const closeButton = overlay?.querySelector(".mudavim-auth-close");
+  const steps = overlay ? Array.from(overlay.querySelectorAll("[data-auth-step]")) : [];
+  const gate = document.getElementById("gate");
+  const app = document.getElementById("app");
+  const bottomNav = document.querySelector(".mudavim-bottom-nav");
+  const otpInputs = overlay ? Array.from(overlay.querySelectorAll(".mudavim-otp input")) : [];
+
+  document.querySelectorAll("[data-auth-open]").forEach((trigger) => {
+    trigger.addEventListener("click", () => {
+      const target = trigger.dataset.authOpen || "login";
+      if (target === "google") {
+        openAuth("success", trigger, "login");
+        return;
+      }
+      openAuth(target, trigger, target);
     });
+  });
+
+  document.querySelectorAll("[data-logout]").forEach((button) => {
+    button.addEventListener("click", () => setAuthenticated(false));
   });
 
   overlay?.addEventListener("click", (event) => {
@@ -55,15 +60,10 @@
     if (event.key === "Escape" && overlay && !overlay.hidden) closeAuth();
   });
 
-  overlay?.querySelectorAll("[data-auth-next]").forEach((button) => {
+  overlay?.querySelectorAll("[data-auth-open]").forEach((button) => {
     button.addEventListener("click", () => {
-      const next = button.dataset.authNext || "welcome";
-      if (button.dataset.authProvider === "google") {
-        authState.provider = "google";
-        if (fullNameInput && !fullNameInput.value) fullNameInput.value = member.name;
-        if (profileEmailInput && !profileEmailInput.value) profileEmailInput.value = "elif@example.com";
-      }
-      showAuthStep(next);
+      const target = button.dataset.authOpen || "login";
+      showAuthStep(target);
     });
   });
 
@@ -74,21 +74,33 @@
     }, 1400);
   });
 
-  overlay?.querySelector("[data-auth-step='phone']")?.addEventListener("submit", (event) => {
+  overlay?.querySelector("[data-auth-step='login']")?.addEventListener("submit", (event) => {
     event.preventDefault();
-    authState.provider = "phone";
-    authState.contact = phoneInput?.value.trim() || "0552 295 46 34";
-    clearOtp();
-    showAuthStep("otp");
+    memberState.visitCount = 6;
+    memberState.level = "Gold Müdavim";
+    memberState.contactLabel = readValue("loginIdentity") || "Müdavim hesabı";
+    completeAuth("existing");
   });
 
-  overlay?.querySelector("[data-auth-step='email']")?.addEventListener("submit", (event) => {
+  overlay?.querySelector("[data-auth-step='register']")?.addEventListener("submit", (event) => {
     event.preventDefault();
-    authState.provider = "email";
-    authState.contact = emailInput?.value.trim() || member.contact;
-    if (profileEmailInput && !profileEmailInput.value) profileEmailInput.value = authState.contact;
-    if (fullNameInput && !fullNameInput.value) fullNameInput.value = member.name;
-    showAuthStep("profile");
+    const terms = document.getElementById("registerTerms");
+    if (terms && !terms.checked) {
+      terms.focus();
+      return;
+    }
+    memberState.visitCount = 0;
+    memberState.level = "Yeni Müdavim";
+    memberState.contactLabel = readValue("registerPhone") || readValue("registerEmail") || "Yeni müdavim";
+    completeAuth("new");
+  });
+
+  overlay?.querySelector("[data-auth-step='phone']")?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    memberState.contactLabel = readValue("mudavimPhone") || "Telefon doğrulandı";
+    auth.pendingMode = "phone";
+    clearOtp();
+    showAuthStep("otp");
   });
 
   overlay?.querySelector("[data-auth-step='otp']")?.addEventListener("submit", (event) => {
@@ -99,30 +111,15 @@
       firstEmpty?.focus();
       return;
     }
-    if (fullNameInput && !fullNameInput.value) fullNameInput.value = member.name;
-    if (profileEmailInput && !profileEmailInput.value && authState.provider !== "phone") {
-      profileEmailInput.value = authState.contact;
-    }
-    showAuthStep("profile");
-  });
-
-  overlay?.querySelector("[data-auth-step='profile']")?.addEventListener("submit", (event) => {
-    event.preventDefault();
-    if (!fullNameInput?.value.trim()) {
-      fullNameInput?.focus();
-      return;
-    }
-    if (!termsInput?.checked) {
-      termsInput?.focus();
-      return;
-    }
-    completeMockRegistration();
-    showAuthStep("success");
+    memberState.visitCount = 6;
+    memberState.level = "Gold Müdavim";
+    completeAuth("existing");
   });
 
   overlay?.querySelector("[data-auth-finish]")?.addEventListener("click", () => {
     closeAuth();
-    document.getElementById("profile")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    setAuthenticated(true);
+    document.getElementById("card")?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   otpInputs.forEach((input, index) => {
@@ -146,30 +143,102 @@
     });
   });
 
-  function openAuth(step, trigger) {
+  function openAuth(step, trigger, mode) {
     if (!overlay) return;
-    authState.lastFocus = trigger || document.activeElement;
+    auth.mode = mode || step || "login";
+    auth.lastFocus = trigger || document.activeElement;
     overlay.hidden = false;
     document.body.classList.add("auth-open");
-    showAuthStep(step || "welcome");
+    showAuthStep(step || "login");
   }
 
   function closeAuth() {
     if (!overlay) return;
     overlay.hidden = true;
     document.body.classList.remove("auth-open");
-    authState.lastFocus?.focus?.();
+    auth.lastFocus?.focus?.();
   }
 
   function showAuthStep(stepName) {
+    const safeStep = steps.some((step) => step.dataset.authStep === stepName) ? stepName : "login";
     steps.forEach((step) => {
-      step.hidden = step.dataset.authStep !== stepName;
+      step.hidden = step.dataset.authStep !== safeStep;
     });
     window.setTimeout(() => {
-      const activeStep = steps.find((step) => step.dataset.authStep === stepName);
+      const activeStep = steps.find((step) => step.dataset.authStep === safeStep);
       const focusTarget = activeStep?.querySelector("input:not([type='checkbox']), button:not(.mudavim-auth-close)");
       focusTarget?.focus?.();
     }, 30);
+  }
+
+  function completeAuth(kind) {
+    const isNew = kind === "new";
+    const progressText = isNew ? "0 / 10 başlangıç" : `${memberState.visitCount} / ${memberState.rewardTarget} ziyaret`;
+    setText("authSuccessCode", memberState.code);
+    setText("authSuccessProgress", progressText);
+    renderDashboard();
+    showAuthStep("success");
+  }
+
+  function setAuthenticated(value) {
+    auth.isAuthenticated = Boolean(value);
+    document.body.classList.toggle("is-member", auth.isAuthenticated);
+    document.body.classList.toggle("is-guest", !auth.isAuthenticated);
+    if (gate) gate.hidden = auth.isAuthenticated;
+    if (app) app.hidden = !auth.isAuthenticated;
+    if (bottomNav) bottomNav.hidden = !auth.isAuthenticated;
+    document.querySelectorAll("[data-guest-nav]").forEach((item) => {
+      item.hidden = auth.isAuthenticated;
+    });
+    document.querySelectorAll("[data-member-nav]").forEach((item) => {
+      item.hidden = !auth.isAuthenticated;
+    });
+    renderDashboard();
+    if (!auth.isAuthenticated) {
+      document.getElementById("gate")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  function renderDashboard() {
+    const remaining = Math.max(0, memberState.rewardTarget - memberState.visitCount);
+    const percent = Math.min(100, Math.max(0, (memberState.visitCount / memberState.rewardTarget) * 100));
+    const remainingText = remaining === 0 ? "Ödülün hazır" : `${remaining} ziyaret kaldı`;
+
+    setText("memberLevel", memberState.level);
+    setText("memberVisits", `${memberState.visitCount} / ${memberState.rewardTarget}`);
+    setText("memberCode", memberState.code);
+    setText("progressCount", String(memberState.visitCount));
+    setText("progressRemain", remainingText);
+    setText("progressText", remainingText);
+    setText("activeRewardTitle", remaining === 0 ? "Ödülün hazır" : memberState.activeReward);
+    setText("activeRewardText", remaining === 0 ? "Tatlı hakkını kasada kullanabilirsin." : `${remaining} ziyaret sonra ödülün hazır.`);
+    setText("profileLevel", memberState.level);
+    setText("profileCode", memberState.code);
+    setText("profileContact", memberState.contactLabel);
+
+    const bar = document.getElementById("progressBar");
+    if (bar) bar.style.width = `${percent}%`;
+
+    const beans = document.getElementById("beanProgress");
+    if (beans) {
+      beans.innerHTML = Array.from({ length: memberState.rewardTarget }, (_, index) => (
+        `<span class="bean${index < memberState.visitCount ? " is-filled" : ""}" aria-hidden="true"></span>`
+      )).join("");
+    }
+
+    renderCards("rewardList", memberState.rewards, "reward-card");
+    renderCards("visitHistory", memberState.recentVisits, "visit-item");
+  }
+
+  function renderCards(id, items, className) {
+    const target = document.getElementById(id);
+    if (!target) return;
+    target.innerHTML = items.map((item) => (
+      `<article class="${className}">
+        <strong>${escapeHTML(item.title)}</strong>
+        <span>${escapeHTML(item.text)}</span>
+      </article>`
+    )).join("");
   }
 
   function clearOtp() {
@@ -178,65 +247,8 @@
     });
   }
 
-  function completeMockRegistration() {
-    member.name = fullNameInput.value.trim();
-    member.contact = profileEmailInput?.value.trim() || authState.contact;
-    member.level = "Yeni Müdavim";
-    member.visits = 0;
-    member.usedRewards = 0;
-    member.code = "THM-4821";
-    member.rewards = {
-      active: [
-        { title: "Kartım hazır", text: "Kasada kodunu okut." }
-      ],
-      locked: [
-        { title: "10 ziyaret kaldı", text: "10 içecekte 1 tatlı hakkı." },
-        { title: "Doğum günü sürprizi", text: "Doğum günü ayında açılır." }
-      ],
-      used: [
-        { title: "Kullanıldı", text: "Henüz kullanılan ödül yok." }
-      ]
-    };
-    setText("authSuccessName", member.name);
-    setText("authSuccessCode", member.code);
-    renderMember();
-  }
-
-  function renderMember() {
-    setText("memberName", member.name);
-    setText("memberContact", member.contact);
-    setText("memberLevel", member.level);
-    setText("memberVisits", `${member.visits} / 10`);
-    setText("memberRewards", String(member.usedRewards));
-    setText("memberCode", member.code);
-    setText("progressCount", String(member.visits));
-    setText("progressRemain", `${Math.max(0, 10 - member.visits)} ziyaret kaldı`);
-
-    const percent = Math.min(100, Math.max(0, member.visits * 10));
-    const bar = document.getElementById("progressBar");
-    if (bar) bar.style.width = `${percent}%`;
-
-    const beans = document.getElementById("beanProgress");
-    if (beans) {
-      beans.innerHTML = Array.from({ length: 10 }, (_, index) => (
-        `<span class="bean${index < member.visits ? " is-filled" : ""}" aria-hidden="true"></span>`
-      )).join("");
-    }
-
-    renderRewards("activeRewards", member.rewards.active, "is-active");
-    renderRewards("lockedRewards", member.rewards.locked, "is-locked");
-    renderRewards("usedRewards", member.rewards.used, "is-used");
-  }
-
-  function renderRewards(id, items, className) {
-    const target = document.getElementById(id);
-    if (!target) return;
-    target.innerHTML = items.map((item) => (
-      `<article class="reward-card ${className}">
-        <strong>${escapeHTML(item.title)}</strong>
-        <span>${escapeHTML(item.text)}</span>
-      </article>`
-    )).join("");
+  function readValue(id) {
+    return document.getElementById(id)?.value.trim() || "";
   }
 
   function setText(id, value) {
@@ -254,5 +266,6 @@
     }[char]));
   }
 
-  renderMember();
+  renderDashboard();
+  setAuthenticated(false);
 })();

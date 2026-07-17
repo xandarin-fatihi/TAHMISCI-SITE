@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Tahmisçi Müdavim dijital sadakat kartı prototipi.">
+  <meta name="description" content="Tahmisçi Müdavim dijital sadakat kartı.">
   <title>Tahmisçi Müdavim</title>
   <link rel="icon" type="image/png" href="/assets/brand/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,102 +12,136 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="/mudavim/mudavim.css">
 </head>
-<body>
+<body class="is-guest">
   <header class="mudavim-header">
     <a class="mudavim-logo" href="/" aria-label="Tahmisçi ana sayfa">
       <img src="/assets/brand/logo-primary.png" alt="Tahmisçi">
     </a>
     <nav class="mudavim-nav" aria-label="Müdavim bağlantıları">
-      <a href="#profile">Kartım</a>
-      <a href="#rewards">Ödüller</a>
-      <a href="/">Siteye Dön</a>
+      <a href="#gate" data-guest-nav>Başlangıç</a>
+      <button type="button" data-auth-open="login" data-guest-nav>Giriş Yap</button>
+      <a href="/" data-guest-nav>Siteye Dön</a>
+      <a href="#card" data-member-nav hidden>Kartım</a>
+      <a href="#rewards" data-member-nav hidden>Ödüller</a>
+      <a href="#history" data-member-nav hidden>Geçmiş</a>
+      <button type="button" data-logout data-member-nav hidden>Çıkış</button>
     </nav>
   </header>
 
   <main>
-    <section class="mudavim-hero" id="top">
-      <div class="mudavim-hero__content">
+    <section class="mudavim-gate" id="gate">
+      <div class="mudavim-gate__copy">
         <p class="eyebrow">Tahmisçi Coffee & Roastery</p>
         <h1>Tahmisçi Müdavim</h1>
-        <p>Her ziyaretini değerli yapan dijital müdavim kartı. 10 içecekte 1 tatlı hakkı seni bekler.</p>
+        <p class="gate-lead">Ziyaretlerin kaybolmasın. Kasada kodunu okut, ilerlemeni takip et, 10 içecekte 1 tatlı hakkı kazan.</p>
+        <div class="gate-benefits" aria-label="Müdavim faydaları">
+          <span><i class="fas fa-qrcode" aria-hidden="true"></i> Dijital QR kart</span>
+          <span><i class="fas fa-seedling" aria-hidden="true"></i> Ziyaret takibi</span>
+          <span><i class="fas fa-cake-candles" aria-hidden="true"></i> Tatlı hakkı</span>
+        </div>
         <div class="mudavim-actions">
-          <button type="button" class="primary-action" data-auth-mode="welcome">Müdavim Kartımı Aç</button>
-          <button type="button" class="secondary-action" data-auth-mode="register">Kayıt Ol</button>
-          <button type="button" class="ghost-action" data-auth-mode="login">Giriş Yap</button>
+          <button type="button" class="primary-action" data-auth-open="login">Giriş Yap</button>
+          <button type="button" class="secondary-action" data-auth-open="register">Kayıt Ol</button>
         </div>
       </div>
-      <aside class="hero-card" aria-label="Müdavim kampanyası">
-        <div class="hero-card__badge">Ana kampanya</div>
-        <span>10 içecekte</span>
-        <strong>1 tatlı hakkı</strong>
-        <small>11. alışverişinde yanında tatlı hakkı.</small>
+
+      <aside class="gate-entry-card" aria-label="Müdavim giriş kapısı">
+        <div class="gate-entry-visual">
+          <img src="/assets/brand/logo-compact.png" alt="" aria-hidden="true">
+          <span>10 içecekte</span>
+          <strong>1 tatlı hakkı</strong>
+        </div>
+        <div class="gate-entry-content">
+          <p class="eyebrow">Müdavim Kartını Aç</p>
+          <h2>Kasada kodunu okut</h2>
+          <p>Telefonla hızlı giriş yapabilir, Google ya da e-posta ile devam edebilirsin.</p>
+          <button class="mudavim-auth-cta" type="button" data-auth-open="phone">Telefonla Devam Et</button>
+          <button class="mudavim-auth-social" type="button" data-auth-open="google">
+            <i class="fab fa-google" aria-hidden="true"></i>
+            Google ile Devam Et
+          </button>
+          <button class="mudavim-auth-link" type="button" data-auth-open="login">E-posta ile giriş yap</button>
+        </div>
       </aside>
     </section>
 
-    <section class="mudavim-dashboard" id="profile">
-      <article class="profile-summary">
-        <p class="eyebrow">Müdavim Kartım</p>
-        <h2 id="memberName">Elif Yılmaz</h2>
-        <p id="memberContact">elif@example.com</p>
-        <div class="profile-stats">
-          <span><strong id="memberLevel">Gold Müdavim</strong> Seviye</span>
-          <span><strong id="memberVisits">6 / 10</strong> Ziyaret</span>
-          <span><strong id="memberRewards">0</strong> Kullanılan ödül</span>
+    <section class="mudavim-app" id="app" hidden>
+      <div class="app-hero">
+        <div>
+          <p class="eyebrow">Kartım hazır</p>
+          <h1>Müdavim Kartım</h1>
+          <p>Ödülün seni beklesin. Kasada kodunu okut, ziyaretlerin işlensin.</p>
         </div>
-      </article>
-
-      <article class="qr-card" aria-label="Müdavim QR kartı">
-        <div class="qr-card__top">
-          <span>Müdavim Kartım</span>
-          <strong id="memberCode">THM-4821</strong>
+        <div class="app-hero__status">
+          <span id="memberLevel">Gold Müdavim</span>
+          <strong id="memberVisits">6 / 10</strong>
+          <small id="progressRemain">4 ziyaret kaldı</small>
         </div>
-        <div class="qr-placeholder" aria-label="QR placeholder">
-          <span></span><span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span><span></span>
-          <span></span><span></span><span></span><span></span><span></span>
-        </div>
-        <p>Kasada kodunu okut.</p>
-      </article>
-    </section>
-
-    <section class="progress-section">
-      <div class="section-head">
-        <p class="eyebrow">İlerleme</p>
-        <h2>10 içecekte 1 tatlı hakkı</h2>
       </div>
-      <div class="progress-card">
-        <div class="progress-card__meta">
-          <strong><span id="progressCount">6</span> / 10 ziyaret</strong>
-          <span id="progressRemain">4 ziyaret kaldı</span>
-        </div>
-        <div class="bean-row" id="beanProgress" aria-label="Müdavim ilerleme"></div>
-        <div class="progress-bar"><span id="progressBar"></span></div>
-      </div>
-    </section>
 
-    <section class="rewards-section" id="rewards">
-      <div class="section-head">
-        <p class="eyebrow">Ödüller</p>
-        <h2>Müdavim ayrıcalıkları</h2>
-      </div>
-      <div class="reward-columns">
-        <section>
-          <h3>Aktif Ödül</h3>
-          <div id="activeRewards" class="reward-list"></div>
-        </section>
-        <section>
-          <h3>Yaklaşan Ödül</h3>
-          <div id="lockedRewards" class="reward-list"></div>
-        </section>
-        <section>
-          <h3>Kullanılan Ödül</h3>
-          <div id="usedRewards" class="reward-list"></div>
-        </section>
+      <div class="mudavim-dashboard">
+        <article class="member-card" id="card">
+          <div class="card-topline">
+            <span>Müdavim Kartım</span>
+            <strong id="memberCode">THM-4821</strong>
+          </div>
+          <div class="qr-placeholder" aria-label="QR placeholder">
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <p>Kasada kodunu okut.</p>
+        </article>
+
+        <article class="progress-card">
+          <div class="section-head">
+            <p class="eyebrow">İlerleme</p>
+            <h2>10 içecekte 1 tatlı hakkı</h2>
+          </div>
+          <div class="progress-card__meta">
+            <strong><span id="progressCount">6</span> / 10 ziyaret</strong>
+            <span id="progressText">4 ziyaret kaldı</span>
+          </div>
+          <div class="bean-row" id="beanProgress" aria-label="Müdavim ilerleme"></div>
+          <div class="progress-bar"><span id="progressBar"></span></div>
+        </article>
+
+        <article class="reward-focus" id="rewards">
+          <p class="eyebrow">Aktif Ödül</p>
+          <h2 id="activeRewardTitle">Tatlı hakkı</h2>
+          <p id="activeRewardText">4 ziyaret sonra ödülün hazır.</p>
+          <div id="rewardList" class="reward-list"></div>
+        </article>
+
+        <article class="history-card" id="history">
+          <div class="section-head">
+            <p class="eyebrow">Geçmiş</p>
+            <h2>Ziyaretler</h2>
+          </div>
+          <div id="visitHistory" class="visit-list"></div>
+        </article>
+
+        <article class="profile-card" id="profile">
+          <p class="eyebrow">Profil</p>
+          <h2>Müdavim Profili</h2>
+          <dl>
+            <div><dt>Seviye</dt><dd id="profileLevel">Gold Müdavim</dd></div>
+            <div><dt>Kod</dt><dd id="profileCode">THM-4821</dd></div>
+            <div><dt>Bildirim</dt><dd id="profileContact">Mock UI</dd></div>
+          </dl>
+        </article>
       </div>
     </section>
   </main>
+
+  <nav class="mudavim-bottom-nav" aria-label="Mobil müdavim menüsü" hidden>
+    <a href="#card"><i class="fas fa-qrcode" aria-hidden="true"></i><span>Kartım</span></a>
+    <a href="#rewards"><i class="fas fa-gift" aria-hidden="true"></i><span>Ödüller</span></a>
+    <a href="#history"><i class="fas fa-clock-rotate-left" aria-hidden="true"></i><span>Geçmiş</span></a>
+    <a href="#profile"><i class="fas fa-user" aria-hidden="true"></i><span>Profil</span></a>
+  </nav>
 
   <div class="mudavim-auth-overlay" id="mudavimAuthOverlay" hidden>
     <section class="mudavim-auth-modal" role="dialog" aria-modal="true" aria-labelledby="mudavimAuthTitle">
@@ -115,52 +149,78 @@
         <i class="fas fa-xmark" aria-hidden="true"></i>
       </button>
 
-      <div class="mudavim-auth-card" data-auth-step="welcome">
+      <form class="mudavim-auth-card" data-auth-step="login">
         <p class="eyebrow">Tahmisçi Müdavim</p>
-        <h2 id="mudavimAuthTitle">Müdavim Kartını Aç</h2>
-        <p>10 içecekte 1 tatlı hakkı. Kasada kodunu okut, ziyaretlerin işlensin.</p>
-        <div class="mudavim-auth-benefits">
-          <span><i class="fas fa-qrcode" aria-hidden="true"></i> QR kart</span>
-          <span><i class="fas fa-chart-line" aria-hidden="true"></i> Ziyaret takibi</span>
-          <span><i class="fas fa-cake-candles" aria-hidden="true"></i> Tatlı hakkı</span>
-          <span><i class="fas fa-gift" aria-hidden="true"></i> Doğum günü sürprizi</span>
+        <h2 id="mudavimAuthTitle">Giriş Yap</h2>
+        <p>Hesabına giriş yap, kartını ve ödül ilerlemeni gör.</p>
+        <label class="mudavim-auth-input">
+          <span>E-posta veya telefon</span>
+          <input id="loginIdentity" type="text" autocomplete="username" placeholder="mail@ornek.com veya 05xx xxx xx xx" required>
+        </label>
+        <label class="mudavim-auth-input">
+          <span>Şifre</span>
+          <input id="loginPassword" type="password" autocomplete="current-password" placeholder="••••••••" required>
+        </label>
+        <div class="auth-row">
+          <label class="remember-row">
+            <input id="rememberMember" type="checkbox">
+            <span>Beni hatırla</span>
+          </label>
+          <button type="button" class="mudavim-auth-link" data-auth-open="forgot">Şifremi unuttum</button>
         </div>
-        <div class="mudavim-auth-actions">
-          <button class="mudavim-auth-cta" type="button" data-auth-next="phone">Telefonla Devam Et</button>
-          <button class="mudavim-auth-social" type="button" data-auth-next="profile" data-auth-provider="google">
-            <i class="fab fa-google" aria-hidden="true"></i>
-            Google ile Devam Et
-          </button>
-          <button class="mudavim-auth-link" type="button" data-auth-next="email">E-posta ile giriş yap</button>
-        </div>
-        <small>Zaten üyeysen aynı telefon numarasıyla giriş yapabilirsin.</small>
-      </div>
+        <button class="mudavim-auth-cta" type="submit">Giriş Yap</button>
+        <button class="mudavim-auth-social" type="button" data-auth-open="google">
+          <i class="fab fa-google" aria-hidden="true"></i>
+          Google ile Devam Et
+        </button>
+        <button class="mudavim-auth-link" type="button" data-auth-open="register">Hesabın yok mu? Kayıt Ol</button>
+      </form>
+
+      <form class="mudavim-auth-card" data-auth-step="register" hidden>
+        <button class="mudavim-auth-back" type="button" data-auth-open="login">Geri</button>
+        <h2>Kayıt Ol</h2>
+        <p>Müdavim Kartını oluştur. Bu prototip gerçek kayıt yapmaz.</p>
+        <label class="mudavim-auth-input">
+          <span>Ad Soyad</span>
+          <input id="registerName" type="text" autocomplete="name" placeholder="Ad Soyad">
+        </label>
+        <label class="mudavim-auth-input">
+          <span>Telefon</span>
+          <input id="registerPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="05xx xxx xx xx" required>
+        </label>
+        <label class="mudavim-auth-input">
+          <span>E-posta</span>
+          <input id="registerEmail" type="email" autocomplete="email" placeholder="mail@ornek.com">
+        </label>
+        <label class="mudavim-auth-input">
+          <span>Şifre</span>
+          <input id="registerPassword" type="password" autocomplete="new-password" placeholder="En az 6 karakter" required>
+        </label>
+        <label class="mudavim-auth-check">
+          <input id="registerTerms" type="checkbox" required>
+          <span>Üyelik koşullarını ve KVKK bilgilendirmesini okudum.</span>
+        </label>
+        <label class="mudavim-auth-check">
+          <input id="registerCampaigns" type="checkbox">
+          <span>Kampanya ve ödül bildirimlerini almak istiyorum.</span>
+        </label>
+        <button class="mudavim-auth-cta" type="submit">Kartımı Oluştur</button>
+      </form>
 
       <form class="mudavim-auth-card" data-auth-step="phone" hidden>
-        <button class="mudavim-auth-back" type="button" data-auth-next="welcome">Geri</button>
-        <h2>Telefon Numaranı Gir</h2>
+        <button class="mudavim-auth-back" type="button" data-auth-open="login">Geri</button>
+        <h2>Telefonla Devam Et</h2>
         <p>Bu numara Müdavim Kartınla eşleşir.</p>
         <label class="mudavim-auth-input">
           <span>Telefon</span>
-          <input id="mudavimPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="05xx xxx xx xx">
+          <input id="mudavimPhone" type="tel" inputmode="tel" autocomplete="tel" placeholder="05xx xxx xx xx" required>
         </label>
         <button class="mudavim-auth-cta" type="submit">Kodu Gönder</button>
       </form>
 
-      <form class="mudavim-auth-card" data-auth-step="email" hidden>
-        <button class="mudavim-auth-back" type="button" data-auth-next="welcome">Geri</button>
-        <h2>E-posta ile giriş</h2>
-        <p>E-posta alternatifi şimdilik mock UI olarak çalışır.</p>
-        <label class="mudavim-auth-input">
-          <span>E-posta</span>
-          <input id="mudavimEmail" type="email" autocomplete="email" placeholder="ornek@email.com">
-        </label>
-        <button class="mudavim-auth-cta" type="submit">Devam Et</button>
-      </form>
-
       <form class="mudavim-auth-card" data-auth-step="otp" hidden>
         <h2>Kodu Gir</h2>
-        <p>Telefonuna gelen 6 haneli kodu yaz. Prototipte herhangi 6 haneli kod kabul edilir.</p>
+        <p>Prototipte herhangi 6 haneli kod kabul edilir.</p>
         <div class="mudavim-otp" aria-label="6 haneli doğrulama kodu">
           <input type="text" inputmode="numeric" maxlength="1" aria-label="Kod 1">
           <input type="text" inputmode="numeric" maxlength="1" aria-label="Kod 2">
@@ -171,38 +231,15 @@
         </div>
         <button class="mudavim-auth-cta" type="submit">Devam Et</button>
         <div class="mudavim-auth-inline">
-          <button type="button" data-auth-next="phone">Numarayı değiştir</button>
+          <button type="button" data-auth-open="phone">Numarayı değiştir</button>
           <button type="button" data-auth-resend>Kodu tekrar gönder</button>
         </div>
-      </form>
-
-      <form class="mudavim-auth-card" data-auth-step="profile" hidden>
-        <h2>Son Bir Adım</h2>
-        <p>Kartını kişiselleştirelim. Gerçek kayıt yapılmaz, sadece mock state güncellenir.</p>
-        <label class="mudavim-auth-input">
-          <span>Ad Soyad</span>
-          <input id="mudavimFullName" type="text" autocomplete="name" placeholder="Ad Soyad" required>
-        </label>
-        <label class="mudavim-auth-input">
-          <span>E-posta <em>isteğe bağlı</em></span>
-          <input id="mudavimProfileEmail" type="email" autocomplete="email" placeholder="ornek@email.com">
-        </label>
-        <label class="mudavim-auth-check">
-          <input id="mudavimTerms" type="checkbox" required>
-          <span>Üyelik koşullarını ve KVKK bilgilendirmesini okudum.</span>
-        </label>
-        <label class="mudavim-auth-check">
-          <input id="mudavimCampaigns" type="checkbox">
-          <span>Kampanya ve ödül bildirimlerini almak istiyorum.</span>
-        </label>
-        <button class="mudavim-auth-cta" type="submit">Kartımı Oluştur</button>
       </form>
 
       <div class="mudavim-auth-card" data-auth-step="success" hidden>
         <p class="eyebrow">Kartım hazır</p>
         <h2>Müdavim Kartın Hazır</h2>
         <div class="mudavim-auth-success">
-          <strong id="authSuccessName">Elif Yılmaz</strong>
           <span id="authSuccessCode">THM-4821</span>
           <div class="mudavim-auth-qr" aria-label="QR placeholder">
             <i></i><i></i><i></i><i></i><i></i>
@@ -211,7 +248,7 @@
             <i></i><i></i><i></i><i></i><i></i>
             <i></i><i></i><i></i><i></i><i></i>
           </div>
-          <b>0 / 10 başlangıç</b>
+          <b id="authSuccessProgress">0 / 10 başlangıç</b>
           <p>İlk içeceğini kasada kodunu okutarak işlet.</p>
         </div>
         <button class="mudavim-auth-cta" type="button" data-auth-finish>Kartımı Gör</button>
