@@ -56,19 +56,32 @@
 }
 
 html {
+  min-height: 100%;
+  height: auto;
+  overflow-x: clip;
+  overflow-y: auto;
   scroll-behavior: smooth;
   scroll-padding-top: calc(var(--tahmisci-header-height) + 18px);
 }
 
 body.tahmisci-static-menu {
   min-width: 0;
+  min-height: 100%;
+  height: auto;
   margin: 0;
   padding-top: var(--tahmisci-header-height);
   overflow-x: clip;
+  overflow-y: auto;
   background: var(--paper);
   color: var(--espresso);
   font-family: Manrope, "Tahmisci Poppins", Poppins, sans-serif;
   -webkit-font-smoothing: antialiased;
+}
+
+body.tahmisci-static-menu .homepage-main {
+  min-height: 0;
+  height: auto;
+  overflow: visible;
 }
 
 body.tahmisci-static-menu.has-brand-watermark::before {

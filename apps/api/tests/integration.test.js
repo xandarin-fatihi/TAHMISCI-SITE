@@ -139,10 +139,100 @@ test("siteState sürümlenir, restart normalizasyonunda korunur ve zararlı içe
   const state = migrateSiteState({ hero: { slides: [{ id: "main", visible: true, order: 0, title: { tr: "Yeni hero" } }] } });
   state.about.description.tr = "Yeni hakkımızda";
   const reloaded = normalizeStore({ ...fixture(), siteState: state });
-  assert.equal(reloaded.siteState.schemaVersion, 2);
+  assert.equal(reloaded.siteState.schemaVersion, 3);
   assert.equal(reloaded.siteState.about.description.tr, "Yeni hakkımızda");
   assert.match(validateSiteState({ ...state, seo: { ...state.seo, canonicalUrl: "javascript:alert(1)" } }), /guvensiz/);
   assert.match(validateSiteState({ ...state, about: { ...state.about, description: { tr: "<img onerror=alert(1)>" } } }), /guvensiz/);
+});
+
+test("eski Windows lokal seedindeki bozuk Türkçe varsayılanlar veri kaybetmeden onarılır", () => {
+  const migrated = migrateSiteState({
+    header: { navigation: [
+      { id: "home", label: { tr: "Ana Sayfa", en: "Home" }, url: "#top", visible: true, order: 0 },
+      { id: "menu", label: { tr: "Men?", en: "Menu" }, url: "#menu", visible: true, order: 1 }
+    ] },
+    hero: { slides: [{
+      id: "hero-main",
+      title: { tr: "Kahvenin iyi hali", en: "Coffee at its best" },
+      description: { tr: "?zenle hazirlanan kahveler ve g?n?n her anina eslik eden lezzetler.", en: "Carefully prepared coffees and flavors for every moment of the day." },
+      buttonText: { tr: "Men?y? Kesfet", en: "Explore the Menu" }
+    }] },
+    about: { title: { tr: "Yönetici tarafından yazılmış özel başlık?", en: "Custom" } }
+  });
+
+  assert.equal(migrated.header.navigation[1].label.tr, "Menü");
+  assert.equal(migrated.hero.slides[0].description.tr, "Özenle hazırlanan kahveler ve günün her anına eşlik eden lezzetler.");
+  assert.equal(migrated.hero.slides[0].buttonText.tr, "Menüyü Keşfet");
+  assert.equal(migrated.about.title.tr, "Yönetici tarafından yazılmış özel başlık?");
+});
+
+test("Müdavim duyuruları sıralı bloklarla korunur ve public çıktıda yalnızca yayınlanan içerik görünür", () => {
+  const data = migrateStore(fixture());
+  data.siteState = migrateSiteState(data.siteState);
+  data.siteState.mudavim.announcements = [
+    {
+      id: "taslak",
+      title: "Taslak duyuru",
+      slug: "taslak-duyuru",
+      order: 0,
+      isPublished: false,
+      blocks: [{ id: "taslak-metin", type: "text", content: "Yayınlanmamalı", order: 0 }]
+    },
+    {
+      id: "yayinda",
+      title: "Yayındaki duyuru",
+      slug: "yayindaki-duyuru",
+      order: 1,
+      isPublished: true,
+      blocks: [
+        { id: "yayinda-gorsel", type: "image", imageUrl: "/media/duyuru.webp", alt: "Duyuru", order: 1 },
+        { id: "yayinda-metin", type: "text", content: "Önce metin", order: 0 },
+        {
+          id: "yayinda-gorsel-metin",
+          type: "image-text",
+          badge: "YENİ",
+          date: "2026-07-19",
+          heading: "Yeni sezon",
+          body: "Görsel solda, metin sağda.",
+          imageUrl: "/media/yeni-sezon.webp",
+          alt: "Yeni sezon duyurusu",
+          order: 2
+        },
+        {
+          id: "yayinda-metin-gorsel",
+          type: "text-image",
+          badge: "ETKİNLİK",
+          heading: "Atölye buluşması",
+          body: "Metin solda, görsel sağda.",
+          imageUrl: "/media/atolye.webp",
+          order: 3
+        }
+      ]
+    }
+  ];
+
+  const normalized = normalizeStore(data);
+  assert.equal(normalized.siteState.mudavim.announcements.length, 2);
+  const publicAnnouncements = buildPublicBootstrap(normalized).siteState.mudavim.announcements;
+  assert.equal(publicAnnouncements.length, 1);
+  assert.equal(publicAnnouncements[0].id, "yayinda");
+  assert.deepEqual(publicAnnouncements[0].blocks.map((block) => block.type), ["text", "image", "image-text", "text-image"]);
+  assert.equal(publicAnnouncements[0].blocks[2].badge, "YENİ");
+  assert.equal(publicAnnouncements[0].blocks[2].heading, "Yeni sezon");
+  assert.equal(publicAnnouncements[0].blocks[2].body, "Görsel solda, metin sağda.");
+  assert.equal("content" in publicAnnouncements[0].blocks[2], false);
+  assert.equal(JSON.stringify(publicAnnouncements).includes("Yayınlanmamalı"), false);
+  assert.match(validateSiteState({
+    ...normalized.siteState,
+    mudavim: {
+      announcements: [{
+        id: "zararli",
+        title: "Zararlı",
+        isPublished: true,
+        blocks: [{ id: "gorsel", type: "image", imageUrl: "javascript:alert(1)" }]
+      }]
+    }
+  }), /guvensiz/);
 });
 
 test("gerçek başlangıç verisi 215 ürünü kaybetmeden okunur", async () => {

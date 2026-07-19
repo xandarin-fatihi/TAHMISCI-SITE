@@ -876,6 +876,15 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     async function initSelectionFlow(data) {
+        // The public brand site is browse-only. The legacy order-selection flow
+        // must never open a modal (or leave body overflow locked) on this page.
+        if (document.body?.classList.contains("tahmisci-static-menu")) {
+            document.querySelectorAll(".selection-modal-overlay.active").forEach((modal) => {
+                modal.classList.remove("active");
+            });
+            setBodyLock(false);
+            return;
+        }
         if (window.TahmisciCatalog) return;
         const app = data?.app || {};
         const branches = Array.isArray(app.branches) ? app.branches : [];

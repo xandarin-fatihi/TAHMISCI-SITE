@@ -4,7 +4,7 @@ function isValidProductInfo(value) {
     const text = String(value ?? "").trim();
     if (!text) return false;
     const normalized = text.toLocaleLowerCase("tr-TR");
-    return !["0", "n/a", "undefined", "null", "kaynakta tanÄ±mlÄ± deÄŸil", "kaynakta tanimli degil"].includes(normalized);
+    return !["0", "n/a", "undefined", "null", "kaynakta tanımlı değil", "kaynakta tanimli degil"].includes(normalized);
 }
 
 function isLogoFallbackSource(source) {
@@ -21,8 +21,8 @@ class ModernMenuPage {
         this.currentQuantity = 1;
         this.basePrice = 0;
         this.appliedPromos = []; // Uygulanan promosyon listesi
-        this.selectedCampaign = null; // SeÃ§ili kampanya
-        this.selectedCampaignValidation = null; // { eligible: bool, reason: string } - backend doÄŸrulama sonucu
+        this.selectedCampaign = null; // Seçili kampanya
+        this.selectedCampaignValidation = null; // { eligible: bool, reason: string } - backend doğrulama sonucu
         // Kampanya/kupon uyumluluk durumu
         this.appliedPromotions = [];
         this.appliedCampaigns = [];
@@ -78,10 +78,10 @@ class ModernMenuPage {
 
         // Load promo from localStorage
         this.loadPromo();
-        // SeÃ§ili kampanyayÄ± yÃ¼kle
+        // Seçili kampanyayı yükle
         this.loadSelectedCampaign();
 
-        // Kampanya motoru + kampanya listesi + global listener'lar sadece bir kez (tekrarlÄ± AJAX Ã¶nlenir)
+        // Kampanya motoru + kampanya listesi + global listener'lar sadece bir kez (tekrarlı AJAX önlenir)
         if (!this._promoCampaignsAndListenersDone) {
             this._promoCampaignsAndListenersDone = true;
             this.loadPromotionEngineState();
@@ -107,10 +107,10 @@ class ModernMenuPage {
     }
 
     // ========== PRODUCT DATA ==========
-    // ÃœrÃ¼nler DB'den window.MenuProducts olarak gelir (menu-products-loader / PHP). Eski demo liste kaldÄ±rÄ±ldÄ±.
+    // Ürünler DB'den window.MenuProducts olarak gelir (menu-products-loader / PHP). Eski demo liste kaldırıldı.
 
     initializeProducts() {
-        // ArtÄ±k kullanÄ±lmÄ±yor; Ã¼rÃ¼nler constructor'da window.MenuProducts ile atanÄ±yor.
+        // Artık kullanılmıyor; ürünler constructor'da window.MenuProducts ile atanıyor.
         return;
     }
 
@@ -200,13 +200,13 @@ class ModernMenuPage {
 
     /**
      * Scroll to category section.
-     * Desktop: window.scrollTo (mevcut davranÄ±ÅŸ).
-     * Mobile (<= 600px): yalnÄ±zca .main container iÃ§inde scroll.
+     * Desktop: window.scrollTo (mevcut davranış).
+     * Mobile (<= 600px): yalnızca .main container içinde scroll.
      */
     scrollToCategory(category) {
         const isMobile = window.innerWidth <= 600;
 
-        // "TÃ¼mÃ¼" iÃ§in en Ã¼ste dÃ¶n
+        // "Tümü" için en üste dön
         if (category === "all") {
             if (isMobile) {
                 const main = document.querySelector(".main");
@@ -359,7 +359,7 @@ class ModernMenuPage {
                 return;
             }
 
-            // AynÄ± ana kategori iÃ§in sadece aktif alt kategori state'ini gÃ¼ncelle.
+            // Aynı ana kategori için sadece aktif alt kategori state'ini güncelle.
             if (lastRenderedSubMainId === Number(mainCategoryId)) {
                 const subBtns = subContainer.querySelectorAll(".filter-sub-btn");
                 subBtns.forEach((btn) => {
@@ -421,7 +421,7 @@ class ModernMenuPage {
                                 }
                             });
 
-                            // Scroll ile aktif kategori deÄŸiÅŸtiÄŸinde alt kategori ÅŸeridini de senkron tut.
+                            // Scroll ile aktif kategori değiştiğinde alt kategori şeridini de senkron tut.
                             if (parentMainId != null) {
                                 renderSubcategoriesForMain(parentMainId, Number(category));
                             } else {
@@ -554,7 +554,7 @@ class ModernMenuPage {
         if (moreCategoriesBtn && moreCategoriesMenu && globalMenu) {
             moreCategoriesBtn.addEventListener("click", (e) => {
                 e.preventDefault();
-                // MenÃ¼ iÃ§eriÄŸini taÅŸÄ±
+                // Menü içeriğini taşı
                 globalMenu.innerHTML = moreCategoriesMenu.innerHTML;
                 globalMenu.classList.add("active");
                 globalMenu.style.display = "block";
@@ -562,10 +562,10 @@ class ModernMenuPage {
                 // Butonun konumunu bul
                 const btnRect = moreCategoriesBtn.getBoundingClientRect();
                 globalMenu.style.top = btnRect.bottom + window.scrollY + "px";
-                globalMenu.style.right = window.innerWidth - btnRect.right - 8 + "px"; // 8px saÄŸ boÅŸluk
+                globalMenu.style.right = window.innerWidth - btnRect.right - 8 + "px"; // 8px sağ boşluk
                 globalMenu.style.left = "auto";
             });
-            // DÄ±ÅŸarÄ± tÄ±klayÄ±nca kapat
+            // Dışarı tıklayınca kapat
             document.addEventListener("click", (e) => {
                 if (!globalMenu.contains(e.target) && e.target !== moreCategoriesBtn) {
                     globalMenu.classList.remove("active");
@@ -575,7 +575,7 @@ class ModernMenuPage {
                     globalMenu.style.left = "";
                 }
             });
-            // MenÃ¼ iÃ§indeyken tÄ±klama event'ini durdur
+            // Menü içindeyken tıklama event'ini durdur
             globalMenu.addEventListener("click", (e) => {
                 e.stopPropagation();
             });
@@ -600,10 +600,10 @@ class ModernMenuPage {
         }
 
         if (category === "all" || category === null) {
-            productsCount.textContent = `${visibleProducts} Ã¼rÃ¼n`;
-            productsCategory.textContent = "tÃ¼m kategoriler";
+            productsCount.textContent = `${visibleProducts} ürün`;
+            productsCategory.textContent = "tüm kategoriler";
         } else {
-            productsCount.textContent = `${visibleProducts} Ã¼rÃ¼n`;
+            productsCount.textContent = `${visibleProducts} ürün`;
             productsCategory.textContent = category;
         }
     }
@@ -738,7 +738,7 @@ class ModernMenuPage {
                 }
             });
         }
-        // Swipe-to-close: tÃ¼m modallar tek listeden, kod tekrarÄ± yok
+        // Swipe-to-close: tüm modallar tek listeden, kod tekrarı yok
         if (typeof SwipeModalController !== "undefined" && SwipeModalController.registerModals) {
             SwipeModalController.registerModals([
                 { overlay: "productModalOverlay", onClose: () => this.closeProductModal() },
@@ -864,7 +864,7 @@ class ModernMenuPage {
 
         const subtitle = nutritionData.caloriesUnit
             ? `${this.escapeHtml(nutritionData.caloriesUnit)} ${this.escapeHtml(
-                t("nutrition_subtitle_suffix", "baÅŸÄ±na besin deÄŸeri"),
+                t("nutrition_subtitle_suffix", "başına besin değeri"),
             )}`
             : "";
 
@@ -884,7 +884,7 @@ class ModernMenuPage {
 
         const html = `
         <div class="nutrition-item">
-          <h3 class="nutrition-item-title">${this.escapeHtml(this.currentProduct.name || t("nutrition_title", "ÃœrÃ¼n"))}</h3>
+          <h3 class="nutrition-item-title">${this.escapeHtml(this.currentProduct.name || t("nutrition_title", "Ürün"))}</h3>
           ${subtitle
                 ? `<p class="nutrition-item-subtitle">${subtitle}</p>`
                 : ""
@@ -973,9 +973,9 @@ class ModernMenuPage {
                 const rawName = String(item.name || "").trim();
                 let label = rawName.replace(String(product?.name || ""), "").trim() || rawName || "Fiyat";
                 label = label
-                    .replace(/^KÃœÃ‡ÃœK$/i, "K")
+                    .replace(/^KÜÇÜK$/i, "K")
                     .replace(/^ORTA$/i, "O")
-                    .replace(/^BÃœYÃœK$/i, "B");
+                    .replace(/^BÜYÜK$/i, "B");
                 return `${label} ${this.formatPriceValue(item.price)}`;
             }).join(" | ");
         }
@@ -991,7 +991,7 @@ class ModernMenuPage {
         const amount = Number(value);
         if (!Number.isFinite(amount) || amount <= 0) return "";
         const clean = amount.toFixed(2).replace(/\.00$/, "").replace(/(\.\d)0$/, "$1");
-        return `${clean}â‚º`;
+        return `${clean}₺`;
     }
 
     updateNutritionActions(product) {
@@ -1040,21 +1040,21 @@ class ModernMenuPage {
             return key.includes(needle);
         });
 
-        const contentItem = findDetail("reÃ§ete") || findDetail("icerik") || findDetail("iÃ§erik");
+        const contentItem = findDetail("reçete") || findDetail("icerik") || findDetail("içerik");
         const allergenItem = findDetail("alerjen");
         const content = contentItem
             ? this.formatNutritionDisplayValue(contentItem.value, contentItem.unit)
-            : (product?.description || "Kaynakta tanÄ±mlÄ± deÄŸil");
+            : (product?.description || "Kaynakta tanımlı değil");
         const allergens = allergenItem
             ? this.formatNutritionDisplayValue(allergenItem.value, allergenItem.unit)
-            : "Kaynakta tanÄ±mlÄ± deÄŸil";
+            : "Kaynakta tanımlı değil";
         const calories = nutritionData.hasCalories
             ? this.formatNutritionDisplayValue(nutritionData.calories, nutritionData.caloriesUnit || "kcal")
-            : "Kaynakta tanÄ±mlÄ± deÄŸil";
+            : "Kaynakta tanımlı değil";
 
         panel.innerHTML = `
             <div class="tahmisci-recipe-summary-row">
-                <strong>Ä°Ã§erik</strong>
+                <strong>İçerik</strong>
                 <span>${this.escapeHtml(content)}</span>
             </div>
             <div class="tahmisci-recipe-summary-row">
@@ -1072,7 +1072,7 @@ class ModernMenuPage {
         const container = document.getElementById("dynamicOptionsContainer");
         if (!container) return;
 
-        // Eski dinleyicileri kaldÄ±r
+        // Eski dinleyicileri kaldır
         if (this.handleOptionChange) {
             container.removeEventListener("change", this.handleOptionChange);
         }
@@ -1086,26 +1086,26 @@ class ModernMenuPage {
             container.removeEventListener("click", this.handleOptionClick);
         }
 
-        // 1) Opsiyon deÄŸiÅŸiklikleri (radio / checkbox)
+        // 1) Opsiyon değişiklikleri (radio / checkbox)
         this.handleOptionChange = (e) => {
             if (e.target.type === "radio" || e.target.type === "checkbox") {
-                // Optional radio + min=0 ise "SeÃ§im yok" seÃ§eneÄŸini sadece seÃ§im yapÄ±ldÄ±ktan sonra ekle
+                // Optional radio + min=0 ise "Seçim yok" seçeneğini sadece seçim yapıldıktan sonra ekle
                 this.syncNoneChoiceVisibility(e.target);
                 this.updatePrice();
 
-                // Radio/checkbox deÄŸiÅŸtiÄŸinde her zaman alt opsiyonlarÄ± kontrol et
-                // (Ã¶nceki seÃ§imin alt opsiyonlarÄ±nÄ± temizlemek ve yeni seÃ§imin alt opsiyonlarÄ±nÄ± gÃ¶stermek iÃ§in)
+                // Radio/checkbox değiştiğinde her zaman alt opsiyonları kontrol et
+                // (önceki seçimin alt opsiyonlarını temizlemek ve yeni seçimin alt opsiyonlarını göstermek için)
                 if (e.target.type === "radio") {
                     this.handleSubOptionsToggle(e.target);
                 } else if (e.target.type === "checkbox") {
-                    // Checkbox iÃ§in de aynÄ± mantÄ±k: seÃ§ildiÄŸinde alt opsiyonlarÄ± kontrol et
+                    // Checkbox için de aynı mantık: seçildiğinde alt opsiyonları kontrol et
                     this.handleSubOptionsToggle(e.target);
                 }
             }
         };
         container.addEventListener("change", this.handleOptionChange);
 
-        // 2) Arama butonu tÄ±klamasÄ±
+        // 2) Arama butonu tıklaması
         this.handleOptionSearchClick = (e) => {
             const toggle = e.target.closest(".option-search-toggle");
             if (!toggle) return;
@@ -1119,10 +1119,10 @@ class ModernMenuPage {
             const isActive = input.classList.toggle("active");
             toggle.classList.toggle("active", isActive);
 
-            // Input aÃ§Ä±kken ikonu gizle, kapalÄ±yken gÃ¶ster
+            // Input açıkken ikonu gizle, kapalıyken göster
             if (isActive) {
                 toggle.style.display = "none";
-                // Input aÃ§Ä±lÄ±r aÃ§Ä±lmaz focus yap
+                // Input açılır açılmaz focus yap
                 setTimeout(() => {
                     input.focus();
                 }, 50);
@@ -1136,9 +1136,9 @@ class ModernMenuPage {
             const choices = group.querySelectorAll(".option-choices .option-choice");
 
             if (isActive) {
-                // Focus zaten yukarÄ±da yapÄ±ldÄ±
+                // Focus zaten yukarıda yapıldı
             } else {
-                // AramayÄ± kapatÄ±rken filtreyi temizle
+                // Aramayı kapatırken filtreyi temizle
                 input.value = "";
                 choices.forEach((choice) => {
                     choice.style.display = "";
@@ -1164,7 +1164,7 @@ class ModernMenuPage {
         };
         container.addEventListener("input", this.handleOptionSearchInput);
 
-        // 4) Hover ile input aÃ§Ä±ldÄ±ÄŸÄ±nda focus yap
+        // 4) Hover ile input açıldığında focus yap
         container.addEventListener(
             "mouseenter",
             (e) => {
@@ -1174,7 +1174,7 @@ class ModernMenuPage {
                 const input = wrapper.querySelector(".option-search-input");
                 if (!input || input.classList.contains("active")) return;
 
-                // Hover ile input aÃ§Ä±ldÄ±ÄŸÄ±nda focus yap
+                // Hover ile input açıldığında focus yap
                 setTimeout(() => {
                     if (!input.classList.contains("active")) {
                         input.classList.add("active");
@@ -1186,17 +1186,17 @@ class ModernMenuPage {
         );
     }
 
-    // Optional radio + min=0 ise "SeÃ§im yok" seÃ§eneÄŸini sadece seÃ§im yapÄ±ldÄ±ktan sonra gÃ¶ster
+    // Optional radio + min=0 ise "Seçim yok" seçeneğini sadece seçim yapıldıktan sonra göster
     syncNoneChoiceVisibility(changedInput) {
         if (!changedInput || changedInput.type !== "radio") return;
 
-        // "SeÃ§im yok" zaten ise bir ÅŸey yapma (grupta kalsÄ±n)
+        // "Seçim yok" zaten ise bir şey yapma (grupta kalsın)
         const optionGroup = changedInput.closest(".product-option-group");
         if (!optionGroup) return;
 
-        // "SeÃ§im yok" seÃ§ildiyse: tÃ¼m radio seÃ§imlerini kaldÄ±r, alt opsiyonlarÄ± temizle ve kendisini kaldÄ±r
+        // "Seçim yok" seçildiyse: tüm radio seçimlerini kaldır, alt opsiyonları temizle ve kendisini kaldır
         if (changedInput.dataset && changedInput.dataset.none === "1") {
-            // AynÄ± isimdeki tÃ¼m radio butonlarÄ±nÄ±n seÃ§imini kaldÄ±r
+            // Aynı isimdeki tüm radio butonlarının seçimini kaldır
             const groupName = changedInput.name;
             if (groupName) {
                 const radios = optionGroup.querySelectorAll(
@@ -1204,12 +1204,12 @@ class ModernMenuPage {
                 );
                 radios.forEach((r) => {
                     r.checked = false;
-                    // VarsayÄ±lan qty'yi de sÄ±fÄ±rla
+                    // Varsayılan qty'yi de sıfırla
                     r.setAttribute("data-qty", "0");
                 });
             }
 
-            // alt opsiyonlarÄ± temizle (varsa)
+            // alt opsiyonları temizle (varsa)
             const subOptionsContainer = optionGroup.querySelector(
                 ".sub-options-container",
             );
@@ -1218,11 +1218,11 @@ class ModernMenuPage {
                 subOptionsContainer.style.display = "none";
             }
 
-            // "SeÃ§im yok" label'Ä±nÄ± kaldÄ±r
+            // "Seçim yok" label'ını kaldır
             const noneLabel = changedInput.closest("label.option-choice");
             if (noneLabel) noneLabel.remove();
 
-            // FiyatÄ± gÃ¼ncelle
+            // Fiyatı güncelle
             this.updatePrice();
 
             return;
@@ -1231,7 +1231,7 @@ class ModernMenuPage {
         const requiredEl = optionGroup.querySelector(".option-required");
         const isRequired = requiredEl && requiredEl.classList.contains("required");
 
-        // KoÅŸul: radio + isteÄŸe baÄŸlÄ± (required:false) ise "SeÃ§im yok" gÃ¶ster
+        // Koşul: radio + isteğe bağlı (required:false) ise "Seçim yok" göster
         const isEligible = !isRequired;
         if (!isEligible) return;
 
@@ -1245,7 +1245,7 @@ class ModernMenuPage {
             'input[type="radio"]:checked',
         );
 
-        // HiÃ§ seÃ§im yoksa "SeÃ§im yok" gÃ¶rÃ¼nmesin (varsa kaldÄ±r)
+        // Hiç seçim yoksa "Seçim yok" görünmesin (varsa kaldır)
         if (!anyChecked) {
             if (noneExists) {
                 const noneInput = optionChoices.querySelector(
@@ -1259,18 +1259,18 @@ class ModernMenuPage {
             return;
         }
 
-        // Bir seÃ§im yapÄ±ldÄ±ysa "SeÃ§im yok" ekle (yoksa)
+        // Bir seçim yapıldıysa "Seçim yok" ekle (yoksa)
         if (!noneExists) {
             const optionId = optionGroup.getAttribute("data-option-id");
             const optionTitle =
                 optionGroup.querySelector(".option-title")?.textContent?.trim() || "";
 
-            // AynÄ± gruptaki gerÃ§ek radio'nun name'ini bul (instance id iÃ§in)
+            // Aynı gruptaki gerçek radio'nun name'ini bul (instance id için)
             const firstRadio = optionChoices.querySelector('input[type="radio"]');
             const groupName =
                 firstRadio?.name || (optionId ? `option_${optionId}` : "");
 
-            // Option objesi benzeri minimal yapÄ± (createOptionChoice iÃ§in)
+            // Option objesi benzeri minimal yapı (createOptionChoice için)
             const fauxOption = {
                 id: optionId,
                 type: "radio",
@@ -1284,7 +1284,7 @@ class ModernMenuPage {
                 fauxOption,
                 {
                     id: "__none__",
-                    name: "SeÃ§im yok",
+                    name: "Seçim yok",
                     price: 0,
                     maxQty: 1,
                     suboption: 0,
@@ -1293,7 +1293,7 @@ class ModernMenuPage {
                 -1,
             );
 
-            // En sona ekle (daha kullanÄ±cÄ± dostu)
+            // En sona ekle (daha kullanıcı dostu)
             optionChoices.appendChild(noneLabel);
         }
     }
@@ -1305,19 +1305,19 @@ class ModernMenuPage {
             this.updatePrice();
             return;
         }
-        // Radio ve checkbox iÃ§in Ã§alÄ±ÅŸÄ±r
+        // Radio ve checkbox için çalışır
         if (input.type !== "radio" && input.type !== "checkbox") return;
 
         const container = document.getElementById("dynamicOptionsContainer");
         if (!container) return;
 
-        // Sub option AJAX isteklerini takip etmek iÃ§in instance-level state
-        // BÃ¶ylece geÃ§ dÃ¶nen eski cevaplar DOM'a yanlÄ±ÅŸ alt opsiyon basamaz.
+        // Sub option AJAX isteklerini takip etmek için instance-level state
+        // Böylece geç dönen eski cevaplar DOM'a yanlış alt opsiyon basamaz.
         if (!this._productSubOptionRequests) {
             this._productSubOptionRequests = {};
         }
 
-        // AynÄ± option grubundaki ortak sub-options host'u bul
+        // Aynı option grubundaki ortak sub-options host'u bul
         const optionGroup = input.closest(".product-option-group");
         if (!optionGroup) return;
 
@@ -1343,21 +1343,21 @@ class ModernMenuPage {
             parentSelectionId || "no_selection",
         ].join("_");
 
-        // Radio iÃ§in: aynÄ± grup iÃ§indeki tÃ¼m radio'larÄ±n alt opsiyonlarÄ±nÄ± temizle
-        // Checkbox iÃ§in: sadece bu checkbox'Ä±n alt opsiyonlarÄ±nÄ± kontrol et
+        // Radio için: aynı grup içindeki tüm radio'ların alt opsiyonlarını temizle
+        // Checkbox için: sadece bu checkbox'ın alt opsiyonlarını kontrol et
         if (input.type === "radio") {
-            // Radio deÄŸiÅŸtiÄŸinde her zaman container'Ä± temizle (Ã¶nceki seÃ§imin alt opsiyonlarÄ±nÄ± kaldÄ±rmak iÃ§in)
+            // Radio değiştiğinde her zaman container'ı temizle (önceki seçimin alt opsiyonlarını kaldırmak için)
             subOptionsContainer.innerHTML = "";
             subOptionsContainer.style.display = "none";
         } else if (input.type === "checkbox") {
-            // Checkbox iÃ§in: birden fazla checkbox seÃ§ili olabilir,
-            // her birinin alt opsiyonlarÄ± ayrÄ± ayrÄ± gÃ¶sterilebilir.
+            // Checkbox için: birden fazla checkbox seçili olabilir,
+            // her birinin alt opsiyonları ayrı ayrı gösterilebilir.
             if (!input.checked) {
-                // Bu seÃ§ime ait bekleyen AJAX cevabÄ± varsa geÃ§ersiz kÄ±l
+                // Bu seçime ait bekleyen AJAX cevabı varsa geçersiz kıl
                 this._productSubOptionRequests[requestKey] =
                     "cancelled_" + Date.now();
 
-                // Checkbox kaldÄ±rÄ±ldÄ±ysa, sadece bu checkbox'a ait alt opsiyon bloklarÄ±nÄ± temizle.
+                // Checkbox kaldırıldıysa, sadece bu checkbox'a ait alt opsiyon bloklarını temizle.
                 const parentKey =
                     input.getAttribute("data-selection-id") || input.value || "";
 
@@ -1368,7 +1368,7 @@ class ModernMenuPage {
                     relatedGroups.forEach((el) => el.remove());
                 }
 
-                // EÄŸer hiÃ§ alt opsiyon kalmadÄ±ysa container'Ä± gizle
+                // Eğer hiç alt opsiyon kalmadıysa container'ı gizle
                 if (
                     !subOptionsContainer.querySelector(
                         ".product-option-group.sub-option-group",
@@ -1382,9 +1382,9 @@ class ModernMenuPage {
             }
         }
 
-        // "SeÃ§im yok" (optional radio) seÃ§ildiyse alt opsiyonlarÄ± kapat ve Ã§Ä±k
+        // "Seçim yok" (optional radio) seçildiyse alt opsiyonları kapat ve çık
         if (input.dataset && input.dataset.none === "1") {
-            // Bu seÃ§ime ait bekleyen AJAX cevabÄ± varsa geÃ§ersiz kÄ±l
+            // Bu seçime ait bekleyen AJAX cevabı varsa geçersiz kıl
             this._productSubOptionRequests[requestKey] =
                 "cancelled_" + Date.now();
 
@@ -1392,9 +1392,9 @@ class ModernMenuPage {
             return;
         }
 
-        // SeÃ§im kaldÄ±rÄ±ldÄ±ysa direkt fiyatÄ± gÃ¼ncelle
+        // Seçim kaldırıldıysa direkt fiyatı güncelle
         if (!input.checked) {
-            // Bu seÃ§ime ait bekleyen AJAX cevabÄ± varsa geÃ§ersiz kÄ±l
+            // Bu seçime ait bekleyen AJAX cevabı varsa geçersiz kıl
             this._productSubOptionRequests[requestKey] =
                 "cancelled_" + Date.now();
 
@@ -1404,7 +1404,7 @@ class ModernMenuPage {
 
         let subOptions = input._subOptions;
 
-        // data-sub="1" ise bu seÃ§enek iÃ§in alt opsiyon AJAX ile yÃ¼klenecek
+        // data-sub="1" ise bu seçenek için alt opsiyon AJAX ile yüklenecek
         const hasSubOptionFlag = input.dataset.sub === "1";
 
         if (
@@ -1414,7 +1414,7 @@ class ModernMenuPage {
             try {
                 const selectionId = input.getAttribute("data-selection-id") || null;
 
-                // selectionId yoksa (Ã¶r: seÃ§im yok) alt opsiyon arama
+                // selectionId yoksa (ör: seçim yok) alt opsiyon arama
                 if (!selectionId) {
                     this.updatePrice();
                     return;
@@ -1438,12 +1438,12 @@ class ModernMenuPage {
 
                 const data = await resp.json();
 
-                // GeÃ§ dÃ¶nen eski cevap ise DOM'a basma
+                // Geç dönen eski cevap ise DOM'a basma
                 if (this._productSubOptionRequests[requestKey] !== requestToken) {
                     return;
                 }
 
-                // Modal kapandÄ±ysa, Ã¼rÃ¼n deÄŸiÅŸtiyse veya input artÄ±k DOM'da deÄŸilse iÅŸlem yapma
+                // Modal kapandıysa, ürün değiştiyse veya input artık DOM'da değilse işlem yapma
                 if (
                     !this.currentProduct ||
                     String(this.currentProduct.id) !== String(productId) ||
@@ -1452,7 +1452,7 @@ class ModernMenuPage {
                     return;
                 }
 
-                // Parent seÃ§im artÄ±k seÃ§ili deÄŸilse eski cevabÄ± yok say
+                // Parent seçim artık seçili değilse eski cevabı yok say
                 if (!input.checked) {
                     return;
                 }
@@ -1471,30 +1471,30 @@ class ModernMenuPage {
             }
         }
 
-        // SeÃ§ilen input'a baÄŸlÄ± alt opsiyonlar yoksa sadece fiyatÄ± gÃ¼ncelle
+        // Seçilen input'a bağlı alt opsiyonlar yoksa sadece fiyatı güncelle
         if (!subOptions || !Array.isArray(subOptions) || subOptions.length === 0) {
             this.updatePrice();
             return;
         }
 
-        // Render Ã¶ncesi tekrar kontrol: input hala DOM'da ve seÃ§ili olmalÄ±
+        // Render öncesi tekrar kontrol: input hala DOM'da ve seçili olmalı
         if (!input.isConnected || !input.checked) {
             this.updatePrice();
             return;
         }
 
-        // Parantez iÃ§indeki isim: seÃ§ili Ã¶ÄŸenin kendi adÄ± olmalÄ± (Ã¶rn: "AcÄ± Sos"),
-        // opsiyon grubu baÅŸlÄ±ÄŸÄ± deÄŸil (Ã¶rn: "Ek Malzemeler").
+        // Parantez içindeki isim: seçili öğenin kendi adı olmalı (örn: "Acı Sos"),
+        // opsiyon grubu başlığı değil (örn: "Ek Malzemeler").
         const parentSelectionName =
             (input.value && input.value.trim()) ||
             (input.getAttribute("data-selection-name") || "").trim() ||
             (input.getAttribute("data-option-title") || "").trim() ||
             "";
 
-        // Yeni alt opsiyonlarÄ± render et (ana opsiyonlarla aynÄ± yapÄ±)
+        // Yeni alt opsiyonları render et (ana opsiyonlarla aynı yapı)
         subOptions.forEach((subOption) => {
-            // AynÄ± sub-option farklÄ± ana opsiyonlarda kullanÄ±lÄ±yorsa,
-            // radio gruplarÄ±nÄ±n Ã§akÄ±ÅŸmamasÄ± iÃ§in instance bazlÄ± bir id kullan.
+            // Aynı sub-option farklı ana opsiyonlarda kullanılıyorsa,
+            // radio gruplarının çakışmaması için instance bazlı bir id kullan.
             const originalId = subOption.id;
             const parentKey =
                 input.getAttribute("data-selection-id") || input.value || "";
@@ -1504,33 +1504,33 @@ class ModernMenuPage {
 
             const subOptionGroup = document.createElement("div");
             subOptionGroup.className = "product-option-group sub-option-group";
-            // Validasyon ve backend iÃ§in orijinal option id'yi sakla
+            // Validasyon ve backend için orijinal option id'yi sakla
             subOptionGroup.setAttribute("data-option-id", originalId);
-            // Hangi ana seÃ§ime (checkbox/radio) baÄŸlÄ± olduÄŸunu takip et
+            // Hangi ana seçime (checkbox/radio) bağlı olduğunu takip et
             if (parentKey) {
                 subOptionGroup.setAttribute("data-parent-selection", parentKey);
             }
-            // min/max deÄŸerlerini data attribute olarak sakla (validasyon iÃ§in)
+            // min/max değerlerini data attribute olarak sakla (validasyon için)
             if (subOption.min !== undefined)
                 subOptionGroup.setAttribute("data-option-min", subOption.min);
             if (subOption.max !== undefined)
                 subOptionGroup.setAttribute("data-option-max", subOption.max);
 
-            // Header (baÅŸlÄ±k + arama)
+            // Header (başlık + arama)
             const header = document.createElement("div");
             header.className = "option-group-header";
 
             const title = document.createElement("h4");
             title.className = "option-title";
-            // BaÅŸlÄ±ÄŸa hangi ana opsiyona baÄŸlÄ± olduÄŸunu ekle: "Sucuk YoÄŸunluÄŸu (AcÄ± Sos)"
+            // Başlığa hangi ana opsiyona bağlı olduğunu ekle: "Sucuk Yoğunluğu (Acı Sos)"
             if (parentSelectionName) {
-                title.textContent = `${subOption.title || "SeÃ§enekler"} (${parentSelectionName})`;
+                title.textContent = `${subOption.title || "Seçenekler"} (${parentSelectionName})`;
             } else {
-                title.textContent = subOption.title || "SeÃ§enekler";
+                title.textContent = subOption.title || "Seçenekler";
             }
             header.appendChild(title);
 
-            // Arama butonu + input (opsiyonel - sub-optionlarda arama gerekli deÄŸilse kaldÄ±rÄ±labilir)
+            // Arama butonu + input (opsiyonel - sub-optionlarda arama gerekli değilse kaldırılabilir)
             const searchWrapper = document.createElement("div");
             searchWrapper.className = "option-search-wrapper";
 
@@ -1554,11 +1554,11 @@ class ModernMenuPage {
 
             subOptionGroup.appendChild(header);
 
-            // Limit & required bilgisi satÄ±rÄ±
+            // Limit & required bilgisi satırı
             const metaRow = document.createElement("div");
             metaRow.className = "option-meta-row";
 
-            // min/max deÄŸerlerini kullan (maxSelectable yerine max kullan)
+            // min/max değerlerini kullan (maxSelectable yerine max kullan)
             const maxSelectable =
                 subOption.max !== undefined
                     ? subOption.max
@@ -1574,7 +1574,7 @@ class ModernMenuPage {
             const limitSuffix =
                 window.I18N?.getTranslations?.()?.[
                     window.I18N?.getPreferredLanguage?.() || "tr"
-                ]?.option_limit_suffix || "adet seÃ§ebilirsiniz!";
+                ]?.option_limit_suffix || "adet seçebilirsiniz!";
             limitSpan.textContent = `${limitPrefix} ${maxSelectable} ${limitSuffix}`;
 
             const requiredSpan = document.createElement("span");
@@ -1586,7 +1586,7 @@ class ModernMenuPage {
             const optionalText =
                 window.I18N?.getTranslations?.()?.[
                     window.I18N?.getPreferredLanguage?.() || "tr"
-                ]?.option_optional || "Ä°steÄŸe BaÄŸlÄ±";
+                ]?.option_optional || "İsteğe Bağlı";
             requiredSpan.textContent = subOption.required
                 ? requiredText
                 : optionalText;
@@ -1600,7 +1600,7 @@ class ModernMenuPage {
             subChoicesContainer.className = "option-choices";
 
             subOption.items.forEach((subItem, subIndex) => {
-                // createOptionChoice iÃ§in: instance id'yi kullan ama orijinal id'yi de sakla
+                // createOptionChoice için: instance id'yi kullan ama orijinal id'yi de sakla
                 const renderOption = {
                     ...subOption,
                     id: instanceId,
@@ -1617,7 +1617,7 @@ class ModernMenuPage {
 
             subOptionGroup.appendChild(subChoicesContainer);
 
-            // Alt opsiyonlarÄ±n gÃ¶sterileceÄŸi ortak container (nested sub-options iÃ§in)
+            // Alt opsiyonların gösterileceği ortak container (nested sub-options için)
             const nestedSubOptionsHost = document.createElement("div");
             nestedSubOptionsHost.className = "sub-options-container";
             nestedSubOptionsHost.style.display = "none";
@@ -1693,7 +1693,7 @@ class ModernMenuPage {
         this.updateModalContent(product, null, null);
         this.updateModalOrderTypeVisibility();
 
-        // TÃ¼kendi ise sepete ekle satÄ±rÄ±nÄ± gizle
+        // Tükendi ise sepete ekle satırını gizle
         const addToCartRow = document.querySelector(".add-to-cart-row");
         if (addToCartRow) {
             addToCartRow.style.display = product.product_qr_status === "2" ? "none" : "";
@@ -1718,12 +1718,12 @@ class ModernMenuPage {
         // Initialize viewport detection for mobile browser chrome
         this.initializeViewportDetection();
 
-        // Galeri sistemini baÅŸlat
+        // Galeri sistemini başlat
         setTimeout(() => {
             const product = this.currentProduct;
 
             if (product) {
-                // EÄŸer media array varsa kullan, yoksa product.image'dan tek resimli galeri oluÅŸtur
+                // Eğer media array varsa kullan, yoksa product.image'dan tek resimli galeri oluştur
                 if (
                     product.media &&
                     Array.isArray(product.media) &&
@@ -1737,7 +1737,7 @@ class ModernMenuPage {
                         window.initProductGallery(mediaWithSource);
                     }
                 } else if (product.image) {
-                    // Fallback: Tek resimli galeri oluÅŸtur
+                    // Fallback: Tek resimli galeri oluştur
                     if (window.initProductGallery) {
                         window.initProductGallery([{
                             type: "image",
@@ -1766,14 +1766,14 @@ class ModernMenuPage {
             "modalImageLoadingSpinner",
         );
 
-        // EÄŸer media array varsa eski resim sistemini atla (galeri kullanÄ±lacak)
+        // Eğer media array varsa eski resim sistemini atla (galeri kullanılacak)
         if (
             product.media &&
             Array.isArray(product.media) &&
             product.media.length > 0
         ) {
-            // Galeri sistemi kullanÄ±lacak, eski resim sistemini atla
-            // Spinner galeri render edildiÄŸinde gizlenecek
+            // Galeri sistemi kullanılacak, eski resim sistemini atla
+            // Spinner galeri render edildiğinde gizlenecek
             // Gallery will be initialized by window.initProductGallery in openProductModal
             if (modalImageSpinner) {
                 modalImageSpinner.style.display = "flex";
@@ -1838,11 +1838,11 @@ class ModernMenuPage {
             }
         }
 
-        // Update badge (tÃ¼kendi Ã¶ncelikli)
+        // Update badge (tükendi öncelikli)
         const modalBadge = document.getElementById("modalProductBadge");
         if (modalBadge) {
             if (product.product_qr_status === "2") {
-                modalBadge.textContent = "TÃ¼kendi";
+                modalBadge.textContent = "Tükendi";
                 modalBadge.style.display = "block";
             } else if (product.badge) {
                 modalBadge.textContent = this.getBadgeText(product.badge);
@@ -1929,19 +1929,19 @@ class ModernMenuPage {
             const optionGroup = document.createElement("div");
             optionGroup.className = "product-option-group";
             optionGroup.setAttribute("data-option-id", option.id);
-            // min/max deÄŸerlerini data attribute olarak sakla (validasyon iÃ§in)
+            // min/max değerlerini data attribute olarak sakla (validasyon için)
             if (option.min !== undefined)
                 optionGroup.setAttribute("data-option-min", option.min);
             if (option.max !== undefined)
                 optionGroup.setAttribute("data-option-max", option.max);
 
-            // Grup baÅŸlÄ±ÄŸÄ± + arama alanÄ±
+            // Grup başlığı + arama alanı
             const header = document.createElement("div");
             header.className = "option-group-header";
 
             const title = document.createElement("h4");
             title.className = "option-title";
-            title.textContent = option.title || "SeÃ§enekler";
+            title.textContent = option.title || "Seçenekler";
             header.appendChild(title);
 
             // Arama butonu + input
@@ -1968,11 +1968,11 @@ class ModernMenuPage {
 
             optionGroup.appendChild(header);
 
-            // Limit & required bilgisi satÄ±rÄ±
+            // Limit & required bilgisi satırı
             const metaRow = document.createElement("div");
             metaRow.className = "option-meta-row";
 
-            // max deÄŸerini kullan (yoksa maxSelectable, yoksa varsayÄ±lan)
+            // max değerini kullan (yoksa maxSelectable, yoksa varsayılan)
             const maxSelectable =
                 option.max !== undefined
                     ? option.max
@@ -1988,7 +1988,7 @@ class ModernMenuPage {
             const limitSuffix =
                 window.I18N?.getTranslations?.()?.[
                     window.I18N?.getPreferredLanguage?.() || "tr"
-                ]?.option_limit_suffix || "adet seÃ§ebilirsiniz!";
+                ]?.option_limit_suffix || "adet seçebilirsiniz!";
             limitSpan.textContent = `${limitPrefix} ${maxSelectable} ${limitSuffix}`;
 
             const requiredSpan = document.createElement("span");
@@ -2001,7 +2001,7 @@ class ModernMenuPage {
             const optionalText =
                 window.I18N?.getTranslations?.()?.[
                     window.I18N?.getPreferredLanguage?.() || "tr"
-                ]?.option_optional || "Ä°steÄŸe BaÄŸlÄ±";
+                ]?.option_optional || "İsteğe Bağlı";
             requiredSpan.textContent = option.required ? requiredText : optionalText;
 
             metaRow.appendChild(limitSpan);
@@ -2013,7 +2013,7 @@ class ModernMenuPage {
             choicesContainer.className = "option-choices";
             optionGroup.appendChild(choicesContainer);
 
-            // Alt opsiyonlarÄ±n gÃ¶sterileceÄŸi ortak container
+            // Alt opsiyonların gösterileceği ortak container
             const subOptionsHost = document.createElement("div");
             subOptionsHost.className = "sub-options-container";
             subOptionsHost.style.display = "none";
@@ -2024,7 +2024,7 @@ class ModernMenuPage {
                 const choiceLabel = this.createOptionChoice(option, item, index);
                 choicesContainer.appendChild(choiceLabel);
 
-                // EÄŸer bu item'in Ã¶nceden yÃ¼klenmiÅŸ statik alt opsiyonu varsa, referansÄ± sakla
+                // Eğer bu item'in önceden yüklenmiş statik alt opsiyonu varsa, referansı sakla
                 const inputEl = choiceLabel.querySelector("input");
                 if (
                     inputEl &&
@@ -2050,10 +2050,10 @@ class ModernMenuPage {
         label.className = "option-choice";
 
         const inputType = option.type === "radio" ? "radio" : "checkbox";
-        // inputName override (Ã¶zellikle "SeÃ§im yok" iÃ§in, mevcut grup ismini kullanmak Ã¼zere)
+        // inputName override (özellikle "Seçim yok" için, mevcut grup ismini kullanmak üzere)
         const inputName = option.inputName || `option_${option.id}`;
         const isNoneChoice = !!(item && item.__none === true);
-        const checkedAttr = ""; // default seÃ§im yapÄ±lmasÄ±n
+        const checkedAttr = ""; // default seçim yapılmasın
         const priceValue =
             item.price !== undefined && item.price !== null ? item.price : 0;
         const hasPrice = priceValue !== 0;
@@ -2063,7 +2063,7 @@ class ModernMenuPage {
             : item && item.id !== undefined && item.id !== null
                 ? String(item.id)
                 : "";
-        // Backend ve cart yapÄ±sÄ± iÃ§in orijinal option id'yi kullan (instance id deÄŸil)
+        // Backend ve cart yapısı için orijinal option id'yi kullan (instance id değil)
         const logicalOptionId =
             option && option.originalId !== undefined && option.originalId !== null
                 ? option.originalId
@@ -2129,7 +2129,7 @@ class ModernMenuPage {
             const getMax = () => {
                 const raw = checkbox?.getAttribute("data-max-qty");
                 const n = parseInt(raw, 10);
-                // maxQty > 0 ise o deÄŸeri kullan, 0 / null / boÅŸ / geÃ§ersiz ise limitsiz (Infinity) kabul et
+                // maxQty > 0 ise o değeri kullan, 0 / null / boş / geçersiz ise limitsiz (Infinity) kabul et
                 return Number.isFinite(n) && n > 0 ? n : Infinity;
             };
 
@@ -2141,7 +2141,7 @@ class ModernMenuPage {
                     const prevChecked = checkbox.checked;
                     checkbox.checked = clamped > 0;
                     checkbox.setAttribute("data-qty", String(clamped));
-                    // Sadece checked durumu deÄŸiÅŸtiyse change event'i tetikle
+                    // Sadece checked durumu değiştiyse change event'i tetikle
                     // (0 -> 1 veya 1 -> 0). Qty artarken tekrar tekrar AJAX gitmesin.
                     if (prevChecked !== checkbox.checked) {
                         const changeEvent = new Event("change", { bubbles: true });
@@ -2159,7 +2159,7 @@ class ModernMenuPage {
                 this.updatePrice();
             };
 
-            // default qty 0 (unchecked) -> kontroller gizli, sadece satÄ±ra tÄ±klayÄ±nca aÃ§Ä±lacak
+            // default qty 0 (unchecked) -> kontroller gizli, sadece satıra tıklayınca açılacak
             setQty(0);
 
             if (incBtn) {
@@ -2181,7 +2181,7 @@ class ModernMenuPage {
                 });
             }
 
-            // Ana iÃ§erik alana tÄ±klayÄ±nca da miktarÄ± arttÄ±r (plus gibi davransÄ±n)
+            // Ana içerik alana tıklayınca da miktarı arttır (plus gibi davransın)
             if (contentEl) {
                 contentEl.addEventListener("click", (e) => {
                     e.preventDefault();
@@ -2246,7 +2246,7 @@ class ModernMenuPage {
             '#dynamicOptionsContainer input[type="radio"], #dynamicOptionsContainer input[type="checkbox"]',
         );
         allOptionInputs.forEach((input) => {
-            // TÃ¼m radio ve checkbox butonlarÄ±nÄ± seÃ§ili olmayan hale getir
+            // Tüm radio ve checkbox butonlarını seçili olmayan hale getir
             input.checked = false;
         });
 
@@ -2279,7 +2279,7 @@ class ModernMenuPage {
             }
         }
 
-        // Populate options from cartItem.options.selections hiyerarÅŸik olarak
+        // Populate options from cartItem.options.selections hiyerarşik olarak
         if (!cartItem.options || !cartItem.options.selections) {
             this.updatePrice();
             return;
@@ -2291,7 +2291,7 @@ class ModernMenuPage {
             return;
         }
 
-        // SeÃ§imleri dÃ¼z listeye Ã§evir ve depth'e gÃ¶re sÄ±rala (Ã¶nce ana opsiyonlar, sonra sub'lar)
+        // Seçimleri düz listeye çevir ve depth'e göre sırala (önce ana opsiyonlar, sonra sub'lar)
         const selectionRecords = [];
 
         Object.keys(cartItem.options.selections).forEach((optionKey) => {
@@ -2317,14 +2317,14 @@ class ModernMenuPage {
             });
         });
 
-        // DerinliÄŸe gÃ¶re sÄ±rala (Ã¶nce ana opsiyonlar)
+        // Derinliğe göre sırala (önce ana opsiyonlar)
         selectionRecords.sort((a, b) => (a.depth || 0) - (b.depth || 0));
 
         const findInputForSelection = (rec) => {
             const idStr = rec.id !== null ? String(rec.id) : null;
 
             if (!rec.isSubOption) {
-                // Ana opsiyon: doÄŸrudan option_{id} grubunda ara
+                // Ana opsiyon: doğrudan option_{id} grubunda ara
                 if (idStr) {
                     return container.querySelector(
                         `input[name="option_${rec.optionId}"][data-selection-id="${idStr}"]`,
@@ -2338,7 +2338,7 @@ class ModernMenuPage {
                 return null;
             }
 
-            // Sub-option: selection id + parentSelectionId'ye gÃ¶re bul
+            // Sub-option: selection id + parentSelectionId'ye göre bul
             const candidates = Array.from(
                 container.querySelectorAll(
                     idStr
@@ -2359,11 +2359,11 @@ class ModernMenuPage {
                 if (withParent) return withParent;
             }
 
-            // Fallback: ilk adayÄ± kullan
+            // Fallback: ilk adayı kullan
             return candidates[0];
         };
 
-        // SeÃ§imleri sÄ±rayla uygula, sub-option'lar iÃ§in de gerekirse alt seviye aÃ§
+        // Seçimleri sırayla uygula, sub-option'lar için de gerekirse alt seviye aç
         for (const rec of selectionRecords) {
             const input = findInputForSelection(rec);
             if (!input) continue;
@@ -2373,7 +2373,7 @@ class ModernMenuPage {
             if (input.type === "radio") {
                 input.checked = true;
                 input.setAttribute("data-qty", String(qty));
-                // Radio iÃ§in alt opsiyonlarÄ± ve "SeÃ§im yok" butonunu hazÄ±rla
+                // Radio için alt opsiyonları ve "Seçim yok" butonunu hazırla
                 await this.handleSubOptionsToggle(input);
                 this.syncNoneChoiceVisibility(input);
             } else if (input.type === "checkbox") {
@@ -2406,7 +2406,7 @@ class ModernMenuPage {
                     }
                 }
 
-                // Checkbox iÃ§in de alt opsiyonlarÄ± kontrol et (varsa)
+                // Checkbox için de alt opsiyonları kontrol et (varsa)
                 await this.handleSubOptionsToggle(input);
             }
         }
@@ -2427,7 +2427,7 @@ class ModernMenuPage {
                 : fallback;
 
         if (this.editingCartItemId) {
-            modalAddToCartBtn.textContent = t("cart_update_btn", "GÃ¼ncelle");
+            modalAddToCartBtn.textContent = t("cart_update_btn", "Güncelle");
             modalAddToCartBtn.setAttribute("data-i18n", "cart_update_btn");
         } else {
             modalAddToCartBtn.textContent = t("product_action_add", "Ekle");
@@ -2458,7 +2458,7 @@ class ModernMenuPage {
         );
 
         allCheckedInputs.forEach((input) => {
-            // "SeÃ§im yok" radiolarÄ± fiyat hesabÄ±na dahil etme
+            // "Seçim yok" radioları fiyat hesabına dahil etme
             if (input.dataset && input.dataset.none === "1") return;
             const price = parseFloat(input.dataset.price) || 0;
             const qty = parseInt(input.getAttribute("data-qty") || "1", 10) || 1;
@@ -2478,7 +2478,7 @@ class ModernMenuPage {
         if (modalCurrentPrice) {
             const priceText = window.TahmisciCatalog
                 ? this.formatTahmisciPriceLabel(this.currentProduct)
-                : (this.currentProduct?.priceLabel || ("â‚º" + totalPrice.toFixed(2)));
+                : (this.currentProduct?.priceLabel || ("₺" + totalPrice.toFixed(2)));
             modalCurrentPrice.textContent = priceText;
             const priceWrap = modalCurrentPrice.closest(".product-modal-price");
             if (priceWrap) priceWrap.style.display = priceText ? "flex" : "none";
@@ -2514,12 +2514,12 @@ class ModernMenuPage {
         const container = document.getElementById("dynamicOptionsContainer");
         if (!container) return { valid: true, error: null };
 
-        // Sadece ana option group'larÄ± bul (sub-option-group olmayan)
+        // Sadece ana option group'ları bul (sub-option-group olmayan)
         const mainOptionGroups = container.querySelectorAll(
             ".product-option-group:not(.sub-option-group)",
         );
 
-        // Ana opsiyonlarÄ± kontrol et
+        // Ana opsiyonları kontrol et
         for (const group of mainOptionGroups) {
             const validationResult = this.validateOptionGroup(group);
             if (!validationResult.valid) {
@@ -2527,14 +2527,14 @@ class ModernMenuPage {
             }
         }
 
-        // GÃ¶rÃ¼nÃ¼r sub-option group'larÄ± kontrol et
+        // Görünür sub-option group'ları kontrol et
         const visibleSubOptionGroups =
             container.querySelectorAll(".sub-option-group");
         for (const subGroup of visibleSubOptionGroups) {
-            // Sub-option container'Ä±nÄ±n display:none olup olmadÄ±ÄŸÄ±nÄ± kontrol et
+            // Sub-option container'ının display:none olup olmadığını kontrol et
             const subContainer = subGroup.closest(".sub-options-container");
             if (subContainer && subContainer.style.display === "none") {
-                continue; // GÃ¶rÃ¼nÃ¼r deÄŸilse kontrol etme
+                continue; // Görünür değilse kontrol etme
             }
 
             const validationResult = this.validateOptionGroup(subGroup);
@@ -2551,21 +2551,21 @@ class ModernMenuPage {
         const optionId = group.getAttribute("data-option-id");
         if (!optionId) return { valid: true, error: null };
 
-        // Option metadata'sÄ±nÄ± bul (required, min, max, title)
+        // Option metadata'sını bul (required, min, max, title)
         const titleEl = group.querySelector(".option-title");
         const optionTitle = titleEl ? titleEl.textContent.trim() : "Opsiyon";
 
         const requiredEl = group.querySelector(".option-required");
         const isRequired = requiredEl && requiredEl.classList.contains("required");
 
-        // min/max deÄŸerlerini data attribute'dan al
+        // min/max değerlerini data attribute'dan al
         const minValue =
             parseInt(group.getAttribute("data-option-min") || "0", 10) || 0;
         const maxValueAttr = group.getAttribute("data-option-max");
         const maxValue =
             maxValueAttr !== null ? parseInt(maxValueAttr, 10) || Infinity : Infinity;
 
-        // Bu option iÃ§in seÃ§ilen input'larÄ± bul (sadece bu group'un direkt option-choices'Ä±ndan)
+        // Bu option için seçilen input'ları bul (sadece bu group'un direkt option-choices'ından)
         const optionChoices = group.querySelector(".option-choices");
         if (!optionChoices) return { valid: true, error: null };
 
@@ -2573,29 +2573,29 @@ class ModernMenuPage {
             'input:checked:not([data-none="1"])',
         );
 
-        // min/max kontrolÃ¼ iÃ§in: seÃ§ilen opsiyon SAYISI (radio veya checkbox'larÄ±n kendisi, qty deÄŸil)
+        // min/max kontrolü için: seçilen opsiyon SAYISI (radio veya checkbox'ların kendisi, qty değil)
         const selectedCount = checkedInputs.length;
 
-        // Ã‡ok dilli mesajlar iÃ§in
+        // Çok dilli mesajlar için
         const lang = window.I18N?.getPreferredLanguage?.() || "tr";
         const translations = window.I18N?.getTranslations?.()?.[lang] || {};
 
-        // Required kontrolÃ¼: required ise en az 1 seÃ§im olmalÄ±
+        // Required kontrolü: required ise en az 1 seçim olmalı
         if (isRequired && selectedCount === 0) {
             const template =
                 translations.validation_required ||
-                "{title} zorunludur. LÃ¼tfen seÃ§im yapÄ±nÄ±z.";
+                "{title} zorunludur. Lütfen seçim yapınız.";
             return {
                 valid: false,
                 error: template.replace("{title}", optionTitle),
             };
         }
 
-        // min kontrolÃ¼: min deÄŸerinden az seÃ§im yapÄ±lmÄ±ÅŸsa (ve seÃ§im yapÄ±lmÄ±ÅŸsa)
+        // min kontrolü: min değerinden az seçim yapılmışsa (ve seçim yapılmışsa)
         if (selectedCount > 0 && selectedCount < minValue) {
             const template =
                 translations.validation_min_selection ||
-                "{title} iÃ§in en az {min} adet seÃ§im yapmalÄ±sÄ±nÄ±z.";
+                "{title} için en az {min} adet seçim yapmalısınız.";
             return {
                 valid: false,
                 error: template
@@ -2604,11 +2604,11 @@ class ModernMenuPage {
             };
         }
 
-        // max kontrolÃ¼: max deÄŸerinden fazla seÃ§im yapÄ±lmÄ±ÅŸsa
+        // max kontrolü: max değerinden fazla seçim yapılmışsa
         if (Number.isFinite(maxValue) && selectedCount > maxValue) {
             const template =
                 translations.validation_max_selection ||
-                "{title} iÃ§in en fazla {max} adet seÃ§ebilirsiniz.";
+                "{title} için en fazla {max} adet seçebilirsiniz.";
             return {
                 valid: false,
                 error: template
@@ -2628,13 +2628,13 @@ class ModernMenuPage {
             return;
         }
 
-        // Validasyon kontrolÃ¼
+        // Validasyon kontrolü
         const validation = this.validateOptions();
         if (!validation.valid) {
             if (window.Swal && typeof window.Swal.fire === "function") {
                 const lang = window.I18N?.getPreferredLanguage?.() || "tr";
                 const translations = window.I18N?.getTranslations?.()?.[lang] || {};
-                const warningTitle = translations.warning_title || "UyarÄ±";
+                const warningTitle = translations.warning_title || "Uyarı";
                 const confirmText = translations.confirm_button || "Tamam";
 
                 window.Swal.fire({
@@ -2683,7 +2683,7 @@ class ModernMenuPage {
 
         // Group selections by option id and store selection ids too
         allCheckedInputs.forEach((input) => {
-            // "SeÃ§im yok" radiolarÄ±nÄ± options iÃ§ine alma
+            // "Seçim yok" radiolarını options içine alma
             if (input.dataset && input.dataset.none === "1") {
                 return;
             }
@@ -2695,18 +2695,18 @@ class ModernMenuPage {
             );
             const optionValue = input.value;
 
-            // GerÃ§ek option detail ID yoksa bu seÃ§im gÃ¼venli deÄŸil.
-            // Bu alan backend'de units_type Ã§Ã¶zÃ¼mÃ¼ iÃ§in zorunlu.
+            // Gerçek option detail ID yoksa bu seçim güvenli değil.
+            // Bu alan backend'de units_type çözümü için zorunlu.
             if (!selectionId) {
                 invalidOptionSelection = true;
-                invalidOptionMessage = "SeÃ§ilen Ã¼rÃ¼n opsiyonlarÄ±ndan biri eksik veya hatalÄ± gÃ¶rÃ¼nÃ¼yor. LÃ¼tfen Ã¼rÃ¼nÃ¼ tekrar seÃ§iniz.";
+                invalidOptionMessage = "Seçilen ürün opsiyonlarından biri eksik veya hatalı görünüyor. Lütfen ürünü tekrar seçiniz.";
                 return;
             }
             const optionPrice = parseFloat(input.dataset.price) || 0;
             const optQty = parseInt(input.getAttribute("data-qty") || "1", 10) || 1;
             const optionTitle = input.getAttribute("data-option-title") || "";
 
-            // HiyerarÅŸi bilgisi: bu seÃ§im bir sub-option mÄ±?
+            // Hiyerarşi bilgisi: bu seçim bir sub-option mı?
             let isSubOption = false;
             let parentSelectionId = null;
             let parentOptionId = null;
@@ -2723,7 +2723,7 @@ class ModernMenuPage {
 
                 if (!parentSelectionId) {
                     invalidOptionSelection = true;
-                    invalidOptionMessage = "Alt opsiyon baÄŸlantÄ±sÄ± doÄŸrulanamadÄ±. LÃ¼tfen Ã¼rÃ¼nÃ¼ tekrar seÃ§iniz.";
+                    invalidOptionMessage = "Alt opsiyon bağlantısı doğrulanamadı. Lütfen ürünü tekrar seçiniz.";
                     return;
                 }
 
@@ -2767,7 +2767,7 @@ class ModernMenuPage {
                 price: optionPrice,
                 qty: optQty,
                 optionTitle: optionTitle,
-                // HiyerarÅŸi bilgisi: ana opsiyon / sub opsiyon zinciri
+                // Hiyerarşi bilgisi: ana opsiyon / sub opsiyon zinciri
                 isSubOption,
                 parentOptionId,
                 parentSelectionId,
@@ -2779,12 +2779,12 @@ class ModernMenuPage {
             if (window.Swal && typeof window.Swal.fire === "function") {
                 const lang = window.I18N?.getPreferredLanguage?.() || "tr";
                 const translations = window.I18N?.getTranslations?.()?.[lang] || {};
-                const warningTitle = translations.warning_title || "UyarÄ±";
+                const warningTitle = translations.warning_title || "Uyarı";
                 const confirmText = translations.confirm_button || "Tamam";
 
                 window.Swal.fire({
                     title: warningTitle,
-                    text: invalidOptionMessage || "ÃœrÃ¼n opsiyonlarÄ± doÄŸrulanamadÄ±. LÃ¼tfen tekrar deneyiniz.",
+                    text: invalidOptionMessage || "Ürün opsiyonları doğrulanamadı. Lütfen tekrar deneyiniz.",
                     icon: "warning",
                     confirmButtonText: confirmText,
                     confirmButtonColor: "#8C734B",
@@ -2798,7 +2798,7 @@ class ModernMenuPage {
         const unitPrice = totalPrice; // price per unit (basePrice + options with qty)
 
         // Save product info before adding to cart (for notification)
-        const productName = this.currentProduct.name || "ÃœrÃ¼n";
+        const productName = this.currentProduct.name || "Ürün";
         const quantity = this.currentQuantity || 1;
 
         // If editing, preserve addedAt timestamp from old item
@@ -2970,7 +2970,7 @@ class ModernMenuPage {
     closeProductModal() {
         if (this.productModalOverlay) {
             this.productModalOverlay.classList.remove("active");
-            // Swipe sonrasÄ± inline stilleri temizle (tekrar aÃ§Ä±lÄ±ÅŸta kayma kalmasÄ±n)
+            // Swipe sonrası inline stilleri temizle (tekrar açılışta kayma kalmasın)
             this.productModalOverlay.style.opacity = "";
             const modalBox = this.productModalOverlay.querySelector(".product-modal");
             if (modalBox) modalBox.style.transform = "";
@@ -2997,12 +2997,12 @@ class ModernMenuPage {
 
     getBadgeText(badge) {
         const badges = {
-            popular: "PopÃ¼ler",
+            popular: "Popüler",
             new: "Yeni",
-            discount: "%15 Ä°ndirim",
-            healthy: "SaÄŸlÄ±klÄ±",
-            hot: "SÄ±cak",
-            breakfast: "KahvaltÄ±",
+            discount: "%15 İndirim",
+            healthy: "Sağlıklı",
+            hot: "Sıcak",
+            breakfast: "Kahvaltı",
         };
         return badges[badge] || "";
     }
@@ -3015,7 +3015,7 @@ class ModernMenuPage {
         }
         // Use global cart manager if available
         if (window.globalCart) {
-            // CartSystem.generateCartItemId ile id Ã¼ret
+            // CartSystem.generateCartItemId ile id üret
             const cartSystem =
                 window.Cart || (window.CartSystem ? window.CartSystem : null);
             let id = null;
@@ -3038,7 +3038,7 @@ class ModernMenuPage {
             }
         } else {
             // Fallback to local cart
-            // CartSystem.generateCartItemId ile id Ã¼ret
+            // CartSystem.generateCartItemId ile id üret
             const cartSystem =
                 window.Cart || (window.CartSystem ? window.CartSystem : null);
             let id = null;
@@ -3140,7 +3140,7 @@ class ModernMenuPage {
     updateCartCounter() {
         // Use global cart manager if available
         if (window.globalCart) {
-            // Global cart kullanÄ±yorsa, direkt updateCartDisplay Ã§aÄŸÄ±r (zaten mobile-cart-count'u gÃ¼ncelliyor)
+            // Global cart kullanıyorsa, direkt updateCartDisplay çağır (zaten mobile-cart-count'u güncelliyor)
             window.globalCart.updateCartDisplay();
 
             // Update desktop cart button badge
@@ -3156,7 +3156,7 @@ class ModernMenuPage {
                 desktopCartBadge.textContent = totalItems > 0 ? totalItems : "";
                 desktopCartBadge.style.display = totalItems > 0 ? "flex" : "none";
             }
-            return; // Global cart kullanÄ±yorsa, local cart gÃ¼ncellemesine gerek yok
+            return; // Global cart kullanıyorsa, local cart güncellemesine gerek yok
         }
 
         // Fallback to local cart counter update (only if globalCart is not available)
@@ -3249,7 +3249,7 @@ class ModernMenuPage {
                 if (Array.isArray(parsed)) {
                     this.appliedPromos = parsed;
                 } else if (parsed) {
-                    // Eski tekli formatÄ± da destekle
+                    // Eski tekli formatı da destekle
                     this.appliedPromos = [parsed];
                 } else {
                     this.appliedPromos = [];
@@ -3275,7 +3275,7 @@ class ModernMenuPage {
             return;
         }
 
-        // Check order type - hide button if tableMenu (Masa MenÃ¼sÃ¼) on desktop
+        // Check order type - hide button if tableMenu (Masa Menüsü) on desktop
         const orderType = localStorage.getItem("menuOrderType");
         if (orderType === "tableMenu") {
             desktopCartBtn.style.display = "none";
@@ -3338,13 +3338,13 @@ class ModernMenuPage {
         // Checkout button
         if (cartCheckoutBtn) {
             cartCheckoutBtn.addEventListener("click", () => {
-                // Ã‡ift tÄ±klamayÄ± engelle ve loading spinner gÃ¶ster
+                // Çift tıklamayı engelle ve loading spinner göster
                 if (cartCheckoutBtn.disabled) return;
 
                 cartCheckoutBtn.disabled = true;
                 cartCheckoutBtn.classList.add("is-loading");
 
-                // Buton metnini sakla, spinner gÃ¶ster
+                // Buton metnini sakla, spinner göster
                 const labelSpan = cartCheckoutBtn.querySelector("span");
                 const icon = cartCheckoutBtn.querySelector("i");
                 if (labelSpan) {
@@ -3354,7 +3354,7 @@ class ModernMenuPage {
                     icon.style.display = "none";
                 }
 
-                // KÃ¼Ã§Ã¼k bir gecikme ile yÃ¶nlendir (spinner'Ä± gÃ¶rselleÅŸtirmek iÃ§in)
+                // Küçük bir gecikme ile yönlendir (spinner'ı görselleştirmek için)
                 setTimeout(() => {
                     window.location.href = "siparis";
                 }, 100);
@@ -3389,9 +3389,9 @@ class ModernMenuPage {
         const modalOverlay = document.getElementById("newCartModalOverlay");
         if (!modalOverlay) return;
 
-        // ModalÄ± hemen aÃ§; iÃ§erik sonra yÃ¼klensin (Ã§ok Ã¼rÃ¼n varken gecikme olmasÄ±n)
+        // Modalı hemen aç; içerik sonra yüklensin (çok ürün varken gecikme olmasın)
         const cartItemsContainer = document.getElementById("newCartItems");
-        const loadingText = (window.I18N && window.I18N.t) ? window.I18N.t("loading") : "YÃ¼kleniyor...";
+        const loadingText = (window.I18N && window.I18N.t) ? window.I18N.t("loading") : "Yükleniyor...";
         if (cartItemsContainer) {
             cartItemsContainer.innerHTML =
                 '<div class="new-cart-modal-loading"><div class="new-cart-modal-loading-spinner"></div><span>' +
@@ -3401,13 +3401,13 @@ class ModernMenuPage {
         modalOverlay.classList.add("active");
         document.body.style.overflow = "hidden";
 
-        // Ä°Ã§eriÄŸi bir sonraki paint sonrasÄ± render et (modal Ã¶nce gÃ¶rÃ¼nsÃ¼n)
+        // İçeriği bir sonraki paint sonrası render et (modal önce görünsün)
         const self = this;
         requestAnimationFrame(function () {
             requestAnimationFrame(function () {
                 self.loadPromo();
                 self.renderNewCartModal();
-                // Kampanya satÄ±rÄ± async yÃ¼klendiÄŸi iÃ§in sepette tekrar gÃ¼ncelle (fetch tamamlansÄ±n)
+                // Kampanya satırı async yüklendiği için sepette tekrar güncelle (fetch tamamlansın)
                 setTimeout(function () {
                     self.updateCampaignSelectVisibility();
                 }, 350);
@@ -3424,7 +3424,7 @@ class ModernMenuPage {
         const newCartBox = modalOverlay.querySelector(".new-cart-modal");
         if (newCartBox) newCartBox.style.transform = "";
 
-        // Sadece baÅŸka modal yoksa scroll'u aÃ§
+        // Sadece başka modal yoksa scroll'u aç
         const productModal = document.querySelector(".product-modal-overlay");
         if (!productModal || !productModal.classList.contains("active")) {
             document.body.style.overflow = "";
@@ -3501,7 +3501,7 @@ class ModernMenuPage {
           <i class="fas fa-times"></i>
         </button>
         <div class="orders-history-header">
-          <h2>${t("prev_orders_title", "SipariÅŸ GeÃ§miÅŸi")}</h2>
+          <h2>${t("prev_orders_title", "Sipariş Geçmişi")}</h2>
         </div>
         <div class="orders-history-content" id="ordersHistoryContent">
     `;
@@ -3510,7 +3510,7 @@ class ModernMenuPage {
             ordersHTML += `
         <div class="orders-empty">
           <i class="fas fa-inbox"></i>
-          <p>${t("prev_orders_empty", "HenÃ¼z sipariÅŸ geÃ§miÅŸiniz bulunmamaktadÄ±r.")}</p>
+          <p>${t("prev_orders_empty", "Henüz sipariş geçmişiniz bulunmamaktadır.")}</p>
         </div>
       `;
         } else {
@@ -3531,7 +3531,7 @@ class ModernMenuPage {
                         const itemTotal = (item.price || 0) * (item.quantity || 1);
                         const itemOptions = item.options || {};
 
-                        // OpsiyonlarÄ± new-cart-item-options-list gÃ¶rÃ¼nÃ¼mÃ¼ ile yaz
+                        // Opsiyonları new-cart-item-options-list görünümü ile yaz
                         let optionsHTML = "";
                         const optionLines = [];
 
@@ -3563,7 +3563,7 @@ class ModernMenuPage {
                                 });
                             });
 
-                            // DerinliÄŸe gÃ¶re sÄ±rala
+                            // Derinliğe göre sırala
                             selectionRecords.sort((a, b) => (a.depth || 0) - (b.depth || 0));
 
                             const nodesById = {};
@@ -3579,7 +3579,7 @@ class ModernMenuPage {
                                 }
                             });
 
-                            // Parent-child iliÅŸkilerini kur
+                            // Parent-child ilişkilerini kur
                             Object.values(nodesById).forEach((node) => {
                                 const rec = node.rec;
                                 const parentSelId = rec.parentSelectionId ?? null;
@@ -3605,7 +3605,7 @@ class ModernMenuPage {
                                         optionKeyLower.includes("size") ||
                                         optionKeyLower.includes("boyut")
                                     ) {
-                                        optionTitle = "Boyut SeÃ§imi";
+                                        optionTitle = "Boyut Seçimi";
                                     } else if (
                                         optionKeyLower.includes("extra") ||
                                         optionKeyLower.includes("ekstra") ||
@@ -3663,7 +3663,7 @@ class ModernMenuPage {
                                         : itemOptions.size;
                                 if (sizeText) {
                                     optionLines.push(
-                                        `<div class="cart-option-line depth-0">Boyut SeÃ§imi: ${sizeText}</div>`,
+                                        `<div class="cart-option-line depth-0">Boyut Seçimi: ${sizeText}</div>`,
                                     );
                                 }
                             }
@@ -3712,13 +3712,13 @@ class ModernMenuPage {
           <div class="order-history-item" data-order-id="${order.id}">
             <div class="order-history-header-item">
               <div class="order-history-info">
-                <h3>${t("order_info_order_code", "SipariÅŸ Kodu")}: <strong>${order.code || order.id}</strong></h3>
-                <p>${itemsCount} ${t("prev_orders_items", "Ã¼rÃ¼n")} â€¢ ${orderDate}</p>
+                <h3>${t("order_info_order_code", "Sipariş Kodu")}: <strong>${order.code || order.id}</strong></h3>
+                <p>${itemsCount} ${t("prev_orders_items", "ürün")} • ${orderDate}</p>
               </div>
               <div class="order-history-actions">
                 <button type="button" class="order-history-toggle-items" data-order-index="${index}">
                   <i class="fas fa-chevron-down"></i>
-                  <span>${t("prev_orders_show_items", "ÃœrÃ¼nleri GÃ¶r")}</span>
+                  <span>${t("prev_orders_show_items", "Ürünleri Gör")}</span>
                 </button>
                 <button type="button" class="order-history-delete" data-order-id="${order.id}">
                   <i class="fas fa-trash"></i>
@@ -3732,7 +3732,7 @@ class ModernMenuPage {
             </div>
             <div class="order-history-details">
               <div class="order-history-total">
-                <span>${t("order_summary_total", "SipariÅŸ tutarÄ±")}:</span>
+                <span>${t("order_summary_total", "Sipariş tutarı")}:</span>
                 <strong>${(order.totals?.total || 0).toFixed(2)}</strong>
               </div>
             </div>
@@ -3789,8 +3789,8 @@ class ModernMenuPage {
 
                     if (span) {
                         span.textContent = isHidden
-                            ? t("prev_orders_hide_items", "ÃœrÃ¼nleri Gizle")
-                            : t("prev_orders_show_items", "ÃœrÃ¼nleri GÃ¶r");
+                            ? t("prev_orders_hide_items", "Ürünleri Gizle")
+                            : t("prev_orders_show_items", "Ürünleri Gör");
                     }
                 }
             });
@@ -3801,15 +3801,15 @@ class ModernMenuPage {
             btn.addEventListener("click", async (e) => {
                 const orderId = e.currentTarget.getAttribute("data-order-id");
                 const confirmed = await window.Swal.fire({
-                    title: t("order_delete_confirm_title", "SipariÅŸi Sil"),
+                    title: t("order_delete_confirm_title", "Siparişi Sil"),
                     text: t(
                         "order_delete_confirm_message",
-                        "Bu sipariÅŸi silmek istediÄŸinize emin misiniz?",
+                        "Bu siparişi silmek istediğinize emin misiniz?",
                     ),
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonText: t("order_delete_confirm", "Evet, Sil"),
-                    cancelButtonText: t("cancel", "Ä°ptal"),
+                    cancelButtonText: t("cancel", "İptal"),
                     confirmButtonColor: "#8C734B",
                     cancelButtonColor: "#8C734B",
                 });
@@ -3819,7 +3819,7 @@ class ModernMenuPage {
                     if (success) {
                         await window.Swal.fire({
                             title: t("order_deleted_title", "Silindi"),
-                            text: t("order_deleted_message", "SipariÅŸ baÅŸarÄ±yla silindi."),
+                            text: t("order_deleted_message", "Sipariş başarıyla silindi."),
                             icon: "success",
                             timer: 2000,
                             timerProgressBar: true,
@@ -3836,9 +3836,9 @@ class ModernMenuPage {
     }
 
     renderNewCartModal() {
-        // PromolarÄ± her render'da localStorage'dan yeniden yÃ¼kle (sayfa yenilemeden senkron)
+        // Promoları her render'da localStorage'dan yeniden yükle (sayfa yenilemeden senkron)
         this.loadPromo();
-        // KampanyayÄ± her render'da localStorage'dan yeniden yÃ¼kle
+        // Kampanyayı her render'da localStorage'dan yeniden yükle
         this.loadSelectedCampaign();
         const cartItems = window.globalCart
             ? window.globalCart.getItems()
@@ -3905,7 +3905,7 @@ class ModernMenuPage {
                     prevOrdersBtn = document.createElement("button");
                     prevOrdersBtn.id = "prevOrdersBtn";
                     prevOrdersBtn.className = "prev-orders-btn";
-                    prevOrdersBtn.innerHTML = `<i class="fas fa-history"></i><span>${t("prev_orders_btn", "Daha Ã–nceki SipariÅŸler")}</span>`;
+                    prevOrdersBtn.innerHTML = `<i class="fas fa-history"></i><span>${t("prev_orders_btn", "Daha Önceki Siparişler")}</span>`;
                     prevOrdersBtn.addEventListener("click", () => {
                         this.closeNewCartModal();
                         this.openOrdersModal();
@@ -3965,7 +3965,7 @@ class ModernMenuPage {
                         ? translations[lang][key]
                         : fallback;
 
-                prevOrdersBtn.innerHTML = `<i class="fas fa-history"></i><span>${t("prev_orders_btn", "Daha Ã–nceki SipariÅŸler")}</span>`;
+                prevOrdersBtn.innerHTML = `<i class="fas fa-history"></i><span>${t("prev_orders_btn", "Daha Önceki Siparişler")}</span>`;
                 prevOrdersBtn.addEventListener("click", () => {
                     this.closeNewCartModal();
                     this.openOrdersModal();
@@ -3988,7 +3988,7 @@ class ModernMenuPage {
             }
         }
 
-        // Promo input her zaman gÃ¶rÃ¼nÃ¼r, birden fazla promosyon eklenebilsin
+        // Promo input her zaman görünür, birden fazla promosyon eklenebilsin
         const promoRow = document.querySelector(".promo-row");
         const promoInput = document.getElementById("promoCodeInput");
         const applyBtn = document.getElementById("applyPromoBtn");
@@ -4012,7 +4012,7 @@ class ModernMenuPage {
 
         // Sort items: newest first (by addedAt) or by ID to maintain insertion order
         const sortedItems = [...cartItems].sort((a, b) => {
-            // If both have addedAt, sort by date (newest first - en yeni en baÅŸta)
+            // If both have addedAt, sort by date (newest first - en yeni en başta)
             if (a.addedAt && b.addedAt) {
                 return new Date(b.addedAt).getTime() - new Date(a.addedAt).getTime();
             }
@@ -4042,7 +4042,7 @@ class ModernMenuPage {
             if (item.options) {
                 const optionLines = [];
 
-                // Yeni yapÄ±: selections + hiyerarÅŸi (isSubOption, parentSelectionId, depth, ...)
+                // Yeni yapı: selections + hiyerarşi (isSubOption, parentSelectionId, depth, ...)
                 if (
                     item.options.selections &&
                     typeof item.options.selections === "object"
@@ -4050,7 +4050,7 @@ class ModernMenuPage {
                     const selectionNodesById = {};
                     const rootNodes = [];
 
-                    // TÃ¼m seÃ§imleri tek listeye topla ve node haritasÄ± oluÅŸtur
+                    // Tüm seçimleri tek listeye topla ve node haritası oluştur
                     Object.keys(item.options.selections).forEach((optionKey) => {
                         const list = Array.isArray(item.options.selections[optionKey])
                             ? item.options.selections[optionKey]
@@ -4067,13 +4067,13 @@ class ModernMenuPage {
                             if (selId !== null) {
                                 selectionNodesById[String(selId)] = node;
                             } else {
-                                // id yoksa doÄŸrudan root kabul et
+                                // id yoksa doğrudan root kabul et
                                 rootNodes.push(node);
                             }
                         });
                     });
 
-                    // Parent-child iliÅŸkilerini kur
+                    // Parent-child ilişkilerini kur
                     Object.values(selectionNodesById).forEach((node) => {
                         const sel = node.sel || {};
                         const parentSelId = sel.parentSelectionId ?? null;
@@ -4089,7 +4089,7 @@ class ModernMenuPage {
                         }
                     });
 
-                    // Option title bulucu (mevcut mantÄ±ÄŸÄ± koru)
+                    // Option title bulucu (mevcut mantığı koru)
                     const resolveOptionTitle = (node) => {
                         const sel = node.sel || {};
                         const optionKey = node.optionKey;
@@ -4115,7 +4115,7 @@ class ModernMenuPage {
                                 optionKeyLower.includes("size") ||
                                 optionKeyLower.includes("boyut")
                             ) {
-                                optionTitle = "Boyut SeÃ§imi";
+                                optionTitle = "Boyut Seçimi";
                             } else if (
                                 optionKeyLower.includes("extra") ||
                                 optionKeyLower.includes("ekstra") ||
@@ -4133,7 +4133,7 @@ class ModernMenuPage {
                         return optionTitle;
                     };
 
-                    // AÄŸaÃ§ yapÄ±sÄ±nÄ± satÄ±rlara dÃ¶k
+                    // Ağaç yapısını satırlara dök
                     const renderNode = (node, level = 0) => {
                         const sel = node.sel || {};
                         const name = sel.name || "";
@@ -4143,7 +4143,7 @@ class ModernMenuPage {
                         const qtyPrefix = qty > 1 ? `${qty}x ` : "";
                         const optionTitle = resolveOptionTitle(node);
 
-                        // SatÄ±r metni: "2x AcÄ± Sos (Ek Malzemeler)" gibi (parantez iÃ§i kÃ¼Ã§Ã¼k)
+                        // Satır metni: "2x Acı Sos (Ek Malzemeler)" gibi (parantez içi küçük)
                         const depthClass = `depth-${Math.min(level, 3)}`;
                         if (optionTitle && optionTitle !== name) {
                             optionLines.push(
@@ -4160,11 +4160,11 @@ class ModernMenuPage {
                         }
                     };
 
-                    // Root node'larÄ± render et
+                    // Root node'ları render et
                     rootNodes.forEach((node) => renderNode(node, 0));
                 }
 
-                // Eski format iÃ§in fallback (size + extras), eÄŸer hiÃ§ satÄ±r Ã¼retilmediyse
+                // Eski format için fallback (size + extras), eğer hiç satır üretilmediyse
                 if (optionLines.length === 0) {
                     if (item.options.size) {
                         const sizeText =
@@ -4173,7 +4173,7 @@ class ModernMenuPage {
                                 : item.options.size;
                         if (sizeText) {
                             optionLines.push(
-                                `<div class="cart-option-line depth-0">Boyut SeÃ§imi: ${sizeText}</div>`,
+                                `<div class="cart-option-line depth-0">Boyut Seçimi: ${sizeText}</div>`,
                             );
                         }
                     }
@@ -4247,7 +4247,7 @@ class ModernMenuPage {
                         </div>
                         <div class="new-cart-item-actions">
                             <button type="button" class="new-cart-item-change-btn" data-item-id="${item.id}" data-product-id="${productId}">
-                                ${t("cart_change_btn", "DeÄŸiÅŸtir")}
+                                ${t("cart_change_btn", "Değiştir")}
                             </button>
                             <div class="new-cart-item-quantity">
                                 <button type="button" class="new-cart-item-quantity-btn" data-action="decrease" data-item-id="${item.id}">
@@ -4367,11 +4367,11 @@ class ModernMenuPage {
 
         // Update totals with promo discount
         this.updateCartTotals(itemsTotal, itemsCount);
-        // Kampanya motorunu gÃ¼ncelle; sonuÃ§ gelince toplamlarÄ± yeniden Ã§iz
+        // Kampanya motorunu güncelle; sonuç gelince toplamları yeniden çiz
         if (itemsTotal > 0 && itemsCount > 0) {
             this.loadPromotionEngineState().then(() => this.updateCartTotals(itemsTotal, itemsCount));
         }
-        // Kampanya butonu gÃ¶rÃ¼nÃ¼rlÃ¼ÄŸÃ¼nÃ¼ gÃ¼ncelle
+        // Kampanya butonu görünürlüğünü güncelle
         this.updateCampaignSelectVisibility();
     }
 
@@ -4391,7 +4391,7 @@ class ModernMenuPage {
         }
         try {
             const orderType = localStorage.getItem("menuOrderType") || "tableOrder";
-            // GeÃ§miÅŸ sipariÅŸleri localStorageâ€™dan al (birikimli kampanya iÃ§in)
+            // Geçmiş siparişleri localStorage’dan al (birikimli kampanya için)
             const companyId = parseInt(localStorage.getItem("menuBranchId") || localStorage.getItem("menuCompanyId") || "0", 10) || 0;
             const cartItems = window.globalCart ? (window.globalCart.getItems && window.globalCart.getItems()) : (this.cart || []);
             const list = Array.isArray(cartItems) ? cartItems : [];
@@ -4401,7 +4401,7 @@ class ModernMenuPage {
                 quantity: Number(item.quantity) || 1,
                 unitPrice: item.price != null ? item.price : (item.unitPrice != null ? item.unitPrice : 0),
                 price: item.price != null ? item.price : (item.unitPrice != null ? item.unitPrice : 0),
-                name: item.name || item.title || "ÃœrÃ¼n",
+                name: item.name || item.title || "Ürün",
             }));
             const userId = (this.currentUser && this.currentUser.id) ? this.currentUser.id : (localStorage.getItem("userId") ? parseInt(localStorage.getItem("userId"), 10) : null);
             const userPayload = userId ? { id: userId } : null;
@@ -4444,7 +4444,7 @@ class ModernMenuPage {
         }
     }
 
-    // Kupon input'unu kampanya kuralÄ±na gÃ¶re aÃ§/kapat
+    // Kupon input'unu kampanya kuralına göre aç/kapat
     applyCouponPolicyToMenuInput() {
         const promoInput = document.getElementById("promoCodeInput");
         const applyBtn = document.getElementById("applyPromoBtn");
@@ -4452,7 +4452,7 @@ class ModernMenuPage {
         if (!promoInput) return;
 
         const reason =
-            this.couponBlockReason || "Kupon bu kampanya ile kullanÄ±lamaz";
+            this.couponBlockReason || "Kupon bu kampanya ile kullanılamaz";
 
         if (this.couponAllowed) {
             promoInput.disabled = false;
@@ -4473,7 +4473,7 @@ class ModernMenuPage {
     }
 
     // =========================
-    // Kampanya seÃ§im sistemi
+    // Kampanya seçim sistemi
     // =========================
     loadSelectedCampaign() {
         try {
@@ -4625,22 +4625,22 @@ class ModernMenuPage {
         };
         const startStr = campaign.startDate
             ? new Date(campaign.startDate).toLocaleDateString("tr-TR")
-            : "â€”";
+            : "—";
         const endStr = campaign.endDate
             ? new Date(campaign.endDate).toLocaleDateString("tr-TR")
-            : "â€”";
+            : "—";
         const terms = Array.isArray(campaign.terms) ? campaign.terms : [];
         const couponPolicy = campaign.coupon_policy;
         const couponText =
             couponPolicy && couponPolicy.allow_coupon === false
-                ? t("campaign_coupon_no", "Kuponla birlikte kullanÄ±lamaz")
-                : t("campaign_coupon_yes", "Kuponla birlikte kullanÄ±labilir");
+                ? t("campaign_coupon_no", "Kuponla birlikte kullanılamaz")
+                : t("campaign_coupon_yes", "Kuponla birlikte kullanılabilir");
         const termsHtml = terms
             .map((term) => `<li>${String(term).replace(/</g, "&lt;")}</li>`)
             .join("");
         const minCents = Number(campaign.min_subtotal_cents);
         const minStr =
-            minCents > 0 ? this.centsToMoneyText(minCents).replace(".", ",") : "â€”";
+            minCents > 0 ? this.centsToMoneyText(minCents).replace(".", ",") : "—";
         const discountType = String(campaign.discount_type || "").toLowerCase();
         const discountVal = Number(campaign.discount_value);
         const discountStr =
@@ -4648,41 +4648,41 @@ class ModernMenuPage {
                 ? "%" + discountVal
                 : discountVal > 0
                     ? discountVal.toFixed(2).replace(".", ",")
-                    : "â€”";
+                    : "—";
         const orderTypes = Array.isArray(campaign.order_types) ? campaign.order_types : (Array.isArray(campaign.channels) ? campaign.channels : (Array.isArray(campaign.campaigns_channels) ? campaign.campaigns_channels : []));
         const orderTypesLabel = orderTypes.length > 0
             ? orderTypes.map((k) => orderTypeToLabel(k)).join(", ")
-            : t("campaign_order_types_all", "TÃ¼mÃ¼");
+            : t("campaign_order_types_all", "Tümü");
         return `
       <div class="campaign-detail-line">
         <div class="campaign-detail-pair">
-          <span class="campaign-detail-label">${t("campaign_min_subtotal", "Min. sepet tutarÄ±")}</span>
+          <span class="campaign-detail-label">${t("campaign_min_subtotal", "Min. sepet tutarı")}</span>
           <span class="campaign-detail-value">${minStr}</span>
         </div>
         <div class="campaign-detail-pair">
-          <span class="campaign-detail-label">${t("campaign_discount", "Ä°ndirim")}</span>
+          <span class="campaign-detail-label">${t("campaign_discount", "İndirim")}</span>
           <span class="campaign-detail-value">${discountStr}</span>
         </div>
       </div>
       <div class="campaign-detail-line">
         <div class="campaign-detail-pair">
-          <span class="campaign-detail-label">${t("campaign_start_date", "BaÅŸlangÄ±Ã§ tarihi")}</span>
+          <span class="campaign-detail-label">${t("campaign_start_date", "Başlangıç tarihi")}</span>
           <span class="campaign-detail-value">${startStr}</span>
         </div>
         <div class="campaign-detail-pair">
-          <span class="campaign-detail-label">${t("campaign_end_date", "BitiÅŸ tarihi")}</span>
+          <span class="campaign-detail-label">${t("campaign_end_date", "Bitiş tarihi")}</span>
           <span class="campaign-detail-value">${endStr}</span>
         </div>
       </div>
       <div class="campaign-detail-row">
-        <span class="campaign-detail-label">${t("campaign_order_types_label", "SipariÅŸ tipleri")}</span>
+        <span class="campaign-detail-label">${t("campaign_order_types_label", "Sipariş tipleri")}</span>
         <span class="campaign-detail-value">${orderTypesLabel.replace(/</g, "&lt;")}</span>
       </div>
       <div class="campaign-detail-row">
-        <span class="campaign-detail-label">${t("campaign_coupon_usage", "Kuponla kullanÄ±m")}</span>
+        <span class="campaign-detail-label">${t("campaign_coupon_usage", "Kuponla kullanım")}</span>
         <span class="campaign-detail-value">${couponText}</span>
       </div>
-      ${terms.length ? `<div class="campaign-detail-row campaign-detail-terms"><span class="campaign-detail-label">${t("campaign_terms", "KatÄ±lÄ±m ÅŸartlarÄ±")}</span><ul class="campaign-detail-list">${termsHtml}</ul></div>` : ""}
+      ${terms.length ? `<div class="campaign-detail-row campaign-detail-terms"><span class="campaign-detail-label">${t("campaign_terms", "Katılım şartları")}</span><ul class="campaign-detail-list">${termsHtml}</ul></div>` : ""}
     `;
     }
 
@@ -4694,7 +4694,7 @@ class ModernMenuPage {
                 ? translations[lang][key]
                 : fallback;
         const btnText = isApplied
-            ? t("campaign_applied_btn", "UygulandÄ±")
+            ? t("campaign_applied_btn", "Uygulandı")
             : eligible
                 ? t("campaign_apply_btn", "Uygula")
                 : t("campaign_detail_btn", "Detay");
@@ -4715,7 +4715,7 @@ class ModernMenuPage {
       </div>
       <button type="button" class="campaign-card-toggle" aria-expanded="false">
         <i class="fas fa-chevron-down campaign-card-toggle-icon"></i>
-        <span>${t("campaign_detail_toggle", "Kampanya detayÄ±")}</span>
+        <span>${t("campaign_detail_toggle", "Kampanya detayı")}</span>
       </button>
       <div class="campaign-card-detail" hidden>
         <div class="campaign-card-detail-inner">${this.buildCampaignDetailHtml(campaign)}</div>
@@ -4752,7 +4752,7 @@ class ModernMenuPage {
         const listEligible = document.getElementById("campaignListEligible");
         if (!modal || !listReady || !listEligible) return;
 
-        // Kupon uygulanmÄ±ÅŸsa kampanya seÃ§imine izin verme
+        // Kupon uygulanmışsa kampanya seçimine izin verme
         if (Array.isArray(this.appliedPromos) && this.appliedPromos.length > 0) {
             const translations = window.I18N?.getTranslations?.();
             const lang = window.I18N?.getPreferredLanguage?.() || "tr";
@@ -4766,7 +4766,7 @@ class ModernMenuPage {
                     title: t("campaign_blocked_by_coupon_title", "Kampanya Uygulanamaz"),
                     text: t(
                         "campaign_blocked_by_coupon_desc",
-                        "Kupon kullandÄ±ÄŸÄ±nÄ±z iÃ§in kampanya sizin iÃ§in geÃ§erli deÄŸil.",
+                        "Kupon kullandığınız için kampanya sizin için geçerli değil.",
                     ),
                     confirmButtonText: t("ok", "Tamam"),
                 });
@@ -4777,7 +4777,7 @@ class ModernMenuPage {
         listReady.innerHTML = "";
         listEligible.innerHTML = "";
 
-        // Her aÃ§Ä±lÄ±ÅŸta run-id artÄ±r; sadece en son aÃ§Ä±lÄ±ÅŸÄ±n cevabÄ± listelensin (tekrarlarÄ± Ã¶nle)
+        // Her açılışta run-id artır; sadece en son açılışın cevabı listelensin (tekrarları önle)
         window.__campaignModalRunId = (window.__campaignModalRunId || 0) + 1;
         const myRunId = window.__campaignModalRunId;
 
@@ -4786,7 +4786,7 @@ class ModernMenuPage {
         listReady.innerHTML = "";
         listEligible.innerHTML = "";
 
-        // AynÄ± kampanyanÄ±n birden fazla gÃ¶rÃ¼nmesini engelle: ID'ye gÃ¶re tekil listele
+        // Aynı kampanyanın birden fazla görünmesini engelle: ID'ye göre tekil listele
         const seenIds = new Set();
         campaigns = campaigns.filter((c) => {
             const id = c?.id != null ? String(c.id) : "";
@@ -4845,7 +4845,7 @@ class ModernMenuPage {
     }
 
     applyCampaignSelection(campaign) {
-        // Kupon uygulanmÄ±ÅŸsa kampanya seÃ§imine izin verme
+        // Kupon uygulanmışsa kampanya seçimine izin verme
         if (Array.isArray(this.appliedPromos) && this.appliedPromos.length > 0) {
             const translations = window.I18N?.getTranslations?.();
             const lang = window.I18N?.getPreferredLanguage?.() || "tr";
@@ -4859,7 +4859,7 @@ class ModernMenuPage {
                     title: t("campaign_blocked_by_coupon_title", "Kampanya Uygulanamaz"),
                     text: t(
                         "campaign_blocked_by_coupon_desc",
-                        "Kupon kullandÄ±ÄŸÄ±nÄ±z iÃ§in kampanya sizin iÃ§in geÃ§erli deÄŸil.",
+                        "Kupon kullandığınız için kampanya sizin için geçerli değil.",
                     ),
                     confirmButtonText: t("ok", "Tamam"),
                 });
@@ -4869,7 +4869,7 @@ class ModernMenuPage {
         this.saveSelectedCampaign(campaign);
         this.renderNewCartModal();
 
-        // Kampanya kupon politikasÄ±nÄ± stabil uygula (geÃ§iÅŸlerde durum sÄ±fÄ±rlansÄ±n)
+        // Kampanya kupon politikasını stabil uygula (geçişlerde durum sıfırlansın)
         if (campaign?.coupon_policy?.allow_coupon === false) {
             this.couponAllowed = false;
             this.couponBlockReason = campaign.coupon_policy.description || "";
@@ -4884,7 +4884,7 @@ class ModernMenuPage {
         this.saveSelectedCampaign(null);
         try { localStorage.setItem("yeppos_skip_auto_campaigns", "1"); } catch (e) { }
         this.renderNewCartModal();
-        // Kampanya kaldÄ±r: motor otomatik uygulama yapmasÄ±n, indirim sÄ±fÄ±rlansÄ±n
+        // Kampanya kaldır: motor otomatik uygulama yapmasın, indirim sıfırlansın
         this.loadPromotionEngineState({ skipAutoCampaigns: true }).then(() => {
             const cartItems = window.globalCart ? window.globalCart.getItems() : this.cart;
             const list = Array.isArray(cartItems) ? cartItems : [];
@@ -4892,7 +4892,7 @@ class ModernMenuPage {
             const itemsCount = list.reduce((s, i) => s + (Number(i.quantity) || 1), 0);
             this.updateCartTotals(itemsTotal, itemsCount);
         });
-        // SipariÅŸ sayfasÄ± aÃ§Ä±ksa kampanya kaldÄ±rma senkronla
+        // Sipariş sayfası açıksa kampanya kaldırma senkronla
         try {
             if (typeof window.refreshOrderPageFromStorage === "function") window.refreshOrderPageFromStorage();
         } catch (e) { }
@@ -4960,7 +4960,7 @@ class ModernMenuPage {
                 this.openCampaignModalForMenu(),
             );
         }
-        // Kampanya kaldÄ±r: event delegation (sepet modal iÃ§indeki buton her render'da aynÄ± kalabilir ama tek listener)
+        // Kampanya kaldır: event delegation (sepet modal içindeki buton her render'da aynı kalabilir ama tek listener)
         if (!document.body.hasAttribute("data-menu-campaign-remove-bound")) {
             document.body.setAttribute("data-menu-campaign-remove-bound", "true");
             document.body.addEventListener("click", (e) => {
@@ -5025,7 +5025,7 @@ class ModernMenuPage {
             });
         }
 
-        // Tek tek promo silmek iÃ§in chip alanÄ±nda event delegation
+        // Tek tek promo silmek için chip alanında event delegation
         const promoAppliedCode = document.getElementById("promoAppliedCode");
         if (promoAppliedCode) {
             promoAppliedCode.addEventListener("click", (e) => {
@@ -5046,11 +5046,11 @@ class ModernMenuPage {
             if (p.id != null && idNum != null) {
                 return Number(p.id) !== idNum;
             }
-            // id yoksa koda gÃ¶re eÅŸle
+            // id yoksa koda göre eşle
             return String(p.code) !== String(promoId);
         });
         this.savePromo();
-        // Sepet gÃ¶rÃ¼nÃ¼mÃ¼nÃ¼ ve toplamlarÄ± yenile
+        // Sepet görünümünü ve toplamları yenile
         this.renderNewCartModal();
     }
 
@@ -5065,7 +5065,7 @@ class ModernMenuPage {
         const errorMessage = document.getElementById("promoErrorMessage");
         const promoAppliedRow = document.getElementById("promoAppliedRow");
 
-        // Promo satÄ±rÄ±nÄ± sÄ±fÄ±rla
+        // Promo satırını sıfırla
         if (promoRow) promoRow.style.display = "flex";
         if (promoInput) {
             promoInput.value = "";
@@ -5079,7 +5079,7 @@ class ModernMenuPage {
         // Refresh cart totals
         this.renderNewCartModal();
 
-        // Kupon politikasÄ± varsa tekrar uygula
+        // Kupon politikası varsa tekrar uygula
         this.applyCouponPolicyToMenuInput();
     }
 
@@ -5108,7 +5108,7 @@ class ModernMenuPage {
         // Kampanya kuponu engelliyorsa burada dur
         if (!this.couponAllowed) {
             errorMessage.textContent =
-                this.couponBlockReason || "Kupon bu kampanya ile kullanÄ±lamaz";
+                this.couponBlockReason || "Kupon bu kampanya ile kullanılamaz";
             errorMessage.style.display = "block";
             return;
         }
@@ -5116,7 +5116,7 @@ class ModernMenuPage {
         if (!promoCode) {
             errorMessage.textContent = t(
                 "promo_enter_code",
-                "LÃ¼tfen promosyon kodunu girin",
+                "Lütfen promosyon kodunu girin",
             );
             errorMessage.style.display = "block";
             return;
@@ -5128,7 +5128,7 @@ class ModernMenuPage {
         errorMessage.style.display = "none";
 
         try {
-            // Sepet ve baÄŸlam (geniÅŸletilmiÅŸ kupon motoru iÃ§in)
+            // Sepet ve bağlam (genişletilmiş kupon motoru için)
             const cartItems = window.globalCart && window.globalCart.getItems ? window.globalCart.getItems() : (this.cart || []);
             const cartList = Array.isArray(cartItems) ? cartItems : [];
             const items = cartList.map((item) => ({
@@ -5137,7 +5137,7 @@ class ModernMenuPage {
                 quantity: Number(item.quantity) || 1,
                 unitPrice: item.price != null ? item.price : (item.unitPrice != null ? item.unitPrice : 0),
                 price: item.price != null ? item.price : (item.unitPrice != null ? item.unitPrice : 0),
-                name: item.name || item.title || "ÃœrÃ¼n",
+                name: item.name || item.title || "Ürün",
             }));
             const companyId = parseInt(localStorage.getItem("menuBranchId") || localStorage.getItem("menuCompanyId") || "0", 10) || 0;
             const orderType = localStorage.getItem("menuOrderType") || "tableOrder";
@@ -5181,16 +5181,16 @@ class ModernMenuPage {
                     promotion_policy: data.promo.promotion_policy || null,
                 };
 
-                // Daha Ã¶nce aynÄ± ID'ye sahip promo eklenmiÅŸ mi?
+                // Daha önce aynı ID'ye sahip promo eklenmiş mi?
                 const alreadyExists = Array.isArray(this.appliedPromos)
                     ? this.appliedPromos.some((p) => p.id === newPromo.id)
                     : false;
 
                 if (alreadyExists) {
-                    // AynÄ± promosyon tekrar eklenemez
+                    // Aynı promosyon tekrar eklenemez
                     errorMessage.textContent = t(
                         "promo_already_applied",
-                        "Bu promosyon kodu zaten uygulanmÄ±ÅŸ.",
+                        "Bu promosyon kodu zaten uygulanmış.",
                     );
                     errorMessage.style.display = "block";
                 } else {
@@ -5203,7 +5203,7 @@ class ModernMenuPage {
                     // Save to localStorage
                     this.savePromo();
 
-                    // Input'u temizle, bir sonraki kod iÃ§in hazÄ±r bÄ±rak
+                    // Input'u temizle, bir sonraki kod için hazır bırak
                     promoInput.value = "";
                     promoInput.disabled = false;
                     promoInput.style.backgroundColor = "#FAF8F2";
@@ -5217,13 +5217,13 @@ class ModernMenuPage {
                     if (window.Swal && typeof window.Swal.fire === "function") {
                         const successMessage = t(
                             "promo_success_message",
-                            'Promosyon kodu "{code}" uygulandÄ±! {discount} TL indirim kazandÄ±nÄ±z.',
+                            'Promosyon kodu "{code}" uygulandı! {discount} TL indirim kazandınız.',
                         )
                             .replace("{code}", promoCode)
                             .replace("{discount}", data.promo.discount);
 
                         await window.Swal.fire({
-                            title: t("promo_success_title", "BaÅŸarÄ±lÄ±!"),
+                            title: t("promo_success_title", "Başarılı!"),
                             text: successMessage,
                             icon: "success",
                             confirmButtonText: "Tamam",
@@ -5246,7 +5246,7 @@ class ModernMenuPage {
                     data.message ||
                     t(
                         "promo_not_found",
-                        "Promosyon kodu bulunamadÄ±. LÃ¼tfen farklÄ± bir kod deneyin",
+                        "Promosyon kodu bulunamadı. Lütfen farklı bir kod deneyin",
                     );
                 errorMessage.style.display = "block";
 
@@ -5257,7 +5257,7 @@ class ModernMenuPage {
             console.error("Promo code validation error:", error);
             errorMessage.textContent = t(
                 "promo_error",
-                "Bir hata oluÅŸtu. LÃ¼tfen tekrar deneyin.",
+                "Bir hata oluştu. Lütfen tekrar deneyin.",
             );
             errorMessage.style.display = "block";
             this.appliedPromo = null;
@@ -5289,7 +5289,7 @@ class ModernMenuPage {
             "promoAppliedDiscount",
         );
 
-        // Kampanya indirimi: Backend motoru tek kaynak; motor indirim dÃ¶ndÃ¼yse client tarafÄ± eklenmez (Ã§ift hesaplama Ã¶nlenir)
+        // Kampanya indirimi: Backend motoru tek kaynak; motor indirim döndüyse client tarafı eklenmez (çift hesaplama önlenir)
         const itemsTotalCents = this.moneyToCents(itemsTotal);
         const engineCents = typeof this.engineCampaignDiscountCents === "number" ? this.engineCampaignDiscountCents : 0;
         const useOnlyEngine = Array.isArray(this.appliedCampaigns) && this.appliedCampaigns.length > 0 && engineCents > 0;
@@ -5300,7 +5300,7 @@ class ModernMenuPage {
             0,
         );
 
-        // Birden fazla promosyonun satÄ±r bazÄ±nda ve toplam indirimini hesapla
+        // Birden fazla promosyonun satır bazında ve toplam indirimini hesapla
         let promoDiscountCents = 0;
         const perPromoDiscounts = [];
         if (Array.isArray(this.appliedPromos) && this.appliedPromos.length > 0) {
@@ -5327,7 +5327,7 @@ class ModernMenuPage {
                     promoDiscountCents += lineDiscountCents;
                 }
             });
-            // Toplam indirim, Ã¼rÃ¼n toplamÄ±nÄ± aÅŸmasÄ±n
+            // Toplam indirim, ürün toplamını aşmasın
             promoDiscountCents = Math.min(
                 promoDiscountCents,
                 subtotalAfterCampaignCents,
@@ -5347,7 +5347,7 @@ class ModernMenuPage {
                 ? translations[lang][key]
                 : fallback;
 
-        // Kampanya satÄ±rÄ± (seÃ§ili kampanya veya motor kampanyalarÄ±) â€“ indirim veya bedava Ã¼rÃ¼n varsa satÄ±r + kaldÄ±r butonu gÃ¶ster
+        // Kampanya satırı (seçili kampanya veya motor kampanyaları) – indirim veya bedava ürün varsa satır + kaldır butonu göster
         const hasFreeItems = Array.isArray(this.freeItems) && this.freeItems.length > 0;
         const hasCampaign = (this.selectedCampaign || (Array.isArray(this.appliedCampaigns) && this.appliedCampaigns.length > 0)) && (campaignDiscountCents > 0 || hasFreeItems);
         if (hasCampaign && campaignAppliedRow && campaignAppliedCode && campaignAppliedDiscount) {
@@ -5361,20 +5361,20 @@ class ModernMenuPage {
             campaignAppliedCode.textContent = name;
             campaignAppliedDiscount.textContent = campaignDiscountCents > 0
                 ? "-" + this.centsToMoneyText(campaignDiscountCents)
-                : (hasFreeItems ? (t("cart_free_items", "Ãœcretsiz Ã¼rÃ¼nler") || "Ãœcretsiz Ã¼rÃ¼nler") : "");
+                : (hasFreeItems ? (t("cart_free_items", "Ücretsiz ürünler") || "Ücretsiz ürünler") : "");
         } else if (campaignAppliedRow) {
             campaignAppliedRow.style.display = "none";
         }
 
-        // Ãœcretsiz Ã¼rÃ¼nler satÄ±rÄ± (kampanya motoru)
+        // Ücretsiz ürünler satırı (kampanya motoru)
         const freeItemsRow = document.getElementById("menuFreeItemsRow");
         const freeItemsList = document.getElementById("menuFreeItemsList");
         if (Array.isArray(this.freeItems) && this.freeItems.length > 0 && freeItemsRow && freeItemsList) {
             freeItemsRow.style.display = "flex";
             freeItemsList.innerHTML = this.freeItems.map((f) => {
-                const n = (f.name || "ÃœrÃ¼n").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                const n = (f.name || "Ürün").replace(/</g, "&lt;").replace(/>/g, "&gt;");
                 const q = Number(f.quantity) || 1;
-                return "<div class=\"free-item-line\"><span class=\"free-item-badge\">Ãœcretsiz</span> " + n + " x " + q + "</div>";
+                return "<div class=\"free-item-line\"><span class=\"free-item-badge\">Ücretsiz</span> " + n + " x " + q + "</div>";
             }).join("");
         } else if (freeItemsRow) {
             freeItemsRow.style.display = "none";
@@ -5384,7 +5384,7 @@ class ModernMenuPage {
         if (perPromoDiscounts.length > 0 && promoAppliedRow) {
             promoAppliedRow.style.display = "flex";
             if (promoAppliedCode) {
-                // Her promosyon iÃ§in ayrÄ± satÄ±r (sol kod, saÄŸ tutar)
+                // Her promosyon için ayrı satır (sol kod, sağ tutar)
                 const linesHtml = perPromoDiscounts
                     .map(({ promo, amountCents }) => {
                         const desc = (promo.description || "").trim();
@@ -5417,7 +5417,7 @@ class ModernMenuPage {
         if (itemsTotalEl)
             itemsTotalEl.textContent = this.centsToMoneyText(itemsTotalCents) + "";
         if (itemsCountEl)
-            itemsCountEl.textContent = `${itemsCount} ${t("cart_items_unit", "Ã¼rÃ¼n")}`;
+            itemsCountEl.textContent = `${itemsCount} ${t("cart_items_unit", "ürün")}`;
         if (orderTotalEl)
             orderTotalEl.textContent = this.centsToMoneyText(finalTotalCents) + "";
         if (footerTotalEl)
@@ -5537,7 +5537,7 @@ class ModernMenuPage {
     // ========== CART EDIT MODAL SYSTEM ==========
 
     openCartEditModal(cartItemId) {
-        // Sepet drawer'Ä± kapat
+        // Sepet drawer'ı kapat
         this.closeCartDrawer();
 
         const cartItem = this.cart.find((item) => item.id === cartItemId);
@@ -5608,11 +5608,11 @@ class ModernMenuPage {
             modalOldPrice.style.display = "none";
         }
 
-        // Update badge (tÃ¼kendi Ã¶ncelikli)
+        // Update badge (tükendi öncelikli)
         const modalBadge = document.getElementById("cartEditProductBadge");
         if (modalBadge) {
             if (product.product_qr_status === "2") {
-                modalBadge.textContent = "TÃ¼kendi";
+                modalBadge.textContent = "Tükendi";
                 modalBadge.style.display = "block";
             } else if (product.badge) {
                 modalBadge.textContent = this.getBadgeText(product.badge);
@@ -5797,7 +5797,7 @@ class ModernMenuPage {
         }
         // Close modal
         this.closeCartEditModal();
-        // Sepet drawer'Ä± tekrar aÃ§
+        // Sepet drawer'ı tekrar aç
         this.openCartDrawer();
     }
 
@@ -5836,7 +5836,7 @@ class ModernMenuPage {
                 window.updateFixedCartBtnVisibility();
             // Sepet butonunu gizle
             hideCartButtons();
-            // Modal aÃ§Ä±ldÄ±ktan sonra scroll listener'Ä± ekle
+            // Modal açıldıktan sonra scroll listener'ı ekle
             setTimeout(() => {
                 setupCartScrollControl();
             }, 100);
@@ -5857,7 +5857,7 @@ class ModernMenuPage {
         // Sepet butonunu gizle
         hideCartButtons();
 
-        // Modal aÃ§Ä±ldÄ±ktan sonra scroll listener'Ä± ekle
+        // Modal açıldıktan sonra scroll listener'ı ekle
         setTimeout(() => {
             setupCartScrollControl();
         }, 100);
@@ -5868,14 +5868,14 @@ class ModernMenuPage {
             window.globalCart.closeCartDrawer();
             if (window.updateFixedCartBtnVisibility)
                 window.updateFixedCartBtnVisibility();
-            // Sepet butonunu gÃ¶ster
+            // Sepet butonunu göster
             showCartButtons();
             return;
         }
         if (this.cartDrawerOverlay) {
             this.cartDrawerOverlay.classList.remove("active");
         }
-        // Sadece baÅŸka modal yoksa scroll'u aÃ§
+        // Sadece başka modal yoksa scroll'u aç
         const productModal = document.querySelector(".product-modal-overlay");
         if (!productModal || !productModal.classList.contains("active")) {
             document.body.style.overflow = "";
@@ -5883,7 +5883,7 @@ class ModernMenuPage {
         if (window.updateFixedCartBtnVisibility)
             window.updateFixedCartBtnVisibility();
 
-        // Sepet butonunu gÃ¶ster
+        // Sepet butonunu göster
         showCartButtons();
     }
 
@@ -5918,7 +5918,7 @@ class ModernMenuPage {
             if (!item.options.extras) {
                 item.options.extras = [];
             }
-            // Boyut (size) stringleÅŸtirme
+            // Boyut (size) stringleştirme
             let sizeText = "";
             if (item.options.size) {
                 if (
@@ -5931,7 +5931,7 @@ class ModernMenuPage {
                     sizeText = `<span class="cart-option">Boyut: ${item.options.size}</span>`;
                 }
             }
-            // Ekstralar (extras) stringleÅŸtirme
+            // Ekstralar (extras) stringleştirme
             let extrasArr = [];
             if (Array.isArray(item.options.extras)) {
                 extrasArr = item.options.extras
@@ -5971,7 +5971,7 @@ class ModernMenuPage {
                     </div>
                     <div class="cart-item-buttons">
                         <button class="edit-item-btn" onclick="window.menuPage.openCartEditModal('${item.id
-                }')" title="DÃ¼zenle">
+                }')" title="Düzenle">
                             <i class="fas fa-edit"></i>
                         </button>
                         <button class="remove-item-btn" onclick="window.menuPage.removeFromCart('${item.id
@@ -5996,7 +5996,7 @@ class ModernMenuPage {
             return;
         }
 
-        const titleText = "ÃœrÃ¼n sepete eklendi!";
+        const titleText = "Ürün sepete eklendi!";
         const descText = `${product.name}${quantity > 1 ? ` (${quantity} adet)` : ""} sepetinize eklendi`;
 
         if (window.Swal && typeof window.Swal.fire === "function") {
@@ -6074,7 +6074,7 @@ class ModernMenuPage {
         }
     }
 
-    // ========== MOBÄ°L TARAYICI CHROME DETECTION ==========
+    // ========== MOBİL TARAYICI CHROME DETECTION ==========
 
     initializeViewportDetection() {
         // Store initial viewport height
@@ -6082,7 +6082,7 @@ class ModernMenuPage {
             ? window.visualViewport.height
             : window.innerHeight;
         this.lastViewportHeight = this.initialViewportHeight;
-        this.viewportChangeThreshold = 50; // 50px deÄŸiÅŸim eÅŸiÄŸi
+        this.viewportChangeThreshold = 50; // 50px değişim eşiği
         this.isChromeVisible = false;
 
         // Setup event listeners
@@ -6194,13 +6194,13 @@ window.openProductModal = function (productId, cartItemId = null) {
 
     window.menuPage.openProductModal(productId, cartItemId);
 
-    // Galeri sistemini baÅŸlat
+    // Galeri sistemini başlat
     setTimeout(() => {
         const products = window.MenuProducts || [];
         const product = products.find((p) => p.id == productId);
 
         if (product) {
-            // EÄŸer media array varsa kullan, yoksa product.image'dan tek resimli galeri oluÅŸtur
+            // Eğer media array varsa kullan, yoksa product.image'dan tek resimli galeri oluştur
             if (
                 product.media &&
                 Array.isArray(product.media) &&
@@ -6212,7 +6212,7 @@ window.openProductModal = function (productId, cartItemId = null) {
                 }));
                 window.initProductGallery(mediaWithSource);
             } else if (product.image) {
-                // Fallback: Tek resimli galeri oluÅŸtur
+                // Fallback: Tek resimli galeri oluştur
                 window.initProductGallery([{
                     type: "image",
                     url: product.image,

@@ -12,6 +12,8 @@
   const AUTH_KEY = "tahmisci.panel.auth";
   const PANEL_THEME_KEY = "tahmisci.panel.theme";
   const PANEL_LAYOUT_KEY = "tahmisci.panel.layout";
+  const SIDEBAR_STATE_KEY = "tahmisci.admin.sidebar.collapsed.v1";
+  const SIDEBAR_BREAKPOINT = window.matchMedia("(max-width: 1180px)");
   const CUSTOM_DEFAULT_KEY = "tahmisci.menu.customDefault.v1";
   const CHANNEL_NAME = "tahmisci-menu-updates";
   const RECIPE_CHANNEL_NAME = "tahmisci-recipe-updates";
@@ -28,7 +30,7 @@
   const LIGHT_LOGO = "/assets/brand/logo-primary.png";
   const DEFAULT_PRODUCT_IMAGE = "/assets/images/products/product-1.jpg";
   const SECTION_TITLES = {
-    overview: "Genel bakış",
+    overview: "Genel Bakış",
     menu: "Menü düzenleme",
     banner: "BANNER düzenleme",
     category: "Kategori düzenleme",
@@ -459,6 +461,7 @@
     mudavimSearch: "",
     mudavimLevelFilter: "all",
     mudavimRewardFilter: "all",
+    selectedMudavimAnnouncementId: "",
     selectedMudavimCustomerId: "mud-1001",
     selectedMenuOutputSectionId: "",
     menuOutputZoom: 0,
@@ -530,6 +533,10 @@
       "clearPopularImage", "suggestBoxType", "suggestBoxColor", "suggestGradientStart",
       "suggestGradientEnd", "suggestGradientAngle", "suggestImageUrl", "suggestOverlay",
       "suggestImageFile", "clearSuggestImage", "bannerMode", "bannerTitle", "bannerSubtitle",
+      "menuSummaryTheme", "menuSummaryThemeText", "menuSummaryDark", "menuSummaryAccent",
+      "menuSummaryAccentText", "menuSummaryText", "menuSummaryCard", "menuSummaryStatus",
+      "menuOverlayValue", "popularOverlayValue", "suggestOverlayValue",
+      "menuPreviewUpdated", "menuPreviewStatus",
       "bannerVideoUrl", "bannerVideoFile", "clearBannerVideo", "bannerVideoList",
       "bannerImageFile", "clearBannerImages", "bannerImageList", "bannerImages", "bannerProductCategory",
       "bannerProductSearch", "bannerProductList", "categoryEditorTitle", "deleteCategoryButton", "categoryName",
@@ -561,6 +568,7 @@
       "staffActivityTabs", "staffActivityList", "staffActivityCount",
       "mudavimStats", "mudavimSearch", "mudavimLevelFilter", "mudavimRewardFilter", "mudavimCustomerList",
       "mudavimCustomerDetail", "mudavimRewardRules", "mudavimCampaigns", "mudavimSettings",
+      "mudavimAnnouncementList", "mudavimAnnouncementEditor", "mudavimAnnouncementPreview", "addMudavimAnnouncementButton", "publishMudavimAnnouncementsButton",
       "feedbackInsights", "feedbackTabs", "feedbackList", "refreshFeedbackButton", "clearFeedbackButton", "jsonOutput", "copyJsonButton",
       "siteHeroKicker", "siteHeroTitle", "siteHeroSubtitle", "siteHeroImageUrl",
       "siteStoryTitle", "siteStoryText", "siteStoryPointOneTitle", "siteStoryPointOneText",
@@ -572,7 +580,8 @@
       "siteBackgroundColor", "siteSurfaceColor", "siteAccentColor",
       "siteAccentColorTwo", "siteTextColor", "siteMutedColor", "siteTitleFont", "siteBodyFont",
       "siteTitleSize", "siteBodySize", "siteSectionOrder", "siteRevisionRefresh", "siteRevisionList",
-      "previewKicker", "previewTitle", "livePreview"
+      "previewKicker", "previewTitle", "livePreview", "menuPreviewMobile", "menuPreviewDesktop",
+      "menuPreviewLight", "menuPreviewDark"
     ];
     ids.forEach((id) => {
       els[id] = document.getElementById(id);
@@ -650,6 +659,9 @@
       els.loginScreen.style.display = "none";
       els.panelShell.hidden = false;
       els.panelShell.style.display = "grid";
+      setSidebarCollapsed(
+        window.matchMedia("(max-width: 1180px)").matches || safeLocalGet(SIDEBAR_STATE_KEY) === "1"
+      );
       state.data = loadData();
       state.recipes = loadRecipeData();
       state.site = loadSiteData();
@@ -697,6 +709,11 @@
     state.bound = true;
 
     els.sidebarToggle.addEventListener("click", toggleSidebar);
+    if (typeof SIDEBAR_BREAKPOINT.addEventListener === "function") {
+      SIDEBAR_BREAKPOINT.addEventListener("change", syncSidebarForViewport);
+    } else if (typeof SIDEBAR_BREAKPOINT.addListener === "function") {
+      SIDEBAR_BREAKPOINT.addListener(syncSidebarForViewport);
+    }
     if (els.settingsToggle && els.settingsMenu) {
       els.settingsToggle.addEventListener("click", toggleSettingsMenu);
       document.addEventListener("click", handleDocumentClick);
@@ -704,6 +721,7 @@
     if (els.sessionRefreshButton) els.sessionRefreshButton.addEventListener("click", refreshAdminSession);
     if (els.sessionLogoutButton) els.sessionLogoutButton.addEventListener("click", logoutAdminSession);
     document.querySelector(".panel-nav").addEventListener("click", handlePanelNavClick);
+    if (els.overviewGrid) els.overviewGrid.addEventListener("click", handleOverviewAction);
     els.addCategoryButton.addEventListener("click", addCategory);
     els.addProductButton.addEventListener("click", addProduct);
     els.resetButton.addEventListener("click", resetToDefault);
@@ -764,6 +782,11 @@
     els.panelThemeToggle.addEventListener("click", togglePanelTheme);
     els.mobilePanelToggle.addEventListener("click", togglePanelLayout);
     els.livePreview.addEventListener("click", handleLivePreviewClick);
+    ensureMenuPreviewResizeObserver();
+    [els.menuPreviewMobile, els.menuPreviewDesktop, els.menuPreviewLight, els.menuPreviewDark].forEach((control) => {
+      if (control) control.addEventListener("change", queueMenuPreviewScale);
+    });
+    window.addEventListener("resize", queueMenuPreviewScale, { passive: true });
     els.feedbackTabs.addEventListener("click", handleFeedbackTabs);
     els.refreshFeedbackButton.addEventListener("click", refreshFeedbackInbox);
     if (els.clearFeedbackButton) els.clearFeedbackButton.addEventListener("click", clearFeedbackItems);
@@ -795,6 +818,20 @@
     }
     if (els.mudavimCustomerDetail) {
       els.mudavimCustomerDetail.addEventListener("click", handleMudavimDetailAction);
+    }
+    if (els.addMudavimAnnouncementButton) {
+      els.addMudavimAnnouncementButton.addEventListener("click", addMudavimAnnouncement);
+    }
+    if (els.publishMudavimAnnouncementsButton) {
+      els.publishMudavimAnnouncementsButton.addEventListener("click", savePendingChanges);
+    }
+    if (els.mudavimAnnouncementList) {
+      els.mudavimAnnouncementList.addEventListener("click", handleMudavimAnnouncementListClick);
+    }
+    if (els.mudavimAnnouncementEditor) {
+      els.mudavimAnnouncementEditor.addEventListener("input", handleMudavimAnnouncementEditorInput);
+      els.mudavimAnnouncementEditor.addEventListener("change", handleMudavimAnnouncementEditorChange);
+      els.mudavimAnnouncementEditor.addEventListener("click", handleMudavimAnnouncementEditorClick);
     }
     window.addEventListener("storage", (event) => {
       if (event.key === FEEDBACK_STORAGE_KEY) renderFeedbackInbox();
@@ -1038,6 +1075,7 @@
 
   function toggleSidebar() {
     const collapsed = els.panelShell.classList.toggle("is-sidebar-collapsed");
+    safeLocalSet(SIDEBAR_STATE_KEY, collapsed ? "1" : "0");
     els.sidebarToggle.setAttribute("aria-expanded", String(!collapsed));
     els.sidebarToggle.setAttribute("aria-label", collapsed ? "Panel menüsünü aç" : "Panel menüsünü kapat");
   }
@@ -1046,6 +1084,10 @@
     els.panelShell.classList.toggle("is-sidebar-collapsed", Boolean(collapsed));
     els.sidebarToggle.setAttribute("aria-expanded", String(!collapsed));
     els.sidebarToggle.setAttribute("aria-label", collapsed ? "Panel menüsünü aç" : "Panel menüsünü kapat");
+  }
+
+  function syncSidebarForViewport(event) {
+    setSidebarCollapsed(event.matches || safeLocalGet(SIDEBAR_STATE_KEY) === "1");
   }
 
   function toggleSettingsMenu(event) {
@@ -1072,6 +1114,15 @@
     if (!link) return;
     event.preventDefault();
     setActiveSection(link.dataset.panelSection, { collapseSidebar: true });
+  }
+
+  function handleOverviewAction(event) {
+    const target = event.target.closest("[data-overview-section]");
+    if (!target) return;
+    event.preventDefault();
+    setActiveSection(target.dataset.overviewSection, {
+      collapseSidebar: window.matchMedia("(max-width: 1180px)").matches
+    });
   }
 
   function setActiveSection(section, options) {
@@ -1509,7 +1560,18 @@
       els.saveChangesButton.textContent = state.saving ? "Kaydediliyor..." : "Kaydet ve Yayınla";
     }
     if (els.saveState) {
-      els.saveState.textContent = message || (pending ? "Kaydedilmedi" : "Hazir");
+      els.saveState.textContent = message || (pending ? "Kaydedilmedi" : "Hazır");
+    }
+    if (els.menuPreviewStatus) {
+      const previewMessage = state.saving ? "Kaydediliyor" : pending ? "Kaydedilmedi" : "Güncel";
+      els.menuPreviewStatus.textContent = previewMessage;
+      const statusPill = els.menuPreviewStatus.closest(".menu-preview-live-state");
+      if (statusPill) statusPill.classList.toggle("is-pending", pending || state.saving);
+    }
+    if (els.menuSummaryStatus) {
+      els.menuSummaryStatus.textContent = state.saving ? "Kaydediliyor" : pending ? "Taslak" : "Hazır";
+      const summaryStatus = els.menuSummaryStatus.closest(".menu-summary-status");
+      if (summaryStatus) summaryStatus.classList.toggle("is-pending", pending || state.saving);
     }
   }
 
@@ -1946,7 +2008,51 @@
     next.header.navigation = normalizeHeaderNavigation(next.header.navigation);
     next.footer = next.footer && typeof next.footer === "object" && !Array.isArray(next.footer) ? next.footer : {};
     next.footer.quickLinks = Array.isArray(next.footer.quickLinks) ? next.footer.quickLinks : [];
+    next.mudavim = next.mudavim && typeof next.mudavim === "object" && !Array.isArray(next.mudavim) ? next.mudavim : {};
+    next.mudavim.announcements = normalizeMudavimAnnouncements(next.mudavim.announcements);
     return next;
+  }
+
+  function normalizeMudavimAnnouncements(value) {
+    return (Array.isArray(value) ? value : []).map((item, itemIndex) => {
+      const id = String(item && item.id || `announcement-${itemIndex + 1}`);
+      return {
+        id,
+        title: String(item && item.title || "Yeni Duyuru"),
+        slug: String(item && item.slug || slugifyMudavimAnnouncement(item && item.title || id)),
+        order: Number.isFinite(Number(item && item.order)) ? Number(item.order) : itemIndex,
+        isPublished: item && item.isPublished === true,
+        blocks: (Array.isArray(item && item.blocks) ? item.blocks : []).map((block, blockIndex) => {
+          const allowedTypes = ["text", "image", "image-text", "text-image"];
+          const type = allowedTypes.includes(block && block.type) ? block.type : (block && block.type === "image" ? "image" : "text");
+          const hasText = type !== "image";
+          const hasImage = type !== "text";
+          const body = String(block && (block.body ?? block.content) || "");
+          return {
+            id: String(block && block.id || `${id}-block-${blockIndex + 1}`),
+            type,
+            badge: hasText ? String(block && block.badge || "") : "",
+            date: hasText ? String(block && block.date || "") : "",
+            heading: hasText ? String(block && block.heading || "") : "",
+            body: hasText ? body : "",
+            content: type === "text" ? body : "",
+            imageUrl: hasImage ? String(block && block.imageUrl || "") : "",
+            alt: hasImage ? String(block && block.alt || "") : "",
+            order: Number.isFinite(Number(block && block.order)) ? Number(block.order) : blockIndex
+          };
+        }).sort((first, second) => first.order - second.order),
+        createdAt: String(item && item.createdAt || ""),
+        updatedAt: String(item && item.updatedAt || "")
+      };
+    }).sort((first, second) => first.order - second.order);
+  }
+
+  function slugifyMudavimAnnouncement(value) {
+    return String(value || "duyuru")
+      .toLocaleLowerCase("tr-TR")
+      .replace(/[çÇ]/g, "c").replace(/[ğĞ]/g, "g").replace(/[ıİ]/g, "i")
+      .replace(/[öÖ]/g, "o").replace(/[şŞ]/g, "s").replace(/[üÜ]/g, "u")
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "duyuru";
   }
 
   function normalizeHeaderNavigation(value) {
@@ -2206,25 +2312,198 @@
     const soldOut = products.filter(({ product }) => product.stock === "sold-out" || product.active === false).length;
     const popular = products.filter(({ product }) => product.popular).length;
     const recipeStats = countRecipes();
-    const stats = [
-      ["Kategori", categories.length],
-      ["Ürün", products.length],
-      ["Aktif", activeProducts],
-      ["Gizli/Tükendi", soldOut],
-      ["Popüler", popular],
-      ["Reçete", recipeStats.sizes],
-      ["Reçete Ürünü", recipeStats.products],
-      ["Seçili Kategori", selectedCategory() ? selectedCategory().products.length : 0]
+    const menuIsOpen = activeProducts > 0;
+    const summaryCards = [
+      { label: "Toplam Kategori", value: categories.length, icon: "categories" },
+      { label: "Toplam Ürün", value: products.length, icon: "products" },
+      { label: "Aktif Ürün", value: activeProducts, icon: "active" },
+      { label: "Reçete Ürünü", value: recipeStats.products, icon: "recipe" },
+      { label: "Canlı Menü", value: menuIsOpen ? "Açık" : "Kapalı", icon: "live", status: menuIsOpen },
+      { label: "Gizli / Tükendi", value: soldOut, icon: "hidden", secondary: true },
+      { label: "Popüler", value: popular, icon: "popular", secondary: true }
     ];
-    const html = stats.map(([label, value]) => `<article class="stat-card"><span>${label}</span><strong>${value}</strong></article>`).join("");
-    const actionCards = [
-      `<a class="stat-card overview-action-card" href="${escapeAttribute(menuPageUrl())}" target="_blank" rel="noopener noreferrer"><span>Canlı Menü</span><strong>Aç</strong></a>`,
-      `<a class="stat-card overview-action-card" href="${escapeAttribute(recipePageUrl())}" target="_blank" rel="noopener noreferrer"><span>Reçete Arayüzü</span><strong>Aç</strong></a>`
-    ].join("");
-    els.overviewGrid.innerHTML = html + actionCards;
+    const distribution = overviewCategoryDistribution(categories, products.length);
+    const conicGradient = distribution.length
+      ? `conic-gradient(${distribution.map((item) => `${item.color} ${item.start.toFixed(2)}% ${item.end.toFixed(2)}%`).join(", ")})`
+      : "conic-gradient(#e7d8ca 0 100%)";
+    const updateDate = state.data.settings.menuUpdateDate || state.site.updatedAt || new Date().toISOString();
+    const updates = [
+      { icon: "menu", title: "Menü verisi güncel", meta: `${formatOverviewNumber(products.length)} ürün · ${formatOverviewTime(updateDate)}` },
+      { icon: "categories", title: "Kategoriler hazır", meta: `${formatOverviewNumber(categories.length)} aktif yapı` },
+      { icon: "recipe", title: "Reçeteler eşitlendi", meta: `${formatOverviewNumber(recipeStats.products)} reçete ürünü` },
+      { icon: "active", title: "Müdavim özeti hazır", meta: `${formatOverviewNumber(MUDAVIM_CUSTOMERS.length)} kayıt` }
+    ];
+    const trend = overviewVisitTrend();
+    const totalMudavimVisits = MUDAVIM_CUSTOMERS.reduce((sum, customer) => sum + Number(customer.totalVisits || 0), 0);
+
+    els.overviewGrid.innerHTML = `
+      <div class="overview-dashboard">
+        <div class="overview-summary-grid" aria-label="Menü özeti">
+          ${summaryCards.map((card) => `
+            <article class="overview-summary-card${card.secondary ? " is-secondary" : ""}">
+              <span class="overview-icon">${overviewIcon(card.icon)}</span>
+              <div>
+                <span>${escapeHTML(card.label)}</span>
+                <strong>${typeof card.value === "number" ? formatOverviewNumber(card.value) : escapeHTML(card.value)}</strong>
+              </div>
+              ${Object.hasOwn(card, "status") ? `<i class="overview-status-dot${card.status ? " is-open" : ""}" aria-label="${card.status ? "Menü yayında" : "Menü kapalı"}"></i>` : ""}
+            </article>
+          `).join("")}
+        </div>
+
+        <div class="overview-main-grid">
+          <article class="overview-panel overview-distribution-panel">
+            <header><h3>Kategorilere Göre Ürün Dağılımı</h3></header>
+            <div class="overview-distribution-content">
+              <div class="overview-donut" style="background:${conicGradient}" role="img" aria-label="Toplam ${formatOverviewNumber(products.length)} ürünün kategori dağılımı">
+                <div><strong>${formatOverviewNumber(products.length)}</strong><span>Toplam</span></div>
+              </div>
+              <ul class="overview-legend">
+                ${distribution.map((item) => `
+                  <li><i style="--legend-color:${item.color}"></i><span>${escapeHTML(item.label)}</span><strong>${Math.round(item.percent)}%</strong></li>
+                `).join("") || `<li><span>Henüz ürün yok</span><strong>0%</strong></li>`}
+              </ul>
+            </div>
+          </article>
+
+          <article class="overview-panel overview-updates-panel">
+            <header><h3>Son Güncellemeler</h3></header>
+            <div class="overview-update-list">
+              ${updates.map((item) => `
+                <div class="overview-update-row">
+                  <span class="overview-icon is-small">${overviewIcon(item.icon)}</span>
+                  <div><strong>${escapeHTML(item.title)}</strong><small>${escapeHTML(item.meta)}</small></div>
+                </div>
+              `).join("")}
+            </div>
+            <button class="overview-list-action" type="button" data-overview-section="menu">Menüyü Yönet</button>
+          </article>
+
+          <article class="overview-panel overview-shortcuts-panel">
+            <header><h3>Kısa Yollar</h3></header>
+            <div class="overview-shortcut-list">
+              <button type="button" data-overview-section="menu"><span>${overviewIcon("menu")}</span><strong>Menü Düzenle</strong><i>›</i></button>
+              <button type="button" data-overview-section="product"><span>${overviewIcon("products")}</span><strong>Ürün Ekle</strong><i>›</i></button>
+              <button type="button" data-overview-section="banner"><span>${overviewIcon("banner")}</span><strong>Banner Ekle</strong><i>›</i></button>
+              <button type="button" data-overview-section="recipe"><span>${overviewIcon("recipe")}</span><strong>Reçete Yönetimi</strong><i>›</i></button>
+              <a href="/" target="_blank" rel="noopener noreferrer"><span>${overviewIcon("active")}</span><strong>Site Önizleme</strong><i>↗</i></a>
+            </div>
+          </article>
+        </div>
+
+        <div class="overview-bottom-grid">
+          <article class="overview-panel overview-trend-panel">
+            <header><div><h3>Ziyaretçi Trendi</h3><small>Müdavim ziyaret kayıtlarının son 7 günü</small></div><strong>${formatOverviewNumber(trend.total)} ziyaret</strong></header>
+            <div class="overview-chart-wrap">
+              <svg class="overview-trend-chart" viewBox="0 0 700 190" role="img" aria-label="Son yedi günlük ziyaretçi trendi">
+                <defs><linearGradient id="overviewTrendFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b7773d" stop-opacity=".35"/><stop offset="1" stop-color="#b7773d" stop-opacity=".02"/></linearGradient></defs>
+                <path class="overview-chart-grid" d="M28 45H672M28 95H672M28 145H672"/>
+                <polygon class="overview-chart-area" points="${trend.area}"/>
+                <polyline class="overview-chart-line" points="${trend.points}"/>
+                ${trend.coordinates.map((point) => `<circle cx="${point.x}" cy="${point.y}" r="4"/>`).join("")}
+                ${trend.labels.map((label, index) => `<text x="${trend.coordinates[index].x}" y="177" text-anchor="middle">${escapeHTML(label)}</text>`).join("")}
+              </svg>
+            </div>
+          </article>
+
+          <article class="overview-panel overview-members-panel">
+            <header><h3>Müdavim Özeti</h3><button type="button" data-overview-section="mudavim">Tümünü Gör</button></header>
+            <div class="overview-member-metrics">
+              <div><span>Toplam Müdavim</span><strong>${formatOverviewNumber(MUDAVIM_CUSTOMERS.length)}</strong><small>Kayıtlı üye</small></div>
+              <div><span>Son 7 Gün</span><strong>${formatOverviewNumber(trend.total)}</strong><small>Ziyaret kaydı</small></div>
+              <div><span>Toplam Ziyaret</span><strong>${formatOverviewNumber(totalMudavimVisits)}</strong><small>Tüm zamanlar</small></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    `;
     if (els.miniStats) {
-      els.miniStats.innerHTML = stats.slice(0, 4).map(([label, value]) => `<article class="stat-card"><span>${label}</span><strong>${value}</strong></article>`).join("");
+      const miniStats = [
+        ["Kategori", categories.length],
+        ["Ürün", products.length],
+        ["Aktif", activeProducts],
+        ["Gizli/Tükendi", soldOut]
+      ];
+      els.miniStats.innerHTML = miniStats.map(([label, value]) => `<article class="stat-card"><span>${label}</span><strong>${formatOverviewNumber(value)}</strong></article>`).join("");
     }
+  }
+
+  function overviewIcon(name) {
+    const paths = {
+      categories: `<path d="M3.5 7.5h17v12h-17z"/><path d="M3.5 7.5 6 4.5h5l2 3"/>`,
+      products: `<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/>`,
+      active: `<circle cx="12" cy="12" r="9"/><path d="m8 12 2.7 2.7L16.5 9"/>`,
+      recipe: `<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/>`,
+      live: `<path d="M6 8h10a4 4 0 0 1 0 8H6zM8 5v3M13 4v4M7 19h10"/>`,
+      hidden: `<path d="M3 3l18 18M10.6 10.7a2 2 0 0 0 2.7 2.7M9.8 5.2A10.7 10.7 0 0 1 21 12a12 12 0 0 1-3.2 4.2M6.2 7.1A12 12 0 0 0 3 12a10.8 10.8 0 0 0 6.2 5.8"/>`,
+      popular: `<path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2-4.5-4.4 6.2-.9z"/>`,
+      menu: `<path d="M7 6h14M7 12h14M7 18h14"/><circle cx="3.5" cy="6" r=".7"/><circle cx="3.5" cy="12" r=".7"/><circle cx="3.5" cy="18" r=".7"/>`,
+      banner: `<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m6 16 4-4 3 3 2-2 3 3"/>`
+    };
+    return `<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${paths[name] || paths.active}</svg>`;
+  }
+
+  function overviewCategoryDistribution(categories, totalProducts) {
+    const colors = ["#4a2c1d", "#75462d", "#a96f45", "#c99b78", "#dec4ad"];
+    const sorted = categories.map((category) => ({
+      label: category.name,
+      count: Array.isArray(category.products) ? category.products.length : 0
+    })).sort((a, b) => b.count - a.count);
+    const visible = sorted.slice(0, 4);
+    const otherCount = sorted.slice(4).reduce((sum, item) => sum + item.count, 0);
+    if (otherCount) visible.push({ label: "Diğer", count: otherCount });
+    let cursor = 0;
+    return visible.filter((item) => item.count > 0).map((item, index) => {
+      const percent = totalProducts ? (item.count / totalProducts) * 100 : 0;
+      const start = cursor;
+      cursor += percent;
+      return { ...item, percent, start, end: cursor, color: colors[index % colors.length] };
+    });
+  }
+
+  function overviewVisitTrend() {
+    const visits = MUDAVIM_CUSTOMERS.flatMap((customer) => Array.isArray(customer.visits) ? customer.visits : []);
+    const timestamps = visits.map((visit) => Date.parse(`${visit.date}T12:00:00`)).filter(Number.isFinite);
+    const latest = timestamps.length ? new Date(Math.max(...timestamps)) : new Date();
+    const days = Array.from({ length: 7 }, (_, index) => {
+      const date = new Date(latest);
+      date.setDate(latest.getDate() - (6 - index));
+      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      return {
+        key,
+        label: new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "short" }).format(date),
+        value: visits.filter((visit) => visit.date === key).length
+      };
+    });
+    const maxValue = Math.max(1, ...days.map((day) => day.value));
+    const coordinates = days.map((day, index) => ({
+      x: Number((28 + index * (644 / 6)).toFixed(2)),
+      y: Number((145 - (day.value / maxValue) * 100).toFixed(2))
+    }));
+    const points = coordinates.map((point) => `${point.x},${point.y}`).join(" ");
+    return {
+      points,
+      area: `28,145 ${points} 672,145`,
+      coordinates,
+      labels: days.map((day) => day.label),
+      total: days.reduce((sum, day) => sum + day.value, 0)
+    };
+  }
+
+  function formatOverviewNumber(value) {
+    return new Intl.NumberFormat("tr-TR").format(Number(value) || 0);
+  }
+
+  function formatOverviewTime(value) {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return "Şimdi";
+    return new Intl.DateTimeFormat("tr-TR", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    }).format(date);
   }
 
   function renderBulkPriceTools() {
@@ -2395,6 +2674,7 @@
     renderMudavimRewardRules();
     renderMudavimCampaigns();
     renderMudavimSettings();
+    renderMudavimAnnouncements();
   }
 
   function filteredMudavimCustomers() {
@@ -2581,6 +2861,298 @@
       <label><span>Müşteri ekranı metni</span><input type="text" value="Kasada kodunu okut" disabled></label>
       <label><span>Seviye kuralı</span><input type="text" value="Bronz / Gümüş / Altın" disabled></label>
     `;
+  }
+
+  function mudavimAnnouncements() {
+    if (!state.site || typeof state.site !== "object") state.site = normalizeSiteSettings({ schemaVersion: 3 });
+    if (!state.site.mudavim || typeof state.site.mudavim !== "object") state.site.mudavim = {};
+    state.site.mudavim.announcements = normalizeMudavimAnnouncements(state.site.mudavim.announcements);
+    return state.site.mudavim.announcements;
+  }
+
+  function selectedMudavimAnnouncement() {
+    const announcements = mudavimAnnouncements();
+    if (!announcements.some((item) => item.id === state.selectedMudavimAnnouncementId)) {
+      state.selectedMudavimAnnouncementId = announcements[0]?.id || "";
+    }
+    return announcements.find((item) => item.id === state.selectedMudavimAnnouncementId) || null;
+  }
+
+  function renderMudavimAnnouncements() {
+    if (!els.mudavimAnnouncementList || !els.mudavimAnnouncementEditor) return;
+    const announcements = mudavimAnnouncements();
+    const selected = selectedMudavimAnnouncement();
+    els.mudavimAnnouncementList.innerHTML = announcements.length ? announcements.map((item) => `
+      <button class="mudavim-announcement-row${item.id === state.selectedMudavimAnnouncementId ? " is-active" : ""}" type="button" data-mudavim-announcement-id="${escapeAttribute(item.id)}">
+        <span><strong>${escapeHTML(item.title)}</strong><small>${item.blocks.length} blok · ${escapeHTML(item.slug)}</small></span>
+        <em class="${item.isPublished ? "is-published" : ""}">${item.isPublished ? "Yayında" : "Taslak"}</em>
+      </button>
+    `).join("") : `<div class="mudavim-empty">Henüz duyuru yok. “Yeni Duyuru” ile başlayın.</div>`;
+
+    if (!selected) {
+      els.mudavimAnnouncementEditor.innerHTML = `<div class="mudavim-empty">Düzenlemek için bir duyuru seçin.</div>`;
+      renderMudavimAnnouncementPreview();
+      return;
+    }
+
+    els.mudavimAnnouncementEditor.innerHTML = `
+      <div class="mudavim-announcement-editor__head">
+        <div><p class="eyebrow">Duyuru düzenleyici</p><h4>${escapeHTML(selected.title)}</h4></div>
+        <button class="danger-action" type="button" data-mudavim-announcement-action="delete-announcement">Duyuruyu Sil</button>
+      </div>
+      <div class="form-grid two mudavim-announcement-fields">
+        <label><span>Başlık</span><input type="text" value="${escapeAttribute(selected.title)}" data-mudavim-announcement-field="title" maxlength="160"></label>
+        <label><span>Slug</span><input type="text" value="${escapeAttribute(selected.slug)}" data-mudavim-announcement-field="slug" maxlength="160"></label>
+        <label><span>Sıra</span><input type="number" min="0" value="${escapeAttribute(selected.order)}" data-mudavim-announcement-field="order"></label>
+        <label class="toggle-row"><input type="checkbox" data-mudavim-announcement-field="isPublished" ${selected.isPublished ? "checked" : ""}><span>Müşteri panelinde yayınla</span></label>
+      </div>
+      <div class="mudavim-block-toolbar">
+        <div><p class="eyebrow">Duyuru Blokları</p><h5>İçerik Yönetimi</h5><span>Bloklar aşağıdaki sırayla yayınlanır.</span></div>
+        <div>
+          <button class="line-action" type="button" data-mudavim-announcement-action="add-text"><i class="fas fa-align-left" aria-hidden="true"></i> Metin</button>
+          <button class="line-action" type="button" data-mudavim-announcement-action="add-image"><i class="far fa-image" aria-hidden="true"></i> Görsel</button>
+          <button class="line-action" type="button" data-mudavim-announcement-action="add-image-text"><i class="fas fa-table-columns" aria-hidden="true"></i> Görsel + Metin</button>
+          <button class="line-action" type="button" data-mudavim-announcement-action="add-text-image"><i class="fas fa-table-columns" aria-hidden="true"></i> Metin + Görsel</button>
+        </div>
+      </div>
+      <div class="mudavim-block-list">
+        ${selected.blocks.length ? selected.blocks.map((block, index) => renderMudavimAnnouncementBlock(block, index, selected.blocks.length)).join("") : `<div class="mudavim-empty">Bu duyuruda henüz içerik bloğu yok.</div>`}
+      </div>
+      <p class="control-note">Değişiklikler “Değişiklikleri Kaydet” düğmesine basıldığında canlıya alınır.</p>
+    `;
+    applyMudavimPreviewImageOrientation(els.mudavimAnnouncementEditor);
+    renderMudavimAnnouncementPreview();
+  }
+
+  function renderMudavimAnnouncementBlock(block, index, total) {
+    const hasText = block.type !== "image";
+    const hasImage = block.type !== "text";
+    const typeOptions = [
+      ["text", "Sadece Metin"],
+      ["image", "Sadece Görsel"],
+      ["image-text", "Görsel + Metin"],
+      ["text-image", "Metin + Görsel"]
+    ];
+    const textFields = hasText ? `
+      <div class="mudavim-block-text-fields">
+        <div class="form-grid two">
+          <label><span>Etiket / kategori</span><input type="text" value="${escapeAttribute(block.badge)}" data-mudavim-block-field="badge" maxlength="40" placeholder="YENİ, ETKİNLİK, SEZONAL"></label>
+          <label><span>Tarih</span><input type="date" value="${escapeAttribute(block.date)}" data-mudavim-block-field="date"></label>
+        </div>
+        <label><span>Başlık</span><input type="text" value="${escapeAttribute(block.heading)}" data-mudavim-block-field="heading" maxlength="180" placeholder="Duyuru başlığı"></label>
+        <label><span>Kısa açıklama</span><textarea rows="4" data-mudavim-block-field="body" maxlength="10000" placeholder="Duyuru metnini yazın">${escapeHTML(block.body)}</textarea></label>
+      </div>
+    ` : "";
+    const imageFields = hasImage ? `
+      <div class="mudavim-block-image-fields">
+        ${block.imageUrl ? `<img src="${escapeAttribute(block.imageUrl)}" alt="" data-mudavim-preview-image>` : `<div class="mudavim-block-image-empty">Görsel seçilmedi</div>`}
+        <label><span>Görsel URL</span><input type="text" value="${escapeAttribute(block.imageUrl)}" data-mudavim-block-field="imageUrl"></label>
+        <label><span>Alternatif metin</span><input type="text" value="${escapeAttribute(block.alt)}" data-mudavim-block-field="alt" maxlength="240"></label>
+        <label class="file-button"><span>Görsel Yükle / Değiştir</span><input type="file" accept="image/jpeg,image/png,image/webp" data-mudavim-block-image></label>
+      </div>
+    ` : "";
+    return `
+      <article class="mudavim-block-card" data-mudavim-block-id="${escapeAttribute(block.id)}">
+        <div class="mudavim-block-card__head">
+          <span class="mudavim-block-order">${index + 1}</span>
+          <label class="mudavim-block-type"><span>Blok tipi</span><select data-mudavim-block-field="type">${typeOptions.map(([value, label]) => `<option value="${value}" ${block.type === value ? "selected" : ""}>${label}</option>`).join("")}</select></label>
+          <div>
+            <button type="button" aria-label="Yukarı taşı" data-mudavim-announcement-action="move-block-up" ${index === 0 ? "disabled" : ""}><i class="fas fa-arrow-up" aria-hidden="true"></i></button>
+            <button type="button" aria-label="Aşağı taşı" data-mudavim-announcement-action="move-block-down" ${index === total - 1 ? "disabled" : ""}><i class="fas fa-arrow-down" aria-hidden="true"></i></button>
+            <button type="button" aria-label="Bloğu sil" data-mudavim-announcement-action="delete-block"><i class="fas fa-trash" aria-hidden="true"></i></button>
+          </div>
+        </div>
+        <div class="mudavim-block-editor-grid${hasText && hasImage ? " is-combined" : ""}">${imageFields}${textFields}</div>
+      </article>
+    `;
+  }
+
+  function renderMudavimAnnouncementPreview() {
+    if (!els.mudavimAnnouncementPreview) return;
+    const announcement = selectedMudavimAnnouncement();
+    if (!announcement) {
+      els.mudavimAnnouncementPreview.innerHTML = `<div class="mudavim-empty">Canlı önizleme için bir duyuru seçin.</div>`;
+      return;
+    }
+    els.mudavimAnnouncementPreview.innerHTML = `
+      <div class="mudavim-preview-frame">
+        <div class="mudavim-preview-head"><span></span><h5>Duyurular</h5><i class="fas fa-xmark" aria-hidden="true"></i></div>
+        <article class="mudavim-preview-announcement">
+          <header><span>Duyuru</span><h4>${escapeHTML(announcement.title)}</h4></header>
+          <div class="mudavim-preview-blocks">
+            ${announcement.blocks.length ? announcement.blocks.map(renderMudavimAnnouncementPreviewBlock).join("") : `<div class="mudavim-empty">Henüz blok eklenmedi.</div>`}
+          </div>
+        </article>
+      </div>
+    `;
+    applyMudavimPreviewImageOrientation(els.mudavimAnnouncementPreview);
+  }
+
+  function renderMudavimAnnouncementPreviewBlock(block) {
+    const hasText = block.type !== "image";
+    const hasImage = block.type !== "text";
+    const meta = hasText && (block.badge || block.date) ? `<div class="mudavim-preview-meta">${block.badge ? `<span>${escapeHTML(block.badge)}</span>` : ""}${block.date ? `<time>${escapeHTML(formatMudavimAnnouncementDate(block.date))}</time>` : ""}</div>` : "";
+    const copy = hasText ? `<div class="mudavim-preview-copy">${meta}${block.heading ? `<h5>${escapeHTML(block.heading)}</h5>` : ""}${block.body ? `<p>${escapeHTML(block.body).replace(/\n/g, "<br>")}</p>` : ""}</div>` : "";
+    const media = hasImage ? `<figure class="mudavim-preview-media">${block.imageUrl ? `<img src="${escapeAttribute(block.imageUrl)}" alt="${escapeAttribute(block.alt || block.heading || "Duyuru görseli")}" data-mudavim-preview-image>` : `<span>Görsel bekleniyor</span>`}</figure>` : "";
+    return `<section class="mudavim-preview-block is-${escapeAttribute(block.type)}">${media}${copy}</section>`;
+  }
+
+  function formatMudavimAnnouncementDate(value) {
+    if (!value) return "";
+    const date = new Date(`${value}T12:00:00`);
+    return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+  }
+
+  function applyMudavimPreviewImageOrientation(root) {
+    root.querySelectorAll("img[data-mudavim-preview-image]").forEach((image) => {
+      const apply = () => {
+        const frame = image.closest("figure, .mudavim-block-image-fields");
+        if (!frame) return;
+        frame.classList.toggle("is-portrait", image.naturalHeight > image.naturalWidth);
+        frame.classList.toggle("is-landscape", image.naturalHeight <= image.naturalWidth);
+      };
+      if (image.complete) apply();
+      else image.addEventListener("load", apply, { once: true });
+    });
+  }
+
+  function addMudavimAnnouncement() {
+    const announcements = mudavimAnnouncements();
+    const now = new Date().toISOString();
+    const id = `announcement-${Date.now().toString(36)}`;
+    announcements.push({
+      id,
+      title: "Yeni Duyuru",
+      slug: `${slugifyMudavimAnnouncement("Yeni Duyuru")}-${announcements.length + 1}`,
+      order: announcements.length,
+      isPublished: false,
+      blocks: [{
+        id: `${id}-block-1`,
+        type: "text",
+        badge: "",
+        date: "",
+        heading: "",
+        body: "",
+        content: "",
+        imageUrl: "",
+        alt: "",
+        order: 0
+      }],
+      createdAt: now,
+      updatedAt: now
+    });
+    state.selectedMudavimAnnouncementId = id;
+    saveSiteSettings();
+    renderMudavimAnnouncements();
+  }
+
+  function handleMudavimAnnouncementListClick(event) {
+    const row = event.target.closest("[data-mudavim-announcement-id]");
+    if (!row) return;
+    state.selectedMudavimAnnouncementId = row.dataset.mudavimAnnouncementId;
+    renderMudavimAnnouncements();
+  }
+
+  function handleMudavimAnnouncementEditorInput(event) {
+    const announcement = selectedMudavimAnnouncement();
+    if (!announcement) return;
+    const announcementField = event.target.dataset.mudavimAnnouncementField;
+    if (announcementField) {
+      announcement[announcementField] = event.target.type === "checkbox"
+        ? event.target.checked
+        : event.target.type === "number" ? Number(event.target.value || 0) : event.target.value;
+      announcement.updatedAt = new Date().toISOString();
+      saveSiteSettings();
+      renderMudavimAnnouncementPreview();
+      return;
+    }
+    const blockField = event.target.dataset.mudavimBlockField;
+    const blockId = event.target.closest("[data-mudavim-block-id]")?.dataset.mudavimBlockId;
+    const block = announcement.blocks.find((item) => item.id === blockId);
+    if (!blockField || !block) return;
+    block[blockField] = event.target.value;
+    if (blockField === "body" && block.type === "text") block.content = block.body;
+    announcement.updatedAt = new Date().toISOString();
+    saveSiteSettings();
+    renderMudavimAnnouncementPreview();
+  }
+
+  async function handleMudavimAnnouncementEditorChange(event) {
+    const input = event.target.closest("[data-mudavim-block-image]");
+    if (!input) {
+      if (event.target.matches("[data-mudavim-block-field='type']")) {
+        renderMudavimAnnouncements();
+        return;
+      }
+      if (event.target.matches("[data-mudavim-announcement-field='title'], [data-mudavim-announcement-field='slug'], [data-mudavim-announcement-field='order'], [data-mudavim-announcement-field='isPublished']")) {
+        renderMudavimAnnouncements();
+      }
+      return;
+    }
+    const file = input.files && input.files[0];
+    const announcement = selectedMudavimAnnouncement();
+    const blockId = input.closest("[data-mudavim-block-id]")?.dataset.mudavimBlockId;
+    const block = announcement?.blocks.find((item) => item.id === blockId);
+    if (!file || !announcement || !block) return;
+    input.disabled = true;
+    try {
+      const media = await storeMediaFile(file, "image");
+      block.imageUrl = media.src;
+      block.alt = block.alt || announcement.title;
+      announcement.updatedAt = new Date().toISOString();
+      saveSiteSettings();
+      renderMudavimAnnouncements();
+      updateSaveControls("Duyuru görseli yüklendi, yayın bekliyor");
+    } catch (error) {
+      alert(`Duyuru görseli yüklenemedi. ${error.message || "Dosyayı kontrol edin."}`);
+      input.disabled = false;
+    }
+  }
+
+  function handleMudavimAnnouncementEditorClick(event) {
+    const button = event.target.closest("[data-mudavim-announcement-action]");
+    if (!button) return;
+    const action = button.dataset.mudavimAnnouncementAction;
+    const announcements = mudavimAnnouncements();
+    const announcement = selectedMudavimAnnouncement();
+    if (!announcement) return;
+    if (action === "delete-announcement") {
+      if (!confirm("Bu duyuruyu silmek istiyor musunuz?")) return;
+      state.site.mudavim.announcements = announcements.filter((item) => item.id !== announcement.id)
+        .map((item, index) => ({ ...item, order: index }));
+      state.selectedMudavimAnnouncementId = state.site.mudavim.announcements[0]?.id || "";
+      saveSiteSettings();
+      renderMudavimAnnouncements();
+      return;
+    }
+    if (["add-text", "add-image", "add-image-text", "add-text-image"].includes(action)) {
+      const type = action.replace(/^add-/, "");
+      announcement.blocks.push({
+        id: `${announcement.id}-block-${Date.now().toString(36)}`,
+        type,
+        badge: "",
+        date: "",
+        heading: "",
+        body: "",
+        content: "",
+        imageUrl: "",
+        alt: "",
+        order: announcement.blocks.length
+      });
+    }
+    const blockId = button.closest("[data-mudavim-block-id]")?.dataset.mudavimBlockId;
+    const blockIndex = announcement.blocks.findIndex((item) => item.id === blockId);
+    if (action === "delete-block" && blockIndex >= 0) announcement.blocks.splice(blockIndex, 1);
+    if (action === "move-block-up" && blockIndex > 0) {
+      [announcement.blocks[blockIndex - 1], announcement.blocks[blockIndex]] = [announcement.blocks[blockIndex], announcement.blocks[blockIndex - 1]];
+    }
+    if (action === "move-block-down" && blockIndex >= 0 && blockIndex < announcement.blocks.length - 1) {
+      [announcement.blocks[blockIndex + 1], announcement.blocks[blockIndex]] = [announcement.blocks[blockIndex], announcement.blocks[blockIndex + 1]];
+    }
+    announcement.blocks.forEach((block, index) => { block.order = index; });
+    announcement.updatedAt = new Date().toISOString();
+    saveSiteSettings();
+    renderMudavimAnnouncements();
   }
 
   function formatMudavimRewardStatus(status) {
@@ -3572,6 +4144,7 @@
     els.productPriceSize.value = typography.productPrice;
     renderActionStyleForm("popular", settings.bottomActions.popular);
     renderActionStyleForm("suggest", settings.bottomActions.suggest);
+    renderMenuUiSummary(settings);
     renderBannerSettingsForm(settings.banner);
 
     const category = selectedCategory();
@@ -5818,6 +6391,33 @@
     els[`${capitalized}Overlay`].value = normalized.overlay;
   }
 
+  function renderMenuUiSummary(settings) {
+    if (!settings) return;
+    const swatches = [
+      [els.menuSummaryTheme, settings.bgColor],
+      [els.menuSummaryDark, settings.darkBgColor],
+      [els.menuSummaryAccent, settings.accentColor],
+      [els.menuSummaryText, settings.textColor],
+      [els.menuSummaryCard, settings.productCardColor]
+    ];
+    swatches.forEach(([element, value]) => {
+      if (element) element.style.backgroundColor = toColor(value, "#F4EBDC");
+    });
+    if (els.menuSummaryThemeText) {
+      const labels = { solid: "Düz renk", gradient: "Gradient", image: "Görsel" };
+      els.menuSummaryThemeText.textContent = labels[settings.menuBackground.type] || "Aydınlık";
+    }
+    if (els.menuSummaryAccentText) {
+      els.menuSummaryAccentText.textContent = toColor(settings.accentColor, DEFAULT_SETTINGS.accentColor).toUpperCase();
+    }
+    if (els.menuOverlayValue) els.menuOverlayValue.textContent = `${Math.round(Number(settings.menuBackground.overlay || 0) * 100)}%`;
+    const popular = normalizeStyle(settings.bottomActions.popular);
+    const suggest = normalizeStyle(settings.bottomActions.suggest);
+    if (els.popularOverlayValue) els.popularOverlayValue.textContent = `${Math.round(Number(popular.overlay || 0) * 100)}%`;
+    if (els.suggestOverlayValue) els.suggestOverlayValue.textContent = `${Math.round(Number(suggest.overlay || 0) * 100)}%`;
+    if (els.menuPreviewUpdated) els.menuPreviewUpdated.textContent = settings.menuUpdateDate || "Canlı veri";
+  }
+
   function readActionStyleForm(prefix, previous) {
     const key = prefix === "popular" ? "popular" : "suggest";
     return normalizeStyle({
@@ -6014,7 +6614,10 @@
     renderMenuPreview();
   }
 
+  let menuPreviewScaleFrame = 0;
+
   function renderMenuPreview() {
+    ensureMenuPreviewResizeObserver();
     const src = menuPreviewUrl();
     const existing = els.livePreview.querySelector(".menu-live-preview");
     if (existing) {
@@ -6022,12 +6625,51 @@
         existing.setAttribute("data-preview-src", src);
         existing.src = src;
       }
+      queueMenuPreviewScale();
       return;
     }
 
     els.livePreview.innerHTML = `
-      <iframe class="menu-live-preview" data-preview-src="${escapeAttribute(src)}" src="${escapeAttribute(src)}" title="Canlı menü önizleme"></iframe>
+      <iframe class="menu-live-preview" data-preview-src="${escapeAttribute(src)}" src="${escapeAttribute(src)}" title="Canlı menü önizleme" loading="eager" scrolling="yes" allow="autoplay"></iframe>
     `;
+    const iframe = els.livePreview.querySelector(".menu-live-preview");
+    if (iframe) iframe.addEventListener("load", queueMenuPreviewScale, { passive: true });
+    queueMenuPreviewScale();
+  }
+
+  function queueMenuPreviewScale() {
+    window.cancelAnimationFrame(menuPreviewScaleFrame);
+    menuPreviewScaleFrame = window.requestAnimationFrame(syncMenuPreviewScale);
+  }
+
+  function ensureMenuPreviewResizeObserver() {
+    if (!els.livePreview || !window.ResizeObserver || els.livePreview.__menuPreviewResizeObserver) return;
+    const observer = new ResizeObserver(queueMenuPreviewScale);
+    observer.observe(els.livePreview);
+    els.livePreview.__menuPreviewResizeObserver = observer;
+  }
+
+  function syncMenuPreviewScale() {
+    if (!els.livePreview) return;
+    const iframe = els.livePreview.querySelector(".menu-live-preview");
+    if (!iframe) return;
+
+    const desktop = Boolean(els.menuPreviewDesktop?.checked);
+    const viewportWidth = desktop ? 1440 : 390;
+    const viewportHeight = desktop ? 900 : 844;
+    const availableWidth = els.livePreview.clientWidth;
+    const availableHeight = els.livePreview.clientHeight;
+    if (availableWidth < 20 || availableHeight < 20) return;
+    const scale = Math.min(availableWidth / viewportWidth, availableHeight / viewportHeight);
+    const renderedWidth = viewportWidth * scale;
+    const renderedHeight = viewportHeight * scale;
+
+    els.livePreview.dataset.previewDevice = desktop ? "desktop" : "mobile";
+    iframe.style.width = `${viewportWidth}px`;
+    iframe.style.height = `${viewportHeight}px`;
+    iframe.style.left = `${Math.max(0, (availableWidth - renderedWidth) / 2)}px`;
+    iframe.style.top = `${Math.max(0, (availableHeight - renderedHeight) / 2)}px`;
+    iframe.style.transform = `scale(${scale})`;
   }
 
   function menuPageUrl() {

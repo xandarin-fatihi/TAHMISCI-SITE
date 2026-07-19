@@ -7,7 +7,8 @@
     { id: "home", label: { tr: "Ana Sayfa", en: "Home" }, url: "#top", icon: "fas fa-house", visible: true, order: 0 },
     { id: "menu", label: { tr: "Menü", en: "Menu" }, url: "#menu", icon: "fas fa-utensils", visible: true, order: 1 },
     { id: "about", label: { tr: "Hakkımızda", en: "About" }, url: "#about", icon: "fas fa-mug-hot", visible: true, order: 2 },
-    { id: "contact", label: { tr: "İletişim", en: "Contact" }, url: "#contact", icon: "fas fa-phone", visible: true, order: 3 }
+    { id: "contact", label: { tr: "İletişim", en: "Contact" }, url: "#contact", icon: "fas fa-phone", visible: true, order: 3 },
+    { id: "mudavim", label: { tr: "Müdavim", en: "Müdavim" }, url: "/mudavim/", icon: "fas fa-id-card", visible: true, order: 4 }
   ];
   const BRAND_DEFAULTS = {
     desktopLogo: "/assets/brand/logo-primary.png",
@@ -409,7 +410,11 @@
 
   function normalizeNavigation(value, language) {
     const source = Array.isArray(value) && value.length ? value : DEFAULT_NAVIGATION;
-    return source
+    const includesMudavim = source.some((item) => String(item?.id || "").toLowerCase() === "mudavim");
+    const normalizedSource = includesMudavim
+      ? source
+      : [...source, DEFAULT_NAVIGATION.find((item) => item.id === "mudavim")];
+    return normalizedSource
       .filter((item) => item && typeof item === "object" && item.visible !== false)
       .map((item, index) => {
         const fallback = DEFAULT_NAVIGATION[index] || {};

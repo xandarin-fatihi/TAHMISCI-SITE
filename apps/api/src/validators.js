@@ -103,7 +103,7 @@ function validateSiteState(siteState) {
   if (siteState.sectionOrder !== undefined && !Array.isArray(siteState.sectionOrder)) {
     return "siteState.sectionOrder dizi olmali.";
   }
-  for (const key of ["global", "features", "branding", "watermark", "motion", "header", "hero", "featuredProducts", "menuSection", "about", "qrMenu", "contact", "footer", "seo"]) {
+  for (const key of ["global", "features", "branding", "watermark", "motion", "header", "hero", "featuredProducts", "menuSection", "about", "qrMenu", "contact", "footer", "seo", "mudavim"]) {
     if (siteState[key] !== undefined && (!siteState[key] || typeof siteState[key] !== "object" || Array.isArray(siteState[key]))) {
       return `siteState.${key} nesne olmali.`;
     }
@@ -163,6 +163,37 @@ function validateSiteState(siteState) {
       if (!item || typeof item !== "object" || Array.isArray(item)) return "Her header navigation kaydi nesne olmali.";
       if (item.visible !== undefined && typeof item.visible !== "boolean") return "Header navigation visible boolean olmali.";
       if (item.order !== undefined && !Number.isFinite(Number(item.order))) return "Header navigation sirasi sayi olmali.";
+    }
+  }
+  const announcements = siteState.mudavim?.announcements;
+  if (announcements !== undefined) {
+    if (!Array.isArray(announcements)) return "siteState.mudavim.announcements dizi olmali.";
+    if (announcements.length > 50) return "En fazla 50 Mudavim duyurusu kaydedilebilir.";
+    const announcementIds = new Set();
+    for (const announcement of announcements) {
+      if (!announcement || typeof announcement !== "object" || Array.isArray(announcement)) return "Her Mudavim duyurusu nesne olmali.";
+      if (!announcement.id || announcementIds.has(announcement.id)) return "Mudavim duyuru kimlikleri dolu ve benzersiz olmali.";
+      announcementIds.add(announcement.id);
+      if (announcement.isPublished !== undefined && typeof announcement.isPublished !== "boolean") return "Mudavim duyuru yayın durumu boolean olmali.";
+      if (announcement.order !== undefined && !Number.isFinite(Number(announcement.order))) return "Mudavim duyuru sirasi sayi olmali.";
+      if (!Array.isArray(announcement.blocks)) return "Mudavim duyuru bloklari dizi olmali.";
+      if (announcement.blocks.length > 60) return "Bir Mudavim duyurusunda en fazla 60 blok olabilir.";
+      const blockIds = new Set();
+      for (const block of announcement.blocks) {
+        if (!block || typeof block !== "object" || Array.isArray(block)) return "Her Mudavim duyuru blogu nesne olmali.";
+        if (!block.id || blockIds.has(block.id)) return "Mudavim duyuru blok kimlikleri dolu ve benzersiz olmali.";
+        blockIds.add(block.id);
+        if (!["text", "image", "image-text", "text-image"].includes(block.type)) return "Mudavim duyuru blok tipi gecersiz.";
+        if (block.order !== undefined && !Number.isFinite(Number(block.order))) return "Mudavim duyuru blok sirasi sayi olmali.";
+        const hasText = block.type !== "image";
+        const hasImage = block.type !== "text";
+        if (hasText && block.body !== undefined && typeof block.body !== "string") return "Duyuru blogunda body metin olmali.";
+        if (hasText && block.heading !== undefined && typeof block.heading !== "string") return "Duyuru blogunda heading metin olmali.";
+        if (hasText && block.badge !== undefined && typeof block.badge !== "string") return "Duyuru blogunda badge metin olmali.";
+        if (hasText && block.date !== undefined && typeof block.date !== "string") return "Duyuru blogunda date metin olmali.";
+        if (block.type === "text" && block.body === undefined && typeof block.content !== "string") return "Metin blogunda body veya content metin olmali.";
+        if (hasImage && typeof block.imageUrl !== "string") return "Gorsel blogunda imageUrl metin olmali.";
+      }
     }
   }
   for (const slide of Array.isArray(hero.slides) ? hero.slides : []) {

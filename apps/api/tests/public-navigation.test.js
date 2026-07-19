@@ -53,25 +53,25 @@ test("public header navigation renders, localizes, updates with SSE and keeps fa
   const page = await openPage();
   try {
     await navigate(page, `${baseUrl}/`);
-    await waitFor(page, "() => document.querySelectorAll('.header-nav .nav-link').length === 4");
+    await waitFor(page, "() => document.querySelectorAll('.header-nav .nav-link').length === 5");
 
     let state = await page.evaluate(collectNavigationState());
-    assert.deepEqual(state.desktopLabels, ["Ana Sayfa", "Menü", "Hakkımızda", "İletişim"]);
-    assert.deepEqual(state.desktopHrefs, ["#top", "#menu", "#about", "#contact"]);
-    assert.equal(state.mobileCount, 4);
+    assert.deepEqual(state.desktopLabels, ["Ana Sayfa", "Menü", "Hakkımızda", "İletişim", "Müdavim"]);
+    assert.deepEqual(state.desktopHrefs, ["#top", "#menu", "#about", "#contact", "/mudavim/"]);
+    assert.equal(state.mobileCount, 5);
     assert.equal(state.mobileMenuActive, false);
 
     await page.evaluate("localStorage.setItem('site_language', 'en'); window.location.reload();");
     await sleep(1800);
     await waitFor(page, "() => document.querySelector('.header-nav .nav-link')?.textContent.includes('Home')");
     state = await page.evaluate(collectNavigationState());
-    assert.deepEqual(state.desktopLabels, ["Home", "Menu", "About", "Contact"]);
+    assert.deepEqual(state.desktopLabels, ["Home", "Menu", "About", "Contact", "Müdavim"]);
 
     await page.send("Emulation.setDeviceMetricsOverride", { width: 390, height: 844, deviceScaleFactor: 2, mobile: true });
     await page.evaluate("document.getElementById('mobileMenuBtn').click()");
     await waitFor(page, "() => document.getElementById('mobileNav')?.classList.contains('active')");
     state = await page.evaluate(collectNavigationState());
-    assert.equal(state.mobileCount, 4);
+    assert.equal(state.mobileCount, 5);
     await page.evaluate("document.querySelector('.mobile-nav-content .mobile-nav-link[href=\"#menu\"]')?.click()");
     await waitFor(page, "() => !document.getElementById('mobileNav')?.classList.contains('active')");
     state = await page.evaluate("({ hash: location.hash, closed: !document.getElementById('mobileNav')?.classList.contains('active') })");
@@ -88,18 +88,18 @@ test("public header navigation renders, localizes, updates with SSE and keeps fa
       body: JSON.stringify({ siteState })
     });
     assert.equal(saved.response.status, 200);
-    await waitFor(page, "() => Array.from(document.querySelectorAll('.header-nav .nav-link')).map((a) => a.textContent.trim()).join('|') === 'Start|Menu|About'");
+    await waitFor(page, "() => Array.from(document.querySelectorAll('.header-nav .nav-link')).map((a) => a.textContent.trim()).join('|') === 'Start|Menu|About|Müdavim'");
     state = await page.evaluate(collectNavigationState());
-    assert.deepEqual(state.desktopLabels, ["Start", "Menu", "About"]);
-    assert.equal(state.mobileCount, 3);
+    assert.deepEqual(state.desktopLabels, ["Start", "Menu", "About", "Müdavim"]);
+    assert.equal(state.mobileCount, 4);
 
     const fallbackPage = await openPage({ failBootstrap: true });
     try {
       await navigate(fallbackPage, `${baseUrl}/`);
-      await waitFor(fallbackPage, "() => document.querySelectorAll('.header-nav .nav-link').length === 4");
+      await waitFor(fallbackPage, "() => document.querySelectorAll('.header-nav .nav-link').length === 5");
       const fallbackState = await fallbackPage.evaluate(collectNavigationState());
-      assert.deepEqual(fallbackState.desktopLabels, ["Home", "Menu", "About", "Contact"]);
-      assert.deepEqual(fallbackState.desktopHrefs, ["#top", "#menu", "#about", "#contact"]);
+      assert.deepEqual(fallbackState.desktopLabels, ["Home", "Menu", "About", "Contact", "Müdavim"]);
+      assert.deepEqual(fallbackState.desktopHrefs, ["#top", "#menu", "#about", "#contact", "/mudavim/"]);
     } finally {
       fallbackPage.close();
     }

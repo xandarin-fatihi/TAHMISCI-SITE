@@ -2,16 +2,16 @@
 <html lang="tr">
 <head>
   <!-- Developer: Uzeyir | System Key: xandar | Source integrity marker -->
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tahmisçi Admin Panel</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Bebas+Neue&family=Caveat:wght@500;700&family=Cinzel:wght@500;700&family=Cormorant+Garamond:wght@500;700&family=DM+Sans:wght@400;600;700&family=Dancing+Script:wght@500;700&family=Great+Vibes&family=Inter:wght@400;600;800&family=Josefin+Sans:wght@400;600;700&family=Lato:wght@400;700;900&family=Libre+Baskerville:wght@400;700&family=Lobster&family=Manrope:wght@400;600;800&family=Merriweather:wght@400;700;900&family=Montserrat:wght@300;500;700&family=Nunito:wght@400;700;900&family=Open+Sans:wght@400;700;800&family=Oswald:wght@400;600;700&family=Pacifico&family=Playfair+Display:wght@500;700;900&family=Playfair+Display+SC:wght@700&family=Poppins:wght@400;600;800&family=Quicksand:wght@400;600;700&family=Raleway:wght@400;700;900&family=Roboto:wght@400;700;900&family=Rubik:wght@400;600;800&family=Source+Sans+3:wght@400;700;900&family=Vidaloka&family=Work+Sans:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="/assets/brand/favicon.png?v=20260714">
-  <link rel="stylesheet" href="styles/admin.css?v=20260714">
+  <link rel="stylesheet" href="styles/admin.css?v=20260719-preview3">
   <script src="/shared/scripts/category-icons.js?v=20260714"></script>
-  <script src="scripts/app.js?v=20260714" defer></script>
+  <script src="scripts/app.js?v=20260719-preview3" defer></script>
 </head>
 <body>
   <section class="login-screen" id="loginScreen">
@@ -32,8 +32,8 @@
   <main class="admin-shell" id="panelShell" hidden>
     <aside class="sidebar" id="sidebarPanel">
       <div class="brand-block">
-        <p class="eyebrow">Tahmisçi</p>
-        <h1>Dijital Menü Paneli</h1>
+        <img class="admin-brand-logo" src="/assets/brand/logo-primary.png" alt="Tahmisçi Coffee & Roastery">
+        <div><p class="eyebrow">Tahmisçi</p><h1>Dijital Menü Paneli</h1></div>
       </div>
       <nav class="panel-nav" aria-label="Panel bölümleri">
         <a href="#overviewGrid" data-panel-section="overview">Genel Bakış</a>
@@ -65,6 +65,10 @@
         </div>
         <div class="product-list" id="productList"></div>
       </div>
+      <div class="sidebar-profile" aria-label="Yönetici profili">
+        <span aria-hidden="true">Y</span>
+        <div><strong>Yönetici</strong><small>Tahmisçi paneli</small></div>
+      </div>
     </aside>
 
     <section class="workspace">
@@ -78,10 +82,12 @@
           <div>
             <p class="eyebrow">Dashboard</p>
             <h2 id="workspaceTitle">Menü yönetimi ve görsel özelleştirme</h2>
+            <p class="topbar-description">Dijital menünüzün görünümünü özelleştirin ve yayınlayın.</p>
           </div>
         </div>
         <div class="topbar-actions">
           <button class="primary-action topbar-save-button" id="saveChangesButton" type="button" aria-disabled="true">Kaydet ve Yayınla</button>
+          <a class="line-action overview-preview-action" href="/" target="_blank" rel="noopener noreferrer">Önizlemeyi Aç <span aria-hidden="true">↗</span></a>
           <div class="save-state" id="saveState">Hazır</div>
         </div>
       </header>
@@ -387,123 +393,86 @@
             </details>
           </section>
 
-          <section class="panel-card section-panel" id="menuAppearanceCard" data-section-panel="menu">
-            <div class="card-head">
-              <div>
-                <p class="eyebrow">Menü Düzenleme</p>
-                <h3>Genel menü görünümü</h3>
+          <section class="section-panel menu-settings-section" id="menuAppearanceCard" data-section-panel="menu">
+            <div class="menu-style-summary" aria-label="Menü stili özeti">
+              <div class="menu-summary-heading">
+                <span class="menu-summary-icon" aria-hidden="true">◫</span>
+                <div><strong>Menü stili özeti</strong><small>Etkin görünüm ayarları</small></div>
               </div>
+              <div class="menu-summary-item"><span class="menu-summary-swatch" id="menuSummaryTheme"></span><small>Tema</small><strong id="menuSummaryThemeText">Aydınlık</strong></div>
+              <div class="menu-summary-item"><span class="menu-summary-swatch" id="menuSummaryDark"></span><small>Karanlık</small><strong>Koyu yüzey</strong></div>
+              <div class="menu-summary-item"><span class="menu-summary-swatch" id="menuSummaryAccent"></span><small>Vurgu</small><strong id="menuSummaryAccentText">Renk</strong></div>
+              <div class="menu-summary-item"><span class="menu-summary-swatch" id="menuSummaryText"></span><small>Yazı</small><strong>Metin</strong></div>
+              <div class="menu-summary-item"><span class="menu-summary-swatch" id="menuSummaryCard"></span><small>Kart</small><strong>Varsayılan</strong></div>
+              <div class="menu-summary-item menu-summary-status"><span class="menu-status-dot"></span><small>Yayın</small><strong id="menuSummaryStatus">Hazır</strong></div>
             </div>
-            <div class="form-grid three">
-              <label>
-                <span>Ana arka plan</span>
-                <input id="bgColor" type="color">
-              </label>
-              <label>
-                <span>Karanlık tema</span>
-                <input id="darkBgColor" type="color">
-              </label>
-              <label>
-                <span>Vurgu rengi</span>
-                <input id="accentColor" type="color">
-              </label>
-              <label>
-                <span>Yazı rengi</span>
-                <input id="textColor" type="color">
-              </label>
-              <label>
-                <span>Buton yazı rengi</span>
-                <input id="buttonTextColor" type="color">
-              </label>
-              <label>
-                <span>Varsayılan kart rengi</span>
-                <input id="productCardColor" type="color">
-              </label>
-            </div>
-            <div class="form-grid three">
-              <label>
-                <span>Arka plan tipi</span>
-                <select id="menuBgType">
-                  <option value="solid">Düz renk</option>
-                  <option value="gradient">Gradient</option>
-                  <option value="image">Görsel</option>
-                </select>
-              </label>
-              <label>
-                <span>Gradient başlangıç</span>
-                <input id="menuGradientStart" type="color">
-              </label>
-              <label>
-                <span>Gradient bitiş</span>
-                <input id="menuGradientEnd" type="color">
-              </label>
-              <label>
-                <span>Gradient açı</span>
-                <input id="menuGradientAngle" type="number" min="0" max="360" step="1">
-              </label>
-              <label>
-                <span>Görsel linki</span>
-                <input id="menuBgUrl" type="url" placeholder="https://...">
-              </label>
-              <label>
-                <span>Overlay opaklığı</span>
-                <input id="menuOverlay" type="range" min="0" max="0.85" step="0.05">
-              </label>
-            </div>
-            <div class="asset-row">
-              <label class="file-button">
-                <span>Bilgisayardan arka plan yükle</span>
-                <input id="menuBgFile" type="file" accept="image/*">
-              </label>
-              <button class="line-action" id="clearMenuBg" type="button">Arka plan görselini sil</button>
-            </div>
-            <div class="form-grid three">
-              <label>
-                <span>Menü güncelleme tarihi</span>
-                <input id="menuUpdateDate" type="date">
-              </label>
-              <label>
-                <span>Başlık fontu</span>
-                <select id="titleFont"></select>
-              </label>
-              <label>
-                <span>Kategori fontu</span>
-                <select id="categoryFont"></select>
-              </label>
-              <label>
-                <span>Ürün adı fontu</span>
-                <select id="productFont"></select>
-              </label>
-            </div>
-            <div class="sub-card typography-card">
-              <h4>Toplu metin punto ayarları</h4>
-              <div class="form-grid three">
-                <label>
-                  <span>Menü başlığı</span>
-                  <input id="menuTitleSize" type="number" min="18" max="54" step="1">
-                </label>
-                <label>
-                  <span>Kategori başlığı</span>
-                  <input id="categoryTitleSize" type="number" min="14" max="34" step="1">
-                </label>
-                <label>
-                  <span>Ürün başlığı</span>
-                  <input id="productTitleSize" type="number" min="10" max="28" step="1">
-                </label>
-                <label>
-                  <span>Ürün açıklaması</span>
-                  <input id="productDescSize" type="number" min="8" max="22" step="1">
-                </label>
-                <label>
-                  <span>İçindekiler metni</span>
-                  <input id="productIngredientsSize" type="number" min="8" max="22" step="1">
-                </label>
-                <label>
-                  <span>Fiyat metni</span>
-                  <input id="productPriceSize" type="number" min="8" max="22" step="1">
-                </label>
+
+            <details class="menu-accordion" open>
+              <summary>
+                <span class="menu-accordion-number">1</span>
+                <span class="menu-accordion-copy"><strong>Genel menü görünümü</strong><small>Tema, renk ve arka plan ayarları</small></span>
+                <span class="menu-accordion-chevron" aria-hidden="true"></span>
+              </summary>
+              <div class="menu-accordion-body">
+                <section class="menu-control-group">
+                  <h4>Tema &amp; renkler</h4>
+                  <div class="form-grid menu-color-grid">
+                    <label><span>Ana arka plan</span><input id="bgColor" type="color"></label>
+                    <label><span>Karanlık tema</span><input id="darkBgColor" type="color"></label>
+                    <label><span>Vurgu rengi</span><input id="accentColor" type="color"></label>
+                    <label><span>Yazı rengi</span><input id="textColor" type="color"></label>
+                    <label><span>Buton yazı rengi</span><input id="buttonTextColor" type="color"></label>
+                    <label><span>Varsayılan kart rengi</span><input id="productCardColor" type="color"></label>
+                  </div>
+                </section>
+
+                <section class="menu-control-group">
+                  <h4>Arka plan</h4>
+                  <div class="form-grid menu-background-grid">
+                    <label>
+                      <span>Arka plan tipi</span>
+                      <select id="menuBgType">
+                        <option value="solid">Düz renk</option>
+                        <option value="gradient">Gradient</option>
+                        <option value="image">Görsel</option>
+                      </select>
+                    </label>
+                    <label><span>Gradient başlangıç</span><input id="menuGradientStart" type="color"></label>
+                    <label><span>Gradient bitiş</span><input id="menuGradientEnd" type="color"></label>
+                    <label><span>Gradient açı</span><input id="menuGradientAngle" type="number" min="0" max="360" step="1"></label>
+                  </div>
+                  <div class="form-grid menu-media-grid">
+                    <label><span>Görsel linki</span><input id="menuBgUrl" type="url" placeholder="https://..."></label>
+                    <label>
+                      <span>Overlay opaklığı</span>
+                      <span class="menu-range-control"><input id="menuOverlay" type="range" min="0" max="0.85" step="0.05"><output id="menuOverlayValue">0%</output></span>
+                    </label>
+                  </div>
+                  <div class="asset-row menu-asset-row">
+                    <label class="file-button"><span>Bilgisayardan arka plan yükle</span><input id="menuBgFile" type="file" accept="image/*"></label>
+                    <button class="line-action" id="clearMenuBg" type="button">Arka plan görselini sil</button>
+                  </div>
+                </section>
               </div>
-            </div>
+            </details>
+
+            <details class="menu-accordion">
+              <summary>
+                <span class="menu-accordion-number">2</span>
+                <span class="menu-accordion-copy"><strong>Toplu metin punto ayarları</strong><small>Menü tipografisini tek noktadan ölçeklendirin</small></span>
+                <span class="menu-accordion-chevron" aria-hidden="true"></span>
+              </summary>
+              <div class="menu-accordion-body">
+                <div class="form-grid menu-typography-grid">
+                  <label><span>Menü başlığı</span><span class="menu-unit-control"><input id="menuTitleSize" type="number" min="18" max="54" step="1"><em>px</em></span></label>
+                  <label><span>Kategori başlığı</span><span class="menu-unit-control"><input id="categoryTitleSize" type="number" min="14" max="34" step="1"><em>px</em></span></label>
+                  <label><span>Ürün başlığı</span><span class="menu-unit-control"><input id="productTitleSize" type="number" min="10" max="28" step="1"><em>px</em></span></label>
+                  <label><span>Ürün açıklaması</span><span class="menu-unit-control"><input id="productDescSize" type="number" min="8" max="22" step="1"><em>px</em></span></label>
+                  <label><span>İçindekiler metni</span><span class="menu-unit-control"><input id="productIngredientsSize" type="number" min="8" max="22" step="1"><em>px</em></span></label>
+                  <label><span>Fiyat metni</span><span class="menu-unit-control"><input id="productPriceSize" type="number" min="8" max="22" step="1"><em>px</em></span></label>
+                </div>
+              </div>
+            </details>
           </section>
 
           
@@ -565,17 +534,24 @@
             </div>
           </section>
 
-          <section class="panel-card section-panel" id="bottomActionsCard" data-section-panel="menu">
-            <div class="card-head">
-              <div>
-                <p class="eyebrow">Alt Kutu Ayarları</p>
-                <h3>Popüler Ürünler ve Bana Öner</h3>
-              </div>
-            </div>
-            <div class="quick-box-grid">
-              <div class="sub-card">
-                <h4>Popüler Ürünler</h4>
-                <div class="form-grid three">
+          <section class="section-panel menu-settings-section" id="bottomActionsCard" data-section-panel="menu">
+            <details class="menu-accordion" open>
+              <summary>
+                <span class="menu-accordion-number">3</span>
+                <span class="menu-accordion-copy"><strong>Alt kutu ayarları</strong><small>Popüler Ürünler ve Bana Öner alanlarını yönetin</small></span>
+                <span class="menu-accordion-chevron" aria-hidden="true"></span>
+              </summary>
+              <div class="menu-accordion-body">
+                <div class="quick-box-grid menu-quick-box-grid">
+                  <details class="menu-sub-accordion" open>
+                    <summary>
+                      <span class="menu-sub-number">3.1</span>
+                      <strong>Popüler Ürünler</strong>
+                      <span class="menu-sub-state">Görünüm ayarları</span>
+                      <span class="menu-accordion-chevron" aria-hidden="true"></span>
+                    </summary>
+                    <div class="menu-sub-body">
+                      <div class="form-grid menu-action-grid">
                   <label>
                     <span>Kutu tipi</span>
                     <select id="popularBoxType">
@@ -606,20 +582,28 @@
                   </label>
                   <label>
                     <span>Görsel overlay</span>
-                    <input id="popularOverlay" type="range" min="0" max="0.85" step="0.05">
+                    <span class="menu-range-control"><input id="popularOverlay" type="range" min="0" max="0.85" step="0.05"><output id="popularOverlayValue">0%</output></span>
                   </label>
                 </div>
-                <div class="asset-row">
+                <div class="asset-row menu-asset-row">
                   <label class="file-button">
                     <span>Popüler kutu görseli yükle</span>
                     <input id="popularImageFile" type="file" accept="image/*">
                   </label>
                   <button class="line-action" id="clearPopularImage" type="button">Görseli sil</button>
                 </div>
-              </div>
-              <div class="sub-card">
-                <h4>Bana Öner</h4>
-                <div class="form-grid three">
+                    </div>
+                  </details>
+
+                  <details class="menu-sub-accordion">
+                    <summary>
+                      <span class="menu-sub-number">3.2</span>
+                      <strong>Bana Öner</strong>
+                      <span class="menu-sub-state">Görünüm ayarları</span>
+                      <span class="menu-accordion-chevron" aria-hidden="true"></span>
+                    </summary>
+                    <div class="menu-sub-body">
+                      <div class="form-grid menu-action-grid">
                   <label>
                     <span>Kutu tipi</span>
                     <select id="suggestBoxType">
@@ -650,18 +634,39 @@
                   </label>
                   <label>
                     <span>Görsel overlay</span>
-                    <input id="suggestOverlay" type="range" min="0" max="0.85" step="0.05">
+                    <span class="menu-range-control"><input id="suggestOverlay" type="range" min="0" max="0.85" step="0.05"><output id="suggestOverlayValue">0%</output></span>
                   </label>
                 </div>
-                <div class="asset-row">
+                <div class="asset-row menu-asset-row">
                   <label class="file-button">
                     <span>Bana Öner kutu görseli yükle</span>
                     <input id="suggestImageFile" type="file" accept="image/*">
                   </label>
                   <button class="line-action" id="clearSuggestImage" type="button">Görseli sil</button>
                 </div>
+                    </div>
+                  </details>
+                </div>
               </div>
-            </div>
+            </details>
+          </section>
+
+          <section class="section-panel menu-settings-section" id="menuOtherCard" data-section-panel="menu">
+            <details class="menu-accordion">
+              <summary>
+                <span class="menu-accordion-number">4</span>
+                <span class="menu-accordion-copy"><strong>Diğer ayarlar</strong><small>Güncelleme tarihi ve font aileleri</small></span>
+                <span class="menu-accordion-chevron" aria-hidden="true"></span>
+              </summary>
+              <div class="menu-accordion-body">
+                <div class="form-grid menu-other-grid">
+                  <label><span>Menü güncelleme tarihi</span><input id="menuUpdateDate" type="date"></label>
+                  <label><span>Başlık fontu</span><select id="titleFont"></select></label>
+                  <label><span>Kategori fontu</span><select id="categoryFont"></select></label>
+                  <label><span>Ürün adı fontu</span><select id="productFont"></select></label>
+                </div>
+              </div>
+            </details>
           </section>
 
           <section class="panel-card section-panel" id="categoryEditorCard" data-section-panel="category">
@@ -1337,6 +1342,31 @@
 
             <div class="mudavim-stat-grid" id="mudavimStats"></div>
 
+            <section class="mudavim-announcement-manager">
+              <div class="mudavim-panel-head">
+                <div>
+                  <p class="eyebrow">Müdavimler / Duyurular Yönetimi</p>
+                  <h4>Duyurular Yönetimi</h4>
+                  <span>İçerik bloklarını düzenle, sırala ve müşteri ekranındaki karşılığını canlı izle.</span>
+                </div>
+                <div class="mudavim-announcement-actions">
+                  <button class="line-action" id="addMudavimAnnouncementButton" type="button">Yeni Duyuru</button>
+                  <button class="primary-action" id="publishMudavimAnnouncementsButton" type="button">Değişiklikleri Kaydet</button>
+                </div>
+              </div>
+              <div class="mudavim-announcement-layout">
+                <aside class="mudavim-announcement-catalog">
+                  <div class="mudavim-manager-kicker"><strong>Duyurular</strong><span>Yayın ve taslak listesi</span></div>
+                  <div class="mudavim-announcement-list" id="mudavimAnnouncementList"></div>
+                </aside>
+                <div class="mudavim-announcement-editor" id="mudavimAnnouncementEditor"></div>
+                <aside class="mudavim-announcement-preview-panel">
+                  <div class="mudavim-manager-kicker"><strong>Canlı Önizleme</strong><span>Müdavim kullanıcı görünümü</span></div>
+                  <div class="mudavim-announcement-preview" id="mudavimAnnouncementPreview"></div>
+                </aside>
+              </div>
+            </section>
+
             <div class="mudavim-admin-layout">
               <section class="mudavim-list-panel">
                 <div class="mudavim-panel-head">
@@ -1443,8 +1473,27 @@
                 <p class="eyebrow" id="previewKicker">Live Preview</p>
                 <h3 id="previewTitle">Canlı Önizleme</h3>
               </div>
+              <span class="menu-preview-live-state"><i aria-hidden="true"></i><strong id="menuPreviewStatus">Güncel</strong></span>
+            </div>
+            <div class="menu-preview-device-tabs" role="tablist" aria-label="Önizleme cihazı">
+              <label><input id="menuPreviewMobile" name="menuPreviewDevice" type="radio" value="mobile" checked><span>Mobil</span></label>
+              <label><input id="menuPreviewDesktop" name="menuPreviewDevice" type="radio" value="desktop"><span>Masaüstü</span></label>
             </div>
             <div class="phone-preview" id="livePreview"></div>
+            <div class="menu-preview-information">
+              <div><span>Cihaz</span><strong class="menu-device-mobile">Telefon</strong><strong class="menu-device-desktop">Masaüstü</strong></div>
+              <div><span>Ekran boyutu</span><strong class="menu-device-mobile">390 × 844</strong><strong class="menu-device-desktop">1440 × 900</strong></div>
+              <div><span>Son güncelleme</span><strong id="menuPreviewUpdated">Canlı veri</strong></div>
+              <div><span>Kaynak</span><strong>Canlı site /</strong></div>
+            </div>
+            <fieldset class="menu-preview-quick-mode">
+              <legend>Hızlı Önizleme Modu</legend>
+              <p>Menüyü farklı ışık koşullarında kontrol edin.</p>
+              <div>
+                <label><input id="menuPreviewLight" name="menuPreviewTheme" type="radio" value="light" checked><span>☀ Aydınlık</span></label>
+                <label><input id="menuPreviewDark" name="menuPreviewTheme" type="radio" value="dark"><span>☾ Karanlık</span></label>
+              </div>
+            </fieldset>
           </section>
         </aside>
       </section>

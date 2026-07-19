@@ -27,6 +27,7 @@ function buildPublicBootstrap(storeData) {
     ? data.menuState.settings
     : {};
   const siteState = migrateSiteState(data.siteState);
+  siteState.mudavim = publicMudavim(siteState.mudavim);
   const hiddenCategoryIds = new Set(siteState.menuSection?.hiddenCategoryIds || []);
 
   const categories = (data.menuState?.categories || [])
@@ -76,6 +77,45 @@ function buildPublicBootstrap(storeData) {
       categories,
       products
     }
+  };
+}
+
+function publicMudavim(value) {
+  const source = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  return {
+    announcements: (Array.isArray(source.announcements) ? source.announcements : [])
+      .filter((item) => item && item.isPublished === true)
+      .sort(byOrder)
+      .map((item) => ({
+        id: String(item.id || ""),
+        title: String(item.title || "Duyuru"),
+        slug: String(item.slug || ""),
+        order: numberOr(item.order, 0),
+        blocks: (Array.isArray(item.blocks) ? item.blocks : [])
+          .sort(byOrder)
+          .map((block) => {
+            const allowedTypes = ["text", "image", "image-text", "text-image"];
+            const type = allowedTypes.includes(block?.type) ? block.type : "text";
+            const hasText = type !== "image";
+            const hasImage = type !== "text";
+            return {
+              id: String(block?.id || ""),
+              type,
+              badge: hasText ? String(block?.badge || "") : "",
+              date: hasText ? String(block?.date || "") : "",
+              heading: hasText ? String(block?.heading || "") : "",
+              body: hasText ? String(block?.body ?? block?.content ?? "") : "",
+              imageUrl: hasImage ? String(block?.imageUrl || "") : "",
+              alt: hasImage ? String(block?.alt || block?.heading || item.title || "Duyuru görseli") : "",
+              order: numberOr(block?.order, 0)
+            };
+          })
+          .filter((block) => {
+            const hasText = Boolean(block.heading.trim() || block.body.trim() || block.badge.trim() || block.date.trim());
+            const hasImage = Boolean(block.imageUrl.trim());
+            return block.type === "text" ? hasText : block.type === "image" ? hasImage : hasText || hasImage;
+          })
+      }))
   };
 }
 

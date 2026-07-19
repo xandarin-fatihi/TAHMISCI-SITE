@@ -1,6 +1,6 @@
 "use strict";
 
-const SITE_SCHEMA_VERSION = 2;
+const SITE_SCHEMA_VERSION = 3;
 
 const DEFAULT_HEADER_NAVIGATION = Object.freeze([
   {
@@ -34,6 +34,14 @@ const DEFAULT_HEADER_NAVIGATION = Object.freeze([
     icon: "fas fa-phone",
     visible: true,
     order: 3
+  },
+  {
+    id: "mudavim",
+    label: { tr: "Müdavim", en: "Müdavim" },
+    url: "/mudavim/",
+    icon: "fas fa-id-card",
+    visible: true,
+    order: 4
   }
 ]);
 
@@ -196,6 +204,27 @@ const DEFAULT_SITE_STATE = Object.freeze({
     favicon: "/assets/brand/favicon.png",
     canonicalUrl: "https://tahmiscicoffee.com/"
   },
+  mudavim: {
+    announcements: [
+      {
+        id: "mudavim-hos-geldin",
+        title: "Tahmisçi Müdavim’e Hoş Geldin",
+        slug: "mudavim-hos-geldin",
+        order: 0,
+        isPublished: true,
+        blocks: [
+          {
+            id: "mudavim-hos-geldin-metin",
+            type: "text",
+            content: "Ziyaretlerini, üyelik dereceni ve Tahmisçi’den güncel duyuruları Müdavim Paneli üzerinden takip edebilirsin.",
+            order: 0
+          }
+        ],
+        createdAt: "2026-07-18T00:00:00.000Z",
+        updatedAt: "2026-07-18T00:00:00.000Z"
+      }
+    ]
+  },
   sectionOrder: ["hero", "featuredProducts", "menuSection", "about", "qrMenu", "contact"],
   updatedAt: null
 });
@@ -212,6 +241,11 @@ function migrateSiteState(input) {
   migrateLegacyText(next, source, "menuIntro", ["menuSection", "description"]);
   migrateLegacyValue(next, source, "heroImageUrl", ["hero", "media", "primary"]);
 
+  // Older Windows-local seeds were once written through a non-UTF-8 code path.
+  // Repair only strings that are demonstrably degraded copies of our defaults;
+  // custom CMS content and legitimate question marks remain untouched.
+  repairCorruptedDefaultStrings(next, DEFAULT_SITE_STATE);
+
   const contactMap = ["address", "phone", "email", "whatsapp", "instagram", "tiktok", "mapsUrl", "hours"];
   contactMap.forEach((key) => migrateLegacyValue(next, source, key, ["contact", key]));
 
@@ -226,6 +260,7 @@ function migrateSiteState(input) {
   next.contact.socialLinks = Array.isArray(next.contact.socialLinks) ? next.contact.socialLinks : [];
   next.footer.quickLinks = Array.isArray(next.footer.quickLinks) ? next.footer.quickLinks : clone(DEFAULT_SITE_STATE.footer.quickLinks);
   next.footer.bottomLinks = Array.isArray(next.footer.bottomLinks) ? next.footer.bottomLinks : [];
+  next.mudavim = normalizeMudavim(next.mudavim);
   next.sectionOrder = normalizeSectionOrder(next.sectionOrder);
   return next;
 }
@@ -270,6 +305,65 @@ function normalizeMotion(value) {
   return { preset: ["off", "subtle", "balanced", "cinematic"].includes(preset) ? preset : "balanced" };
 }
 
+function normalizeMudavim(value) {
+  const source = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  const announcements = Array.isArray(source.announcements)
+    ? source.announcements
+    : clone(DEFAULT_SITE_STATE.mudavim.announcements);
+  return {
+    ...source,
+    announcements: announcements
+      .filter((item) => item && typeof item === "object" && !Array.isArray(item))
+      .map((item, itemIndex) => normalizeAnnouncement(item, itemIndex))
+      .sort((first, second) => first.order - second.order)
+  };
+}
+
+function normalizeAnnouncement(item, itemIndex) {
+  const id = safeIdentifier(item.id, `announcement-${itemIndex + 1}`);
+  const title = String(item.title || "Duyuru").trim();
+  const slug = safeIdentifier(item.slug, id);
+  const blocks = (Array.isArray(item.blocks) ? item.blocks : [])
+    .filter((block) => block && typeof block === "object" && !Array.isArray(block))
+    .map((block, blockIndex) => {
+      const allowedTypes = ["text", "image", "image-text", "text-image"];
+      const type = allowedTypes.includes(block.type) ? block.type : (block.type === "image" ? "image" : "text");
+      const hasText = type !== "image";
+      const hasImage = type !== "text";
+      const body = String(block.body ?? block.content ?? "");
+      return {
+        ...block,
+        id: safeIdentifier(block.id, `${id}-block-${blockIndex + 1}`),
+        type,
+        badge: hasText ? String(block.badge || "") : "",
+        date: hasText ? String(block.date || "") : "",
+        heading: hasText ? String(block.heading || "") : "",
+        body: hasText ? body : "",
+        content: type === "text" ? body : "",
+        imageUrl: hasImage ? safeAssetPath(block.imageUrl, "") : "",
+        alt: hasImage ? String(block.alt || block.heading || title) : "",
+        order: Number.isFinite(Number(block.order)) ? Number(block.order) : blockIndex
+      };
+    })
+    .sort((first, second) => first.order - second.order);
+  return {
+    ...item,
+    id,
+    title,
+    slug,
+    order: Number.isFinite(Number(item.order)) ? Number(item.order) : itemIndex,
+    isPublished: item.isPublished === true,
+    blocks,
+    createdAt: String(item.createdAt || ""),
+    updatedAt: String(item.updatedAt || "")
+  };
+}
+
+function safeIdentifier(value, fallback) {
+  const text = String(value || "").trim().toLowerCase().replace(/[^a-z0-9._-]+/g, "-").replace(/^-+|-+$/g, "");
+  return text || fallback;
+}
+
 function safeAssetPath(value, fallback) {
   const text = String(value || "").trim();
   if (!text) return fallback;
@@ -285,7 +379,11 @@ function clampNumber(value, fallback, min, max) {
 
 function normalizeHeaderNavigation(value) {
   const source = Array.isArray(value) && value.length ? value : clone(DEFAULT_HEADER_NAVIGATION);
-  return source
+  const includesMudavim = source.some((item) => String(item?.id || "").toLowerCase() === "mudavim");
+  const normalizedSource = includesMudavim
+    ? source
+    : [...source, clone(DEFAULT_HEADER_NAVIGATION.find((item) => item.id === "mudavim"))];
+  return normalizedSource
     .filter((item) => item && typeof item === "object" && !Array.isArray(item))
     .map((item, index) => {
       const fallback = DEFAULT_HEADER_NAVIGATION[index] || {};
@@ -357,6 +455,44 @@ function deepMerge(target, source) {
     }
   }
   return target;
+}
+
+function repairCorruptedDefaultStrings(value, fallback) {
+  if (!value || !fallback || typeof value !== "object" || typeof fallback !== "object") return value;
+
+  for (const [key, expected] of Object.entries(fallback)) {
+    const current = value[key];
+    if (typeof current === "string" && typeof expected === "string") {
+      if (isDegradedDefaultString(current, expected)) value[key] = expected;
+      continue;
+    }
+    if (Array.isArray(current) && Array.isArray(expected)) {
+      current.forEach((item, index) => repairCorruptedDefaultStrings(item, expected[index]));
+      continue;
+    }
+    repairCorruptedDefaultStrings(current, expected);
+  }
+  return value;
+}
+
+function isDegradedDefaultString(value, expected) {
+  if (!value || value === expected || !/[?\u0000-\u007f]/.test(value)) return false;
+  const alternatives = {
+    "ç": "[çc?]", "Ç": "[ÇC?]",
+    "ğ": "[ğg?]", "Ğ": "[ĞG?]",
+    "ı": "[ıi?]", "İ": "[İIi?]",
+    "ö": "[öo?]", "Ö": "[ÖO?]",
+    "ş": "[şs?]", "Ş": "[ŞS?]",
+    "ü": "[üu?]", "Ü": "[ÜU?]",
+    "©": "(?:©|\\?)",
+    "’": "(?:’|')"
+  };
+  const pattern = Array.from(expected, (character) => alternatives[character] || escapeRegExp(character)).join("");
+  return new RegExp(`^${pattern}$`).test(value);
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function clone(value) {
