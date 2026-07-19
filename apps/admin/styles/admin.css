@@ -1,4 +1,4 @@
-/* Developer: Uzeyir | System Key: xandar | Stylesheet integrity marker */
+﻿/* Developer: Uzeyir | System Key: xandar | Stylesheet integrity marker */
 @font-face {
   font-family: "Magnolia Script";
   src: url("/assets/fonts/magnolia-script.otf") format("opentype");
@@ -317,42 +317,32 @@ body[data-panel-theme="dark"] select {
   min-height: 40px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0;
   border-radius: 7px;
   color: var(--ink);
-  padding: 9px 12px;
+  padding: 10px 14px;
   font-size: 13px;
   font-weight: 750;
   text-decoration: none;
 }
 
 .panel-nav a::before {
-  content: "•";
-  width: 24px;
-  height: 24px;
-  display: inline-grid;
-  flex: 0 0 24px;
-  place-items: center;
-  border: 1px solid var(--line);
-  border-radius: 7px;
-  background: color-mix(in srgb, var(--surface-soft) 72%, transparent);
-  color: var(--brand);
-  font-size: 12px;
-  font-weight: 900;
+  content: "â€¢";
+  display: none;
 }
 
-.panel-nav a[data-panel-section="overview"]::before { content: "⌂"; }
-.panel-nav a[data-panel-section="menu"]::before { content: "☰"; }
-.panel-nav a[data-panel-section="banner"]::before { content: "▣"; }
-.panel-nav a[data-panel-section="category"]::before { content: "▤"; }
-.panel-nav a[data-panel-section="product"]::before { content: "◇"; }
+.panel-nav a[data-panel-section="overview"]::before { content: "âŒ‚"; }
+.panel-nav a[data-panel-section="menu"]::before { content: "â˜°"; }
+.panel-nav a[data-panel-section="banner"]::before { content: "â–£"; }
+.panel-nav a[data-panel-section="category"]::before { content: "â–¤"; }
+.panel-nav a[data-panel-section="product"]::before { content: "â—‡"; }
 .panel-nav a[data-panel-section="bulkPrice"]::before { content: "%"; }
 .panel-nav a[data-panel-section="menuOutput"]::before { content: "TV"; font-size: 10px; }
 .panel-nav a[data-panel-section="recipe"]::before { content: "R"; }
 .panel-nav a[data-panel-section="staffAccess"]::before { content: "U"; }
 .panel-nav a[data-panel-section="mudavim"]::before { content: "M"; }
 .panel-nav a[data-panel-section="feedback"]::before { content: "!"; }
-.panel-nav a[data-panel-section="settings"]::before { content: "⚙"; }
+.panel-nav a[data-panel-section="settings"]::before { content: "âš™"; }
 
 .panel-nav a:hover,
 .panel-nav a:focus-visible,
@@ -2326,10 +2316,139 @@ body[data-panel-theme="dark"] select {
   margin-bottom: 2px;
 }
 
+.banner-editor-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.banner-editor-card {
+  display: grid;
+  gap: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+.banner-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  min-height: 64px;
+  position: relative;
+  cursor: pointer;
+  list-style: none;
+  padding: 18px;
+}
+
+.banner-card-head::-webkit-details-marker {
+  display: none;
+}
+
+.banner-card-head h3,
+.banner-card-head strong {
+  margin: 0;
+  color: var(--ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 18px;
+  line-height: 1.15;
+}
+
+.banner-card-head p,
+.banner-card-head small,
+.banner-upload-card span {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.banner-step {
+  width: 34px;
+  height: 34px;
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: linear-gradient(145deg, #8a593a, #4a2c1d);
+  color: #fffaf1;
+  box-shadow: 0 8px 18px rgba(74, 44, 29, 0.18);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.banner-card-head > div,
+.banner-card-head > span:nth-child(2) {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.banner-card-head i {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  margin: 9px 2px 0 auto;
+  border-right: 2px solid var(--ink);
+  border-bottom: 2px solid var(--ink);
+  transform: rotate(45deg);
+  transition: transform 180ms ease;
+}
+
+.banner-accordion[open] > .banner-card-head i {
+  transform: rotate(225deg);
+}
+
+.banner-accordion-body {
+  border-top: 1px solid rgba(74, 44, 29, 0.08);
+  padding: 14px 18px 18px;
+}
+
+.banner-accordion:not([open]) > .banner-accordion-body {
+  display: none;
+}
+
+.banner-text-grid {
+  grid-template-columns: minmax(160px, 0.85fr) minmax(220px, 1.15fr);
+  gap: 12px;
+}
+
+.banner-field-wide {
+  grid-column: 1 / -1;
+}
+
+.banner-media-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.banner-upload-card {
+  min-width: 0;
+  display: grid;
+  align-content: start;
+  gap: 11px;
+  border: 1px solid rgba(74, 44, 29, 0.12);
+  border-radius: 8px;
+  background: rgba(255, 250, 245, 0.62);
+  padding: 13px;
+}
+
+.banner-upload-card strong {
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.banner-upload-card .file-button,
+.banner-upload-card .line-action {
+  width: 100%;
+  justify-content: center;
+}
+
 .banner-media-list {
   display: grid;
   gap: 8px;
-  margin: 8px 0 12px;
+  margin: 0;
 }
 
 .banner-media-row {
@@ -2462,6 +2581,10 @@ body[data-panel-theme="dark"] select {
 
 .banner-product-list {
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  max-height: min(420px, 52vh);
+  overflow: auto;
+  padding-right: 2px;
+  scrollbar-width: thin;
 }
 
 .banner-product-option {
@@ -3105,7 +3228,7 @@ body[data-panel-theme="dark"] .line-action {
     grid-template-columns: 1fr 1fr;
   }
 }
-/* Site düzenleme: sabit tasarımı bozmadan gruplanmış CMS alanları. */
+/* Site dÃ¼zenleme: sabit tasarÄ±mÄ± bozmadan gruplanmÄ±ÅŸ CMS alanlarÄ±. */
 .site-editor-card {
   display: grid;
   gap: 18px;
@@ -3884,7 +4007,7 @@ body[data-panel-theme="dark"] .line-action {
   .mudavim-preview-block.is-text-image .mudavim-preview-copy { grid-column: 1; grid-row: 2; }
 }
 
-/* Genel Bakış: sıcak, sade ve veriye bağlı yönetim özeti. */
+/* Genel BakÄ±ÅŸ: sÄ±cak, sade ve veriye baÄŸlÄ± yÃ¶netim Ã¶zeti. */
 .admin-brand-logo,
 .sidebar-profile,
 .overview-preview-action {
@@ -3964,6 +4087,7 @@ body:has(.admin-shell[data-active-section="overview"]:not([hidden]))::before {
 }
 
 .admin-shell[data-active-section="overview"] .panel-nav a::before {
+  display: none;
   border: 0;
   background: transparent;
   color: #6f4932;
@@ -4653,7 +4777,7 @@ body:has(.admin-shell[data-active-section="overview"]:not([hidden]))::before {
   }
 }
 
-/* Menü Düzenleme: Genel Bakış ile uyumlu açık, kompakt yönetim deneyimi. */
+/* MenÃ¼ DÃ¼zenleme: Genel BakÄ±ÅŸ ile uyumlu aÃ§Ä±k, kompakt yÃ¶netim deneyimi. */
 .topbar-description,
 .menu-preview-live-state,
 .menu-preview-device-tabs,
@@ -4662,16 +4786,16 @@ body:has(.admin-shell[data-active-section="overview"]:not([hidden]))::before {
   display: none;
 }
 
-body:has(.admin-shell[data-active-section="menu"]:not([hidden])) {
+body:has(.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]):not([hidden])) {
   background: #f7f1e9;
 }
 
-body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
+body:has(.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]):not([hidden]))::before {
   filter: sepia(1) saturate(0.7) hue-rotate(340deg);
   opacity: 0.025;
 }
 
-.admin-shell[data-active-section="menu"] {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) {
   --page: #f7f1e9;
   --surface: #fffaf5;
   --surface-soft: #f5eadf;
@@ -4688,14 +4812,14 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   color: var(--ink);
 }
 
-.admin-shell[data-active-section="menu"] .sidebar {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .sidebar {
   border-right-color: rgba(74, 44, 29, 0.1);
   background: rgba(255, 250, 245, 0.97);
   color: var(--ink);
   box-shadow: 10px 0 36px rgba(74, 44, 29, 0.035);
 }
 
-.admin-shell[data-active-section="menu"] .brand-block {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .brand-block {
   grid-template-columns: 76px minmax(0, 1fr);
   align-items: center;
   gap: 11px;
@@ -4704,7 +4828,7 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   padding: 2px 4px 14px;
 }
 
-.admin-shell[data-active-section="menu"] .admin-brand-logo {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .admin-brand-logo {
   width: 76px;
   height: 76px;
   display: block;
@@ -4713,51 +4837,52 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   transform: scale(1.12);
 }
 
-.admin-shell[data-active-section="menu"] .brand-block .eyebrow,
-.admin-shell[data-active-section="menu"] .topbar .eyebrow {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .brand-block .eyebrow,
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .topbar .eyebrow {
   color: #9d6535;
 }
 
-.admin-shell[data-active-section="menu"] .brand-block h1 {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .brand-block h1 {
   color: var(--ink);
   font-size: 17px;
   line-height: 1.2;
 }
 
-.admin-shell[data-active-section="menu"] .panel-nav {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .panel-nav {
   gap: 3px;
 }
 
-.admin-shell[data-active-section="menu"] .panel-nav a {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .panel-nav a {
   min-height: 42px;
   border-radius: 9px;
   color: #49352a;
   font-weight: 650;
 }
 
-.admin-shell[data-active-section="menu"] .panel-nav a::before {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .panel-nav a::before {
+  display: none;
   border: 0;
   background: transparent;
   color: #6f4932;
 }
 
-.admin-shell[data-active-section="menu"] .panel-nav a:hover,
-.admin-shell[data-active-section="menu"] .panel-nav a:focus-visible {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .panel-nav a:hover,
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .panel-nav a:focus-visible {
   background: #f5eadf;
   color: #4a2c1d;
 }
 
-.admin-shell[data-active-section="menu"] .panel-nav a.is-active {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .panel-nav a.is-active {
   background: linear-gradient(135deg, #4a2c1d, #6b3d24);
   color: #fffaf5;
   box-shadow: 0 9px 20px rgba(74, 44, 29, 0.16);
 }
 
-.admin-shell[data-active-section="menu"] .panel-nav a.is-active::before {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .panel-nav a.is-active::before {
   color: inherit;
 }
 
-.admin-shell[data-active-section="menu"] .sidebar-profile {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .sidebar-profile {
   min-width: 0;
   display: flex;
   align-items: center;
@@ -4769,7 +4894,7 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   padding: 11px;
 }
 
-.admin-shell[data-active-section="menu"] .sidebar-profile > span {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .sidebar-profile > span {
   width: 38px;
   height: 38px;
   display: grid;
@@ -4781,109 +4906,113 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   font-weight: 800;
 }
 
-.admin-shell[data-active-section="menu"] .sidebar-profile div {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .sidebar-profile div {
   min-width: 0;
   display: grid;
   gap: 2px;
 }
 
-.admin-shell[data-active-section="menu"] .sidebar-profile strong,
-.admin-shell[data-active-section="menu"] .sidebar-profile small {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .sidebar-profile strong,
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .sidebar-profile small {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.admin-shell[data-active-section="menu"] .sidebar-profile small {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .sidebar-profile small {
   color: var(--muted);
   font-size: 11px;
 }
 
-.admin-shell[data-active-section="menu"] .workspace {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .workspace {
   min-height: 100vh;
   background: transparent;
   padding: 20px 22px 28px;
 }
 
-.admin-shell[data-active-section="menu"] .topbar {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .topbar {
   min-height: 72px;
   margin-bottom: 14px;
 }
 
-.admin-shell[data-active-section="menu"] .topbar .eyebrow {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .topbar .eyebrow {
   height: 0;
   overflow: hidden;
   font-size: 0;
 }
 
-.admin-shell[data-active-section="menu"] .topbar .eyebrow::after {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .topbar .eyebrow::after {
   content: "MENÜ YÖNETİMİ";
   display: block;
   height: auto;
   font-size: 10px;
 }
 
-.admin-shell[data-active-section="menu"] .topbar h2 {
+.admin-shell[data-active-section="banner"] .topbar .eyebrow::after {
+  content: "BANNER YÖNETİMİ";
+}
+
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .topbar h2 {
   color: var(--ink);
   font-size: clamp(27px, 2.1vw, 36px);
   letter-spacing: -0.035em;
 }
 
-.admin-shell[data-active-section="menu"] .topbar-description {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .topbar-description {
   display: block;
   margin-top: 5px;
   color: var(--muted);
   font-size: 12px;
 }
 
-.admin-shell[data-active-section="menu"] .sidebar-toggle,
-.admin-shell[data-active-section="menu"] .overview-preview-action {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .sidebar-toggle,
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .overview-preview-action {
   border: 1px solid var(--line);
   background: rgba(255, 250, 245, 0.86);
   color: #4a2c1d;
   box-shadow: 0 7px 20px rgba(74, 44, 29, 0.06);
 }
 
-.admin-shell[data-active-section="menu"] .overview-preview-action {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .overview-preview-action {
   min-height: 42px;
   display: inline-flex;
   gap: 9px;
   padding-inline: 17px;
 }
 
-.admin-shell[data-active-section="menu"] .topbar-save-button {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .topbar-save-button {
   min-height: 42px;
   background: linear-gradient(135deg, #4a2c1d, #67391f);
   color: #fffaf5;
   box-shadow: 0 8px 20px rgba(74, 44, 29, 0.16);
 }
 
-.admin-shell[data-active-section="menu"] .save-state {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .save-state {
   min-width: 78px;
   background: #f3e7db;
   color: #64412b;
 }
 
-.admin-shell[data-active-section="menu"] .content-grid {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .content-grid {
   grid-template-columns: minmax(0, 1fr) minmax(320px, 390px);
   gap: 14px;
 }
 
-.admin-shell[data-active-section="menu"] .editor-column {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .editor-column {
   gap: 10px;
 }
 
-.admin-shell[data-active-section="menu"] input,
-.admin-shell[data-active-section="menu"] textarea,
-.admin-shell[data-active-section="menu"] select {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) input,
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) textarea,
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) select {
   border-color: rgba(74, 44, 29, 0.14);
   background: rgba(255, 255, 255, 0.72);
   color: #342217;
 }
 
-.admin-shell[data-active-section="menu"] input:focus,
-.admin-shell[data-active-section="menu"] textarea:focus,
-.admin-shell[data-active-section="menu"] select:focus {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) input:focus,
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) textarea:focus,
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) select:focus {
   border-color: rgba(183, 119, 61, 0.72);
   box-shadow: 0 0 0 3px rgba(183, 119, 61, 0.12);
 }
@@ -5161,7 +5290,7 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   padding: 7px 8px;
 }
 
-.admin-shell[data-active-section="menu"] input[type="color"] {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) input[type="color"] {
   width: 36px;
   min-height: 36px;
   justify-self: end;
@@ -5173,11 +5302,11 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   overflow: hidden;
 }
 
-.admin-shell[data-active-section="menu"] input[type="color"]::-webkit-color-swatch-wrapper {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) input[type="color"]::-webkit-color-swatch-wrapper {
   padding: 0;
 }
 
-.admin-shell[data-active-section="menu"] input[type="color"]::-webkit-color-swatch {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) input[type="color"]::-webkit-color-swatch {
   border: 0;
   border-radius: 50%;
 }
@@ -5197,7 +5326,7 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   gap: 8px;
 }
 
-.admin-shell[data-active-section="menu"] .menu-range-control input[type="range"] {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .menu-range-control input[type="range"] {
   min-width: 0;
   min-height: 30px;
   border: 0;
@@ -5244,15 +5373,15 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   margin-top: 9px;
 }
 
-.admin-shell[data-active-section="menu"] .file-button,
-.admin-shell[data-active-section="menu"] .line-action {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .file-button,
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .line-action {
   border-color: rgba(74, 44, 29, 0.14);
   background: #fffaf5;
   color: #5d3925;
 }
 
-.admin-shell[data-active-section="menu"] .file-button:hover,
-.admin-shell[data-active-section="menu"] .line-action:hover {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .file-button:hover,
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .line-action:hover {
   border-color: rgba(183, 119, 61, 0.5);
   background: #fff;
 }
@@ -5302,11 +5431,11 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   gap: 8px;
 }
 
-.admin-shell[data-active-section="menu"] .preview-column {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .preview-column {
   top: 14px;
 }
 
-.admin-shell[data-active-section="menu"] .sticky-preview {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .sticky-preview {
   max-height: calc(100vh - 28px);
   display: flex;
   flex-direction: column;
@@ -5318,27 +5447,27 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   scrollbar-width: thin;
 }
 
-.admin-shell[data-active-section="menu"] .sticky-preview > .card-head {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .sticky-preview > .card-head {
   width: 100%;
   margin-bottom: 9px;
 }
 
-.admin-shell[data-active-section="menu"] .sticky-preview .eyebrow {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .sticky-preview .eyebrow {
   display: none;
 }
 
-.admin-shell[data-active-section="menu"] .sticky-preview h3 {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .sticky-preview h3 {
   color: var(--ink);
   font-size: 13px;
 }
 
-.admin-shell[data-active-section="menu"] .menu-preview-live-state {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .menu-preview-live-state {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   border-radius: 999px;
-  background: #eef3e7;
-  color: #58743e;
+  background: #f4eadf;
+  color: #6b3d24;
   padding: 6px 9px;
   font-size: 8px;
 }
@@ -5347,8 +5476,8 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #789b56;
-  box-shadow: 0 0 0 3px rgba(120, 155, 86, 0.13);
+  background: #b7773d;
+  box-shadow: 0 0 0 3px rgba(183, 119, 61, 0.13);
 }
 
 .menu-preview-live-state.is-pending {
@@ -5361,9 +5490,9 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   box-shadow: 0 0 0 3px rgba(183, 119, 61, 0.13);
 }
 
-.admin-shell[data-active-section="menu"] .menu-preview-device-tabs {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .menu-preview-source-tabs,
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .menu-preview-device-tabs {
   display: grid;
-  grid-template-columns: 1fr 1fr;
   gap: 6px;
   width: 100%;
   margin-bottom: 9px;
@@ -5373,12 +5502,22 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   padding: 4px;
 }
 
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .menu-preview-source-tabs {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .menu-preview-device-tabs {
+  grid-template-columns: 1fr 1fr;
+}
+
+.menu-preview-source-tabs label,
 .menu-preview-device-tabs label,
 .menu-preview-quick-mode label {
   display: block;
   cursor: pointer;
 }
 
+.menu-preview-source-tabs input,
 .menu-preview-device-tabs input,
 .menu-preview-quick-mode input {
   width: 1px;
@@ -5391,6 +5530,7 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   pointer-events: none;
 }
 
+.menu-preview-source-tabs span,
 .menu-preview-device-tabs span,
 .menu-preview-quick-mode label span {
   min-height: 31px;
@@ -5403,6 +5543,7 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   font-weight: 750;
 }
 
+.menu-preview-source-tabs input:checked + span,
 .menu-preview-device-tabs input:checked + span,
 .menu-preview-quick-mode input:checked + span {
   border-color: rgba(183, 119, 61, 0.45);
@@ -5411,7 +5552,7 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   box-shadow: 0 4px 10px rgba(74, 44, 29, 0.06);
 }
 
-.admin-shell[data-active-section="menu"] .phone-preview {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .phone-preview {
   width: auto;
   height: min(515px, calc(100vh - 275px));
   max-width: 100%;
@@ -5424,7 +5565,7 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   transition: width 220ms ease, aspect-ratio 220ms ease, border-radius 220ms ease;
 }
 
-.admin-shell[data-active-section="menu"]:has(#menuPreviewDesktop:checked) .phone-preview {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]):has(#menuPreviewDesktop:checked) .phone-preview {
   width: 100%;
   height: auto;
   max-height: none;
@@ -5433,16 +5574,16 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   border-radius: 11px;
 }
 
-.admin-shell[data-active-section="menu"]:has(#menuPreviewDark:checked) .menu-live-preview {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]):has(#menuPreviewDark:checked) .menu-live-preview {
   filter: brightness(0.7) saturate(0.9) contrast(1.05);
 }
 
-.admin-shell[data-active-section="menu"] .menu-live-preview {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .menu-live-preview {
   transition: filter 180ms ease;
   will-change: transform;
 }
 
-.admin-shell[data-active-section="menu"] .menu-preview-information {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .menu-preview-information {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0;
@@ -5479,15 +5620,15 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   display: none;
 }
 
-.admin-shell[data-active-section="menu"]:has(#menuPreviewDesktop:checked) .menu-device-mobile {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]):has(#menuPreviewDesktop:checked) .menu-device-mobile {
   display: none;
 }
 
-.admin-shell[data-active-section="menu"]:has(#menuPreviewDesktop:checked) .menu-device-desktop {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]):has(#menuPreviewDesktop:checked) .menu-device-desktop {
   display: block;
 }
 
-.admin-shell[data-active-section="menu"] .menu-preview-quick-mode {
+.admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .menu-preview-quick-mode {
   display: grid;
   gap: 5px;
   margin: 9px 0 0;
@@ -5516,8 +5657,12 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
 }
 
 @media (max-width: 1500px) {
-  .admin-shell[data-active-section="menu"] .content-grid {
+  .admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .content-grid {
     grid-template-columns: minmax(0, 1fr) minmax(300px, 350px);
+  }
+
+  .admin-shell[data-active-section="banner"] .content-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
   }
 
   .menu-style-summary {
@@ -5534,27 +5679,36 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
 }
 
 @media (max-width: 1180px) {
-  .admin-shell[data-active-section="menu"] .workspace {
+  .admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .workspace {
     padding: 18px;
   }
 
-  .admin-shell[data-active-section="menu"] .content-grid {
+  .admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .content-grid {
     grid-template-columns: 1fr;
   }
 
-  .admin-shell[data-active-section="menu"] .sticky-preview {
+  .admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .sticky-preview {
     max-height: none;
   }
 
-  .admin-shell[data-active-section="menu"] .phone-preview {
+  .admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .phone-preview {
     width: auto;
     height: min(552px, calc(100vh - 170px));
     max-width: 100%;
   }
 
-  .admin-shell[data-active-section="menu"]:has(#menuPreviewDesktop:checked) .phone-preview {
+  .admin-shell:is([data-active-section="menu"], [data-active-section="banner"]):has(#menuPreviewDesktop:checked) .phone-preview {
     width: min(760px, 100%);
     height: auto;
+  }
+
+  .banner-media-grid,
+  .banner-text-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .banner-field-wide {
+    grid-column: auto;
   }
 
   .menu-quick-box-grid {
@@ -5563,20 +5717,20 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
 }
 
 @media (max-width: 760px) {
-  .admin-shell[data-active-section="menu"] .workspace {
+  .admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .workspace {
     padding: 14px 12px 20px;
   }
 
-  .admin-shell[data-active-section="menu"] .topbar {
+  .admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .topbar {
     gap: 12px;
   }
 
-  .admin-shell[data-active-section="menu"] .topbar-actions {
+  .admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .topbar-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
   }
 
-  .admin-shell[data-active-section="menu"] .save-state {
+  .admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .save-state {
     grid-column: 1 / -1;
   }
 
@@ -5614,6 +5768,27 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
   .menu-asset-row > * {
     width: 100%;
   }
+
+  .banner-card-head,
+  .banner-product-accordion summary {
+    gap: 10px;
+  }
+
+  .banner-editor-card,
+  .banner-product-accordion summary,
+  .banner-product-body {
+    padding: 13px;
+  }
+
+  .banner-step {
+    width: 30px;
+    height: 30px;
+    font-size: 15px;
+  }
+
+  .banner-product-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 480px) {
@@ -5638,8 +5813,9 @@ body:has(.admin-shell[data-active-section="menu"]:not([hidden]))::before {
 
 @media (prefers-reduced-motion: reduce) {
   .menu-accordion-chevron,
-  .admin-shell[data-active-section="menu"] .phone-preview,
-  .admin-shell[data-active-section="menu"] .menu-live-preview {
+  .admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .phone-preview,
+  .admin-shell:is([data-active-section="menu"], [data-active-section="banner"]) .menu-live-preview {
     transition: none;
   }
 }
+

@@ -29,10 +29,16 @@
   const BRAND_BODY_FONT = '"Tahmisci Poppins", Poppins, Arial, sans-serif';
   const LIGHT_LOGO = "/assets/brand/logo-primary.png";
   const DEFAULT_PRODUCT_IMAGE = "/assets/images/products/product-1.jpg";
+  const LIVE_PREVIEW_SOURCES = {
+    site: { label: "Site Canlı", title: "Canlı site önizleme", path: "" },
+    menu: { label: "Menü Canlı (QR Menü)", title: "Canlı QR menü önizleme", path: "qr-menu/" },
+    recipe: { label: "Reçete Canlı", title: "Canlı reçete önizleme", path: "recete/" },
+    mudavim: { label: "Müdavim Canlı", title: "Canlı müdavim önizleme", path: "mudavim/" }
+  };
   const SECTION_TITLES = {
     overview: "Genel Bakış",
     menu: "Menü düzenleme",
-    banner: "BANNER düzenleme",
+    banner: "Banner Düzenleme",
     category: "Kategori düzenleme",
     product: "Ürün düzenleme",
     bulkPrice: "Toplu fiyat güncelleme",
@@ -463,6 +469,7 @@
     mudavimRewardFilter: "all",
     selectedMudavimAnnouncementId: "",
     selectedMudavimCustomerId: "mud-1001",
+    previewSource: "site",
     selectedMenuOutputSectionId: "",
     menuOutputZoom: 0,
     menuOutputControlTab: "sections",
@@ -581,7 +588,8 @@
       "siteAccentColorTwo", "siteTextColor", "siteMutedColor", "siteTitleFont", "siteBodyFont",
       "siteTitleSize", "siteBodySize", "siteSectionOrder", "siteRevisionRefresh", "siteRevisionList",
       "previewKicker", "previewTitle", "livePreview", "menuPreviewMobile", "menuPreviewDesktop",
-      "menuPreviewLight", "menuPreviewDark"
+      "menuPreviewLight", "menuPreviewDark", "menuPreviewSourceSite", "menuPreviewSourceMenu",
+      "menuPreviewSourceRecipe", "menuPreviewSourceMudavim", "menuPreviewSourceLabel"
     ];
     ids.forEach((id) => {
       els[id] = document.getElementById(id);
@@ -783,8 +791,25 @@
     els.mobilePanelToggle.addEventListener("click", togglePanelLayout);
     els.livePreview.addEventListener("click", handleLivePreviewClick);
     ensureMenuPreviewResizeObserver();
-    [els.menuPreviewMobile, els.menuPreviewDesktop, els.menuPreviewLight, els.menuPreviewDark].forEach((control) => {
+    [
+      els.menuPreviewMobile,
+      els.menuPreviewDesktop,
+      els.menuPreviewLight,
+      els.menuPreviewDark,
+      els.menuPreviewSourceSite,
+      els.menuPreviewSourceMenu,
+      els.menuPreviewSourceRecipe,
+      els.menuPreviewSourceMudavim
+    ].forEach((control) => {
       if (control) control.addEventListener("change", queueMenuPreviewScale);
+    });
+    [els.menuPreviewSourceSite, els.menuPreviewSourceMenu, els.menuPreviewSourceRecipe, els.menuPreviewSourceMudavim].forEach((control) => {
+      if (control) {
+        control.addEventListener("change", () => {
+          state.previewSource = selectedLivePreviewSource().id;
+          renderPreview();
+        });
+      }
     });
     window.addEventListener("resize", queueMenuPreviewScale, { passive: true });
     els.feedbackTabs.addEventListener("click", handleFeedbackTabs);
@@ -2300,7 +2325,7 @@
 
     if (els.previewKicker && els.previewTitle) {
       const recipeMode = activeSection === "recipe";
-      els.previewKicker.textContent = recipeMode ? "Reçete Önizleme" : "Live Preview";
+      els.previewKicker.textContent = recipeMode ? "Reçete Önizleme" : "Canlı Önizleme";
       els.previewTitle.textContent = recipeMode ? "Canlı Reçete" : "Canlı Önizleme";
     }
   }
@@ -6618,11 +6643,14 @@
 
   function renderMenuPreview() {
     ensureMenuPreviewResizeObserver();
-    const src = menuPreviewUrl();
+    const source = selectedLivePreviewSource();
+    const src = livePreviewUrl(source.id);
     const existing = els.livePreview.querySelector(".menu-live-preview");
+    updateLivePreviewSourceControls(source);
     if (existing) {
       if (existing.getAttribute("data-preview-src") !== src) {
         existing.setAttribute("data-preview-src", src);
+        existing.title = source.title;
         existing.src = src;
       }
       queueMenuPreviewScale();
@@ -6630,7 +6658,7 @@
     }
 
     els.livePreview.innerHTML = `
-      <iframe class="menu-live-preview" data-preview-src="${escapeAttribute(src)}" src="${escapeAttribute(src)}" title="Canlı menü önizleme" loading="eager" scrolling="yes" allow="autoplay"></iframe>
+      <iframe class="menu-live-preview" data-preview-src="${escapeAttribute(src)}" src="${escapeAttribute(src)}" title="${escapeAttribute(source.title)}" loading="eager" scrolling="yes" allow="autoplay"></iframe>
     `;
     const iframe = els.livePreview.querySelector(".menu-live-preview");
     if (iframe) iframe.addEventListener("load", queueMenuPreviewScale, { passive: true });
@@ -6693,7 +6721,32 @@
   }
 
   function menuPreviewUrl() {
-    return `${menuPageUrl()}?preview=menu`;
+    return livePreviewUrl("menu");
+  }
+
+  function selectedLivePreviewSource() {
+    const checked = document.querySelector("input[name='menuPreviewSource']:checked");
+    const id = checked && LIVE_PREVIEW_SOURCES[checked.value] ? checked.value : state.previewSource;
+    const safeId = LIVE_PREVIEW_SOURCES[id] ? id : "site";
+    state.previewSource = safeId;
+    return { id: safeId, ...LIVE_PREVIEW_SOURCES[safeId] };
+  }
+
+  function updateLivePreviewSourceControls(source) {
+    const current = source || selectedLivePreviewSource();
+    Object.keys(LIVE_PREVIEW_SOURCES).forEach((id) => {
+      const key = `menuPreviewSource${id.charAt(0).toUpperCase()}${id.slice(1)}`;
+      if (els[key]) els[key].checked = id === current.id;
+    });
+    if (els.menuPreviewSourceLabel) els.menuPreviewSourceLabel.textContent = current.label;
+  }
+
+  function livePreviewUrl(sourceId) {
+    const source = LIVE_PREVIEW_SOURCES[sourceId] || LIVE_PREVIEW_SOURCES.site;
+    const base = publicSiteUrl();
+    if (!source.path) return base;
+    if (source.path.startsWith("?") || source.path.startsWith("#")) return `${base}${source.path}`;
+    return `${base}${source.path.replace(/^\/+/, "")}`;
   }
 
   function renderRecipePreview() {

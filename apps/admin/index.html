@@ -9,9 +9,9 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Bebas+Neue&family=Caveat:wght@500;700&family=Cinzel:wght@500;700&family=Cormorant+Garamond:wght@500;700&family=DM+Sans:wght@400;600;700&family=Dancing+Script:wght@500;700&family=Great+Vibes&family=Inter:wght@400;600;800&family=Josefin+Sans:wght@400;600;700&family=Lato:wght@400;700;900&family=Libre+Baskerville:wght@400;700&family=Lobster&family=Manrope:wght@400;600;800&family=Merriweather:wght@400;700;900&family=Montserrat:wght@300;500;700&family=Nunito:wght@400;700;900&family=Open+Sans:wght@400;700;800&family=Oswald:wght@400;600;700&family=Pacifico&family=Playfair+Display:wght@500;700;900&family=Playfair+Display+SC:wght@700&family=Poppins:wght@400;600;800&family=Quicksand:wght@400;600;700&family=Raleway:wght@400;700;900&family=Roboto:wght@400;700;900&family=Rubik:wght@400;600;800&family=Source+Sans+3:wght@400;700;900&family=Vidaloka&family=Work+Sans:wght@400;700;900&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="/assets/brand/favicon.png?v=20260714">
-  <link rel="stylesheet" href="styles/admin.css?v=20260719-preview3">
+  <link rel="stylesheet" href="styles/admin.css?v=20260719-sidebar1">
   <script src="/shared/scripts/category-icons.js?v=20260714"></script>
-  <script src="scripts/app.js?v=20260719-preview3" defer></script>
+  <script src="scripts/app.js?v=20260719-banner2" defer></script>
 </head>
 <body>
   <section class="login-screen" id="loginScreen">
@@ -38,7 +38,7 @@
       <nav class="panel-nav" aria-label="Panel bölümleri">
         <a href="#overviewGrid" data-panel-section="overview">Genel Bakış</a>
         <a href="#menuAppearanceCard" data-panel-section="menu">Menü Düzenleme</a>
-        <a href="#bannerSettingsCard" data-panel-section="banner">BANNER Düzenleme</a>
+        <a href="#bannerSettingsCard" data-panel-section="banner">Banner Düzenleme</a>
         <a href="#categoryEditorCard" data-panel-section="category">Kategori Düzenleme</a>
         <a href="#productEditorCard" data-panel-section="product">Ürün Düzenleme</a>
         <a href="#bulkPriceCard" data-panel-section="bulkPrice">Toplu Fiyat Güncelleme</a>
@@ -476,62 +476,101 @@
           </section>
 
           
-          <section class="panel-card section-panel" id="bannerSettingsCard" data-section-panel="banner">
-            <div class="card-head">
-              <div>
-                <p class="eyebrow">BANNER Düzenleme</p>
-                <h3>Kategori üstü sunu alanı</h3>
+          <section class="section-panel banner-editor-panel" id="bannerSettingsCard" data-section-panel="banner">
+            <details class="panel-card banner-accordion banner-editor-card" open>
+              <summary class="banner-card-head">
+                <span class="banner-step">1</span>
+                <div>
+                  <h3>Banner Modu &amp; Metin</h3>
+                  <p>Banner modunu seçin ve başlık metinlerini düzenleyin.</p>
+                </div>
+                <i aria-hidden="true"></i>
+              </summary>
+              <div class="banner-accordion-body">
+                <div class="form-grid banner-text-grid">
+                  <label>
+                    <span>Banner modu</span>
+                    <select id="bannerMode">
+                      <option value="random">Rastgele ürünler</option>
+                      <option value="products">Seçili ürün sunusu</option>
+                      <option value="images">Görsel sunu</option>
+                      <option value="video">Video</option>
+                    </select>
+                  </label>
+                  <label>
+                    <span>Başlık</span>
+                    <input id="bannerTitle" type="text" placeholder="Tahmisçi">
+                  </label>
+                  <label class="banner-field-wide">
+                    <span>Alt metin</span>
+                    <input id="bannerSubtitle" type="text" placeholder="Öne çıkan sunu">
+                  </label>
+                </div>
               </div>
-            </div>
-            <div class="form-grid three">
-              <label>
-                <span>Banner modu</span>
-                <select id="bannerMode">
-                  <option value="random">Rastgele ürünler</option>
-                  <option value="products">Seçili ürün sunusu</option>
-                  <option value="images">Görsel sunu</option>
-                  <option value="video">Video</option>
-                </select>
-              </label>
-              <label>
-                <span>Başlık</span>
-                <input id="bannerTitle" type="text" placeholder="Tahmisçi">
-              </label>
-              <label>
-                <span>Alt metin</span>
-                <input id="bannerSubtitle" type="text" placeholder="Öne çıkan sunu">
-              </label>
-            </div>
-            <div class="asset-row">
-              <label class="file-button">
-                <span>Cihazdan video yükle</span>
-                <input id="bannerVideoFile" type="file" accept="video/mp4,video/webm,video/ogg,video/quicktime,video/x-m4v,.mp4,.webm,.ogv,.ogg,.mov,.m4v" multiple>
-              </label>
-              <button class="line-action" id="clearBannerVideo" type="button">Tüm videoları sil</button>
-            </div>
-            <div class="banner-media-list" id="bannerVideoList"></div>
-            <div class="asset-row">
-              <label class="file-button">
-                <span>Cihazdan görsel yükle</span>
-                <input id="bannerImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif" multiple>
-              </label>
-              <button class="line-action" id="clearBannerImages" type="button">Tüm görselleri sil</button>
-            </div>
-            <div class="banner-media-list" id="bannerImageList"></div>
-            <div class="sub-card">
-              <h4>Seçili ürün sunusu</h4>
-              <div class="form-grid two">
-                <label>
-                  <span>Kategori</span>
-                  <select id="bannerProductCategory"></select>
-                </label>
-                <label>
-                  <span>Ürün ara</span>
-                  <input id="bannerProductSearch" type="search" placeholder="Bu kategoride ara">
-                </label>
+            </details>
+
+            <details class="panel-card banner-accordion banner-editor-card">
+              <summary class="banner-card-head">
+                <span class="banner-step">2</span>
+                <div>
+                  <h3>Medya Yüklemeleri</h3>
+                  <p>Banner için arka plan videosu veya görsel yükleyin.</p>
+                </div>
+                <i aria-hidden="true"></i>
+              </summary>
+              <div class="banner-accordion-body">
+                <div class="banner-media-grid">
+                  <section class="banner-upload-card">
+                    <div>
+                      <strong>Video yükleme</strong>
+                      <span>MP4, WebM, MOV veya OGG dosyaları.</span>
+                    </div>
+                    <label class="file-button">
+                      <span>Cihazdan video yükle</span>
+                      <input id="bannerVideoFile" type="file" accept="video/mp4,video/webm,video/ogg,video/quicktime,video/x-m4v,.mp4,.webm,.ogv,.ogg,.mov,.m4v" multiple>
+                    </label>
+                    <button class="line-action" id="clearBannerVideo" type="button">Tüm videoları sil</button>
+                    <div class="banner-media-list" id="bannerVideoList"></div>
+                  </section>
+                  <section class="banner-upload-card">
+                    <div>
+                      <strong>Görsel yükleme</strong>
+                      <span>JPG, PNG, WebP veya GIF dosyaları.</span>
+                    </div>
+                    <label class="file-button">
+                      <span>Cihazdan görsel yükle</span>
+                      <input id="bannerImageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif,.jpg,.jpeg,.png,.webp,.gif" multiple>
+                    </label>
+                    <button class="line-action" id="clearBannerImages" type="button">Tüm görselleri sil</button>
+                    <div class="banner-media-list" id="bannerImageList"></div>
+                  </section>
+                </div>
               </div>
-              <div class="banner-product-list" id="bannerProductList"></div>
-            </div>
+            </details>
+
+            <details class="panel-card banner-accordion banner-product-accordion">
+              <summary class="banner-card-head">
+                <span class="banner-step">3</span>
+                <span>
+                  <strong>Seçili Ürün Sunusu</strong>
+                  <small>Banner alanında gösterilecek ürünleri seçin.</small>
+                </span>
+                <i aria-hidden="true"></i>
+              </summary>
+              <div class="banner-accordion-body banner-product-body">
+                <div class="form-grid two">
+                  <label>
+                    <span>Kategori</span>
+                    <select id="bannerProductCategory"></select>
+                  </label>
+                  <label>
+                    <span>Ürün ara</span>
+                    <input id="bannerProductSearch" type="search" placeholder="Bu kategoride ara">
+                  </label>
+                </div>
+                <div class="banner-product-list" id="bannerProductList"></div>
+              </div>
+            </details>
           </section>
 
           <section class="section-panel menu-settings-section" id="bottomActionsCard" data-section-panel="menu">
@@ -1470,10 +1509,16 @@
           <section class="panel-card sticky-preview">
             <div class="card-head">
               <div>
-                <p class="eyebrow" id="previewKicker">Live Preview</p>
+                <p class="eyebrow" id="previewKicker">Canlı Önizleme</p>
                 <h3 id="previewTitle">Canlı Önizleme</h3>
               </div>
               <span class="menu-preview-live-state"><i aria-hidden="true"></i><strong id="menuPreviewStatus">Güncel</strong></span>
+            </div>
+            <div class="menu-preview-source-tabs" role="tablist" aria-label="Canlı önizleme kaynağı">
+              <label><input id="menuPreviewSourceSite" name="menuPreviewSource" type="radio" value="site" checked><span>Site Canlı</span></label>
+              <label><input id="menuPreviewSourceMenu" name="menuPreviewSource" type="radio" value="menu"><span>Menü Canlı</span></label>
+              <label><input id="menuPreviewSourceRecipe" name="menuPreviewSource" type="radio" value="recipe"><span>Reçete Canlı</span></label>
+              <label><input id="menuPreviewSourceMudavim" name="menuPreviewSource" type="radio" value="mudavim"><span>Müdavim Canlı</span></label>
             </div>
             <div class="menu-preview-device-tabs" role="tablist" aria-label="Önizleme cihazı">
               <label><input id="menuPreviewMobile" name="menuPreviewDevice" type="radio" value="mobile" checked><span>Mobil</span></label>
@@ -1484,7 +1529,7 @@
               <div><span>Cihaz</span><strong class="menu-device-mobile">Telefon</strong><strong class="menu-device-desktop">Masaüstü</strong></div>
               <div><span>Ekran boyutu</span><strong class="menu-device-mobile">390 × 844</strong><strong class="menu-device-desktop">1440 × 900</strong></div>
               <div><span>Son güncelleme</span><strong id="menuPreviewUpdated">Canlı veri</strong></div>
-              <div><span>Kaynak</span><strong>Canlı site /</strong></div>
+              <div><span>Kaynak</span><strong id="menuPreviewSourceLabel">Site Canlı</strong></div>
             </div>
             <fieldset class="menu-preview-quick-mode">
               <legend>Hızlı Önizleme Modu</legend>
