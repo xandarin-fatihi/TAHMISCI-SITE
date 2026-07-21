@@ -132,7 +132,10 @@
     renderMenu();
     setupLiveUpdates();
     await hydrateMenuFromBackend();
-    if (isPreviewMode()) openMenu();
+    if (isPreviewMode()) {
+      openMenu();
+      applyPreviewCategory();
+    }
   }
 
   function cacheElements() {
@@ -1099,6 +1102,27 @@
     } catch (error) {
       return false;
     }
+  }
+
+  function previewCategoryId() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      return params.get("category") || params.get("previewCategory") || "";
+    } catch (error) {
+      return "";
+    }
+  }
+
+  function applyPreviewCategory() {
+    const categoryId = previewCategoryId();
+    if (!categoryId || !getCategory(categoryId)) return;
+    state.activeCategory = categoryId;
+    state.openCategoryId = categoryId;
+    renderMenu();
+    window.setTimeout(() => {
+      const target = document.getElementById(`category-${categoryId}`);
+      if (target) target.scrollIntoView({ behavior: "auto", block: "start" });
+    }, 0);
   }
 
   function scrollMenuTop() {

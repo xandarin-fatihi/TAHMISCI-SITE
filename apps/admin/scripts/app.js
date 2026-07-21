@@ -10,8 +10,12 @@
   const BACKEND_URL_KEY = "tahmisci.backend.url";
   const BACKEND_TOKEN_KEY = "tahmisci.backend.panel.token";
   const AUTH_KEY = "tahmisci.panel.auth";
+  const LAST_ACTIVE_SECTION_KEY = "tahmisci.admin.lastActiveSection";
   const PANEL_THEME_KEY = "tahmisci.panel.theme";
   const PANEL_LAYOUT_KEY = "tahmisci.panel.layout";
+  const PANEL_SETTINGS_KEY = "tahmisci.admin.settings.v1";
+  const PANEL_SETTINGS_DEFAULT_KEY = "tahmisci.admin.settings.default.v1";
+  const PANEL_DEVICE_SESSION_KEY = "tahmisci.admin.deviceSession.v1";
   const SIDEBAR_STATE_KEY = "tahmisci.admin.sidebar.collapsed.v1";
   const SIDEBAR_BREAKPOINT = window.matchMedia("(max-width: 1180px)");
   const CUSTOM_DEFAULT_KEY = "tahmisci.menu.customDefault.v1";
@@ -39,16 +43,43 @@
     overview: "Genel Bakış",
     menu: "Menü düzenleme",
     banner: "Banner Düzenleme",
-    category: "Kategori düzenleme",
+    category: "Kategori Düzenleme",
     product: "Ürün düzenleme",
-    bulkPrice: "Toplu fiyat güncelleme",
+    bulkPrice: "Toplu Fiyat Güncelleme",
     menuOutput: "Menü çıktısı",
     recipe: "Reçete Düzenleme",
     site: "Site Düzenleme",
-    staffAccess: "Kullanıcı yetkilendirme",
-    mudavim: "Müdavimler",
-    feedback: "Dilek & şikayet",
+    staffAccess: "Personel Atama",
+    mudavim: "Müdavim",
+    feedback: "Dilek & Şikayet",
     settings: "Ayarlar"
+  };
+  // Menü Çıktısı modülü geçici olarak pasif. İleride tekrar aktif edilebilir.
+  const DISABLED_PANEL_SECTIONS = new Set(["menuOutput"]);
+  const SECTION_DESCRIPTIONS = {
+    staffAccess: "Personel hesaplarını yönetin, eğitim/görev programları atayın ve kayıtları takip edin.",
+    mudavim: "Sadakat sistemi yönetimi ve müşteri etkileşimi"
+  };
+  const DEFAULT_PANEL_CONFIG = {
+    behavior: {
+      keepLastSection: true,
+      sidebarDefaultOpen: true,
+      sessionWarningEnabled: true,
+      autosaveWarning: true,
+      confirmOnExit: true,
+      defaultSection: "overview",
+      warningSeconds: 30
+    },
+    security: {
+      sessionMinutes: 10,
+      warningSeconds: 60,
+      failedLoginLimit: 5,
+      confirmOnExit: true,
+      singleDeviceSession: false
+    },
+    backup: {
+      lastBackupAt: ""
+    }
   };
   const PREMIUM_SITE_PALETTE = {
     backgroundColor: "#010302",
@@ -87,98 +118,7 @@
     { id: "about", label: { tr: "Hakkımızda", en: "About" }, url: "#about", icon: "fas fa-mug-hot", visible: true, order: 2 },
     { id: "contact", label: { tr: "İletişim", en: "Contact" }, url: "#contact", icon: "fas fa-phone", visible: true, order: 3 }
   ];
-  const MUDAVIM_CUSTOMERS = [
-    {
-      id: "mud-1001",
-      name: "Elif Yılmaz",
-      contact: "elif@example.com",
-      level: "Gold",
-      code: "THM-4821",
-      totalVisits: 26,
-      cycleVisits: 6,
-      rewardsEarned: 2,
-      rewardStatus: "active",
-      lastVisit: "2026-07-16",
-      note: "Gold müdavim. Dört ziyaret sonra yeni tatlı hakkı açılacak.",
-      activeRewards: [],
-      visits: [
-        { date: "2026-07-16", type: "Ziyaret", change: "+1 ziyaret", note: "Latte" },
-        { date: "2026-07-10", type: "Ziyaret", change: "+1 ziyaret", note: "Mango frozen" },
-        { date: "2026-06-28", type: "Ödül kullanımı", change: "Tatlı hakkı kullanıldı", note: "Limonlu cheesecake" }
-      ]
-    },
-    {
-      id: "mud-1002",
-      name: "Mehmet Kaya",
-      contact: "0555 120 35 80",
-      level: "Silver",
-      code: "THM-7390",
-      totalVisits: 20,
-      cycleVisits: 10,
-      rewardsEarned: 1,
-      rewardStatus: "ready",
-      lastVisit: "2026-07-15",
-      note: "Ödül hazır. Kasada tatlı hakkı kullandırılabilir.",
-      activeRewards: ["Tatlı hakkı"],
-      visits: [
-        { date: "2026-07-15", type: "Ziyaret", change: "+1 ziyaret", note: "Americano" },
-        { date: "2026-07-12", type: "Ödül", change: "Ödül hazır", note: "10. içecek tamamlandı" }
-      ]
-    },
-    {
-      id: "mud-1003",
-      name: "Ayşe Demir",
-      contact: "ayse@example.com",
-      level: "Yeni",
-      code: "THM-1042",
-      totalVisits: 1,
-      cycleVisits: 1,
-      rewardsEarned: 0,
-      rewardStatus: "new",
-      lastVisit: "2026-07-12",
-      note: "Yeni kayıt. İlk ziyaret işlendi.",
-      activeRewards: [],
-      visits: [
-        { date: "2026-07-12", type: "Yeni kayıt", change: "+1 ziyaret", note: "Müdavim kaydı oluşturuldu" }
-      ]
-    },
-    {
-      id: "mud-1004",
-      name: "Burak Çelik",
-      contact: "burak@example.com",
-      level: "Gold",
-      code: "THM-6628",
-      totalVisits: 31,
-      cycleVisits: 3,
-      rewardsEarned: 2,
-      rewardStatus: "used",
-      lastVisit: "2026-07-09",
-      note: "Son ödülünü kullandı. Yeni döngü devam ediyor.",
-      activeRewards: [],
-      visits: [
-        { date: "2026-07-09", type: "Ödül kullanımı", change: "Tatlı hakkı kullanıldı", note: "Brownie" },
-        { date: "2026-07-07", type: "Ziyaret", change: "+1 ziyaret", note: "Espresso" }
-      ]
-    },
-    {
-      id: "mud-1005",
-      name: "Zeynep Arslan",
-      contact: "zeynep@example.com",
-      level: "Silver",
-      code: "THM-3157",
-      totalVisits: 18,
-      cycleVisits: 8,
-      rewardsEarned: 1,
-      rewardStatus: "active",
-      lastVisit: "2026-07-17",
-      note: "2 ziyaret kaldı. Soğuk içecekleri tercih ediyor.",
-      activeRewards: [],
-      visits: [
-        { date: "2026-07-17", type: "Ziyaret", change: "+1 ziyaret", note: "Cold brew" },
-        { date: "2026-07-11", type: "Ziyaret", change: "+1 ziyaret", note: "Latte" }
-      ]
-    }
-  ];
+  const MUDAVIM_CUSTOMERS = [];
   const memoryStore = {};
   const FONT_OPTIONS = [
     ["Tahmisci Magnolia", BRAND_TITLE_FONT],
@@ -435,6 +375,7 @@
     activeSection: "overview",
     selectedCategoryId: "",
     selectedProductId: "",
+    allowEmptyProductSelection: false,
     selectedRecipeCategory: "",
     selectedRecipeProduct: "",
     selectedRecipePreviewSize: "",
@@ -451,6 +392,7 @@
     dirtyMenu: false,
     dirtyRecipes: false,
     dirtySite: false,
+    dirtyPanel: false,
     saving: false,
     renderTimer: null,
     bulkPriceSelectedIds: new Set(),
@@ -476,6 +418,8 @@
     menuOutputGuides: { x: null, y: null },
     menuOutputFullscreen: false,
     menuOutputNoticeTimer: null,
+    panelConfig: cloneData(DEFAULT_PANEL_CONFIG),
+    failedLoginCount: 0,
     productImportFile: null,
     productImportReport: null,
     recipeImportFile: null,
@@ -496,6 +440,7 @@
 
   async function init() {
     cacheElements();
+    state.panelConfig = loadPanelConfig();
     populateFontSelects();
     applyPanelTheme();
     applyPanelLayout();
@@ -507,6 +452,7 @@
     } else {
       safeSessionRemove(AUTH_KEY);
       safeSessionRemove(BACKEND_TOKEN_KEY);
+      safeLocalRemove(LAST_ACTIVE_SECTION_KEY);
     }
   }
 
@@ -516,7 +462,7 @@
       "sessionWarningModal", "sessionWarningText", "sessionRefreshButton", "sessionLogoutButton",
       "sidebarPanel", "sidebarToggle", "settingsToggle", "settingsMenu", "workspaceTitle",
       "overviewGrid", "contentGrid", "categoryList", "productList", "saveState", "saveChangesButton", "panelThemeToggle", "addCategoryButton",
-      "bulkPriceCategory", "bulkPriceSearch", "bulkPriceProductList", "bulkPriceSelectVisible", "bulkPriceClearSelection",
+      "bulkPriceCategory", "bulkPriceProductSelect", "bulkPriceSearch", "bulkPriceProductList", "bulkPriceClearSelection",
       "bulkPriceSelectedCount", "bulkPriceValueLabel", "bulkPriceValue", "bulkPriceSummary", "bulkPriceApply",
       "menuOutputCard", "menuOutputTemplateName", "menuOutputCanvaLink", "menuOutputOpenCanva", "menuOutputSaveTemplate",
       "menuOutputUpdateTemplate", "menuOutputDuplicateTemplate", "menuOutputDeleteTemplate", "menuOutputSetDefaultTemplate",
@@ -552,7 +498,8 @@
       "clearCategoryImage", "categoryImagePreview", "bulkProductImageUrl", "applyBulkProductImage",
       "bulkProductImageFile", "clearBulkProductImage", "bulkProductStyleType", "bulkProductColor",
       "bulkProductGradientStart", "bulkProductGradientEnd", "bulkProductGradientAngle",
-      "applyBulkProductStyle", "productCategoryTabs", "productQuickList", "productEditorTitle", "deleteProductButton", "productName",
+      "applyBulkProductStyle", "productEditorCard", "productCategoryTabs", "productQuickList", "productDetailsAccordion",
+      "productEditorTitle", "deleteProductButton", "productName",
       "productCategory", "productDesc", "priceMode", "standardPrice", "standardPriceField",
       "sizePriceFields", "priceK", "priceO", "priceB", "singleDoublePriceFields", "priceSingle", "priceDouble", "productStock",
       "productKind", "productTemperature", "productPopular", "productActive", "productStyleType", "productColor",
@@ -566,7 +513,7 @@
       "recipeImportChanges", "recipeImportErrors",
       "addRecipeCategoryButton", "addRecipeProductButton", "addRecipeSizeButton", "deleteRecipeCategoryButton",
       "deleteRecipeProductButton", "recipeCategoryName", "recipeProductName", "recipeSizeList",
-      "staffRefreshButton", "staffUserName", "staffUsername", "staffPassword", "staffUserActive",
+      "staffOverviewGrid", "staffRefreshButton", "staffUserName", "staffUsername", "staffPassword", "staffUserActive",
       "staffUserSaveButton", "staffUserResetButton", "staffUserMessage", "staffUserList", "staffUserCount", "staffUserFilter",
       "staffAssignmentUser", "staffAssignmentKind", "staffScopeType", "staffAssignmentCategory",
       "staffAssignmentProduct", "staffAssignmentSize", "staffQuestionCount", "staffPassingScore",
@@ -575,8 +522,16 @@
       "staffActivityTabs", "staffActivityList", "staffActivityCount",
       "mudavimStats", "mudavimSearch", "mudavimLevelFilter", "mudavimRewardFilter", "mudavimCustomerList",
       "mudavimCustomerDetail", "mudavimRewardRules", "mudavimCampaigns", "mudavimSettings",
-      "mudavimAnnouncementList", "mudavimAnnouncementEditor", "mudavimAnnouncementPreview", "addMudavimAnnouncementButton", "publishMudavimAnnouncementsButton",
-      "feedbackInsights", "feedbackTabs", "feedbackList", "refreshFeedbackButton", "clearFeedbackButton", "jsonOutput", "copyJsonButton",
+      "mudavimAnnouncementList", "mudavimAnnouncementEditor", "mudavimAnnouncementPreview", "addMudavimAnnouncementButton", "addMudavimAnnouncementInlineButton", "publishMudavimAnnouncementsButton",
+      "feedbackInsights", "feedbackTabs", "feedbackList", "feedbackMudavimSummary", "refreshFeedbackButton", "clearFeedbackButton",
+      "settingsDesktopPreviewViewport", "settingsDesktopPreviewFrame", "jsonOutput", "copyJsonButton",
+      "settingsLastSectionToggle", "settingsSidebarDefaultOpen", "settingsSessionWarningEnabled", "settingsAutosaveWarning",
+      "settingsConfirmOnExit", "settingsDefaultSection", "settingsWarningSeconds", "siteCafeName", "siteShortDescription",
+      "sitePhoneInfo", "siteWhatsappInfo", "siteAddressInfo", "siteHoursInfo", "siteInstagramInfo", "siteEmailInfo",
+      "siteLogoFile", "siteLogoPreview", "siteLogoClear", "siteFaviconFile", "siteFaviconPreview", "siteFaviconClear",
+      "settingsSessionMinutes", "settingsSecurityWarningSeconds", "settingsFailedLoginLimit", "settingsSecurityConfirmOnExit",
+      "settingsSingleDeviceSession", "settingsChangePassword", "settingsLogoutNow", "settingsLastBackup",
+      "exportMenuData", "exportRecipeData", "exportCustomerData", "createBackup",
       "siteHeroKicker", "siteHeroTitle", "siteHeroSubtitle", "siteHeroImageUrl",
       "siteStoryTitle", "siteStoryText", "siteStoryPointOneTitle", "siteStoryPointOneText",
       "siteStoryPointTwoTitle", "siteStoryPointTwoText", "siteStoryPointThreeTitle", "siteStoryPointThreeText",
@@ -640,21 +595,37 @@
     safeLocalSet(PANEL_LAYOUT_KEY, nextLayout);
     applyPanelLayout(nextLayout);
     if (nextLayout === "mobile") setSidebarCollapsed(true);
+    queueSettingsDesktopPreviewScale();
   }
 
   function bindLogin() {
     els.loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
       const password = els.passwordInput.value.trim();
+      const limit = failedLoginLimit();
+      if (state.failedLoginCount >= limit) {
+        els.loginError.textContent = `Çok fazla başarısız giriş denemesi. Limit: ${limit}.`;
+        els.loginError.hidden = false;
+        return;
+      }
       const backendLogin = await loginBackend(password);
       if (backendLogin.ok) {
         safeSessionSet(AUTH_KEY, "ok");
+        state.failedLoginCount = 0;
+        if (state.panelConfig.security.singleDeviceSession) {
+          safeLocalSet(PANEL_DEVICE_SESSION_KEY, String(Date.now()));
+        }
         els.loginError.hidden = true;
         showPanel();
       } else {
+        state.failedLoginCount += 1;
+        const remaining = Math.max(0, limit - state.failedLoginCount);
         els.loginError.textContent = backendLogin.message || (backendBaseUrl()
           ? "Şifre hatalı veya oturum açılamadı."
           : "Backend adresi tanımlı değil. Panel için backend bağlantısı gerekli.");
+        if (remaining === 0) {
+          els.loginError.textContent = `Çok fazla başarısız giriş denemesi. Limit: ${limit}.`;
+        }
         els.loginError.hidden = false;
         els.passwordInput.select();
       }
@@ -667,14 +638,13 @@
       els.loginScreen.style.display = "none";
       els.panelShell.hidden = false;
       els.panelShell.style.display = "grid";
-      setSidebarCollapsed(
-        window.matchMedia("(max-width: 1180px)").matches || safeLocalGet(SIDEBAR_STATE_KEY) === "1"
-      );
+      setSidebarCollapsed(defaultSidebarCollapsed());
       state.data = loadData();
       state.recipes = loadRecipeData();
       state.site = loadSiteData();
       ensureSelection();
       ensureRecipeSelection();
+      setActiveSection(resolveInitialActiveSection(), { collapseSidebar: false, render: false });
       try {
         if ("BroadcastChannel" in window && !state.channel) state.channel = new BroadcastChannel(CHANNEL_NAME);
         if ("BroadcastChannel" in window && !state.recipeChannel) state.recipeChannel = new BroadcastChannel(RECIPE_CHANNEL_NAME);
@@ -728,12 +698,14 @@
     }
     if (els.sessionRefreshButton) els.sessionRefreshButton.addEventListener("click", refreshAdminSession);
     if (els.sessionLogoutButton) els.sessionLogoutButton.addEventListener("click", logoutAdminSession);
+    window.addEventListener("hashchange", handleSectionHashChange);
     document.querySelector(".panel-nav").addEventListener("click", handlePanelNavClick);
     if (els.overviewGrid) els.overviewGrid.addEventListener("click", handleOverviewAction);
     els.addCategoryButton.addEventListener("click", addCategory);
     els.addProductButton.addEventListener("click", addProduct);
-    els.resetButton.addEventListener("click", resetToDefault);
+    if (els.resetButton) els.resetButton.addEventListener("click", resetToDefault);
     if (els.saveDefaultButton) els.saveDefaultButton.addEventListener("click", saveCurrentAsDefault);
+    bindPanelSettingsEvents();
     if (els.defaultChoiceModal) els.defaultChoiceModal.addEventListener("click", handleDefaultChoice);
     els.categoryList.addEventListener("click", (event) => {
       const row = event.target.closest("[data-category-id]");
@@ -741,6 +713,7 @@
       state.selectedCategoryId = row.dataset.categoryId;
       const category = selectedCategory();
       state.selectedProductId = category && category.products[0] ? category.products[0].id : "";
+      state.allowEmptyProductSelection = false;
       setActiveSection("category", { collapseSidebar: true, render: false });
       renderAll();
     });
@@ -748,23 +721,28 @@
       const row = event.target.closest("[data-product-id]");
       if (!row) return;
       state.selectedProductId = row.dataset.productId;
+      state.allowEmptyProductSelection = false;
       setActiveSection("product", { collapseSidebar: true, render: false });
       renderAll();
     });
     els.productCategoryTabs.addEventListener("click", handleProductCategoryTabs);
     els.productQuickList.addEventListener("click", handleProductQuickList);
+    els.productCategoryTabs.addEventListener("change", handleProductCategoryTabs);
+    els.productQuickList.addEventListener("change", handleProductQuickList);
+    if (els.productEditorCard) els.productEditorCard.addEventListener("click", handleProductEditorCardClick);
     els.bulkPriceCategory.addEventListener("change", () => {
       state.bulkPriceMessage = "";
+      renderBulkPriceProductSelect();
       renderBulkPriceProductList();
       updateBulkPriceControls();
     });
+    if (els.bulkPriceProductSelect) els.bulkPriceProductSelect.addEventListener("change", handleBulkPriceProductSelect);
     els.bulkPriceSearch.addEventListener("input", () => {
       state.bulkPriceMessage = "";
-      renderBulkPriceProductList();
+      renderBulkPriceProductSelect();
       updateBulkPriceControls();
     });
-    els.bulkPriceProductList.addEventListener("change", handleBulkPriceProductSelection);
-    els.bulkPriceSelectVisible.addEventListener("click", selectVisibleBulkPriceProducts);
+    els.bulkPriceProductList.addEventListener("click", handleBulkPriceProductListClick);
     els.bulkPriceClearSelection.addEventListener("click", clearBulkPriceSelection);
     els.bulkPriceValue.addEventListener("input", () => {
       state.bulkPriceMessage = "";
@@ -787,9 +765,12 @@
       els.saveChangesButton.addEventListener("pointerdown", handleSaveButtonPointerDown);
       els.saveChangesButton.addEventListener("click", handleSaveButtonClick);
     }
-    els.panelThemeToggle.addEventListener("click", togglePanelTheme);
-    els.mobilePanelToggle.addEventListener("click", togglePanelLayout);
+    if (els.panelThemeToggle) els.panelThemeToggle.addEventListener("click", togglePanelTheme);
+    if (els.mobilePanelToggle) els.mobilePanelToggle.addEventListener("click", togglePanelLayout);
     els.livePreview.addEventListener("click", handleLivePreviewClick);
+    if (els.settingsDesktopPreviewFrame) {
+      els.settingsDesktopPreviewFrame.addEventListener("load", queueSettingsDesktopPreviewScale, { passive: true });
+    }
     ensureMenuPreviewResizeObserver();
     [
       els.menuPreviewMobile,
@@ -811,7 +792,10 @@
         });
       }
     });
-    window.addEventListener("resize", queueMenuPreviewScale, { passive: true });
+    window.addEventListener("resize", () => {
+      queueMenuPreviewScale();
+      queueSettingsDesktopPreviewScale();
+    }, { passive: true });
     els.feedbackTabs.addEventListener("click", handleFeedbackTabs);
     els.refreshFeedbackButton.addEventListener("click", refreshFeedbackInbox);
     if (els.clearFeedbackButton) els.clearFeedbackButton.addEventListener("click", clearFeedbackItems);
@@ -847,8 +831,14 @@
     if (els.addMudavimAnnouncementButton) {
       els.addMudavimAnnouncementButton.addEventListener("click", addMudavimAnnouncement);
     }
+    if (els.addMudavimAnnouncementInlineButton) {
+      els.addMudavimAnnouncementInlineButton.addEventListener("click", addMudavimAnnouncement);
+    }
     if (els.publishMudavimAnnouncementsButton) {
-      els.publishMudavimAnnouncementsButton.addEventListener("click", savePendingChanges);
+      els.publishMudavimAnnouncementsButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        savePendingChanges();
+      });
     }
     if (els.mudavimAnnouncementList) {
       els.mudavimAnnouncementList.addEventListener("click", handleMudavimAnnouncementListClick);
@@ -900,6 +890,7 @@
     if (els.staffScopeType) els.staffScopeType.addEventListener("change", updateStaffAssignmentControls);
     if (els.staffProductPicker) els.staffProductPicker.addEventListener("change", () => {
       if (els.staffAssignmentMessage) els.staffAssignmentMessage.textContent = "";
+      syncStaffProductPickerChips();
     });
     if (els.staffAssignmentCreateButton) els.staffAssignmentCreateButton.addEventListener("click", createStaffAssignment);
     if (els.staffAssignmentList) els.staffAssignmentList.addEventListener("click", handleStaffAssignmentListClick);
@@ -1098,21 +1089,120 @@
     });
   }
 
+  function bindPanelSettingsEvents() {
+    [
+      els.settingsLastSectionToggle,
+      els.settingsSidebarDefaultOpen,
+      els.settingsSessionWarningEnabled,
+      els.settingsAutosaveWarning,
+      els.settingsConfirmOnExit,
+      els.settingsDefaultSection,
+      els.settingsWarningSeconds,
+      els.settingsSessionMinutes,
+      els.settingsSecurityWarningSeconds,
+      els.settingsFailedLoginLimit,
+      els.settingsSecurityConfirmOnExit,
+      els.settingsSingleDeviceSession
+    ].forEach((control) => {
+      if (!control) return;
+      control.addEventListener("change", handlePanelSettingsChange);
+      control.addEventListener("input", handlePanelSettingsChange);
+    });
+
+    [
+      els.siteCafeName,
+      els.siteShortDescription,
+      els.sitePhoneInfo,
+      els.siteWhatsappInfo,
+      els.siteAddressInfo,
+      els.siteHoursInfo,
+      els.siteInstagramInfo,
+      els.siteEmailInfo
+    ].forEach((control) => {
+      if (!control) return;
+      control.addEventListener("input", handleSiteInfoSettingsChange);
+      control.addEventListener("change", handleSiteInfoSettingsChange);
+    });
+
+    if (els.siteLogoFile) els.siteLogoFile.addEventListener("change", (event) => handleSettingsMediaInput(event, "logo"));
+    if (els.siteFaviconFile) els.siteFaviconFile.addEventListener("change", (event) => handleSettingsMediaInput(event, "favicon"));
+    if (els.siteLogoClear) els.siteLogoClear.addEventListener("click", () => clearSettingsMedia("logo"));
+    if (els.siteFaviconClear) els.siteFaviconClear.addEventListener("click", () => clearSettingsMedia("favicon"));
+    if (els.settingsChangePassword) els.settingsChangePassword.addEventListener("click", () => window.open("/password-reset/", "_blank", "noopener"));
+    if (els.settingsLogoutNow) els.settingsLogoutNow.addEventListener("click", logoutAdminSession);
+    if (els.exportMenuData) els.exportMenuData.addEventListener("click", () => exportAdminDataset("menu"));
+    if (els.exportRecipeData) els.exportRecipeData.addEventListener("click", () => exportAdminDataset("recipes"));
+    if (els.exportCustomerData) els.exportCustomerData.addEventListener("click", () => exportAdminDataset("customers"));
+    if (els.createBackup) els.createBackup.addEventListener("click", createAdminBackup);
+  }
+
+  function handlePanelSettingsChange(event) {
+    if (event && event.currentTarget === els.settingsConfirmOnExit && els.settingsSecurityConfirmOnExit) {
+      els.settingsSecurityConfirmOnExit.checked = els.settingsConfirmOnExit.checked;
+    }
+    if (event && event.currentTarget === els.settingsSecurityConfirmOnExit && els.settingsConfirmOnExit) {
+      els.settingsConfirmOnExit.checked = els.settingsSecurityConfirmOnExit.checked;
+    }
+    writePanelConfigFromForm({ dirty: true });
+    savePanelConfig();
+    if (event && event.currentTarget === els.settingsSidebarDefaultOpen) {
+      safeLocalRemove(SIDEBAR_STATE_KEY);
+      setSidebarCollapsed(defaultSidebarCollapsed());
+    }
+    applyPanelRuntimeSettings();
+  }
+
+  function handleSiteInfoSettingsChange() {
+    writeSiteInfoFromSettings({ dirty: true });
+  }
+
+  function defaultSidebarCollapsed() {
+    if (SIDEBAR_BREAKPOINT.matches) return true;
+    const saved = safeLocalGet(SIDEBAR_STATE_KEY);
+    if (saved === "1" || saved === "0") return saved === "1";
+    return state.panelConfig && state.panelConfig.behavior.sidebarDefaultOpen === false;
+  }
+
+  function failedLoginLimit() {
+    return clamp(Number(state.panelConfig && state.panelConfig.security.failedLoginLimit || DEFAULT_PANEL_CONFIG.security.failedLoginLimit), 1, 20);
+  }
+
+  function sessionWarningSeconds() {
+    const config = state.panelConfig || DEFAULT_PANEL_CONFIG;
+    if (config.behavior && config.behavior.sessionWarningEnabled === false) return 0;
+    return clamp(Number(config.security && config.security.warningSeconds || config.behavior && config.behavior.warningSeconds || SESSION_WARNING_SECONDS), 10, 600);
+  }
+
+  function adminSessionMinutes() {
+    return clamp(Number(state.panelConfig && state.panelConfig.security.sessionMinutes || DEFAULT_PANEL_CONFIG.security.sessionMinutes), 1, 1440);
+  }
+
+  function shouldConfirmLogout() {
+    const config = state.panelConfig || DEFAULT_PANEL_CONFIG;
+    return config.behavior.confirmOnExit !== false || config.security.confirmOnExit !== false;
+  }
+
   function toggleSidebar() {
     const collapsed = els.panelShell.classList.toggle("is-sidebar-collapsed");
     safeLocalSet(SIDEBAR_STATE_KEY, collapsed ? "1" : "0");
     els.sidebarToggle.setAttribute("aria-expanded", String(!collapsed));
     els.sidebarToggle.setAttribute("aria-label", collapsed ? "Panel menüsünü aç" : "Panel menüsünü kapat");
+    queueSettingsDesktopPreviewScale();
   }
 
   function setSidebarCollapsed(collapsed) {
     els.panelShell.classList.toggle("is-sidebar-collapsed", Boolean(collapsed));
     els.sidebarToggle.setAttribute("aria-expanded", String(!collapsed));
     els.sidebarToggle.setAttribute("aria-label", collapsed ? "Panel menüsünü aç" : "Panel menüsünü kapat");
+    queueSettingsDesktopPreviewScale();
   }
 
   function syncSidebarForViewport(event) {
-    setSidebarCollapsed(event.matches || safeLocalGet(SIDEBAR_STATE_KEY) === "1");
+    if (event && event.matches) {
+      setSidebarCollapsed(true);
+      return;
+    }
+    setSidebarCollapsed(defaultSidebarCollapsed());
   }
 
   function toggleSettingsMenu(event) {
@@ -1150,10 +1240,67 @@
     });
   }
 
+  function handleSectionHashChange() {
+    const section = resolveHashSection();
+    if (!section || section === state.activeSection) return;
+    setActiveSection(section, { collapseSidebar: false });
+  }
+
+  function resolveInitialActiveSection() {
+    const config = state.panelConfig || DEFAULT_PANEL_CONFIG;
+    const stored = config.behavior && config.behavior.keepLastSection !== false
+      ? normalizePanelSection(safeLocalGet(LAST_ACTIVE_SECTION_KEY))
+      : "";
+    return resolveHashSection() || stored || normalizePanelSection(config.behavior && config.behavior.defaultSection) || "overview";
+  }
+
+  function resolveHashSection() {
+    const hash = window.location.hash ? decodeURIComponent(window.location.hash.slice(1)) : "";
+    if (!hash) return "";
+    const normalizedHash = normalizePanelSection(hash);
+    if (normalizedHash) return normalizedHash;
+    const directLink = Array.from(document.querySelectorAll("[data-panel-section]"))
+      .find((link) => link.getAttribute("href") === `#${hash}`);
+    if (directLink) return normalizePanelSection(directLink.dataset.panelSection);
+    const target = document.getElementById(hash);
+    if (!target) return "";
+    return normalizePanelSection(target.dataset.sectionPanel || target.closest("[data-section-panel]")?.dataset.sectionPanel);
+  }
+
+  function normalizePanelSection(section) {
+    if (!SECTION_TITLES[section]) return "";
+    if (DISABLED_PANEL_SECTIONS.has(section)) return "";
+    return section;
+  }
+
   function setActiveSection(section, options) {
-    state.activeSection = SECTION_TITLES[section] ? section : "overview";
+    const previousSection = state.activeSection;
+    state.activeSection = normalizePanelSection(section) || "overview";
+    if (!options || options.persist !== false) {
+      if (state.panelConfig && state.panelConfig.behavior.keepLastSection !== false) safeLocalSet(LAST_ACTIVE_SECTION_KEY, state.activeSection);
+      else safeLocalRemove(LAST_ACTIVE_SECTION_KEY);
+    }
+    if (state.activeSection === "category" && previousSection !== "category") {
+      state.previewSource = "menu";
+      updateLivePreviewSourceControls({ id: "menu", ...LIVE_PREVIEW_SOURCES.menu });
+    }
+    if (state.activeSection === "product" && previousSection !== "product") {
+      state.previewSource = "menu";
+      if (els.menuPreviewMobile) els.menuPreviewMobile.checked = true;
+      updateLivePreviewSourceControls({ id: "menu", ...LIVE_PREVIEW_SOURCES.menu });
+    }
+    if (state.activeSection === "recipe" && previousSection !== "recipe") {
+      state.previewSource = "recipe";
+      if (els.menuPreviewMobile) els.menuPreviewMobile.checked = true;
+      updateLivePreviewSourceControls({ id: "recipe", ...LIVE_PREVIEW_SOURCES.recipe });
+    }
+    if (state.activeSection === "settings" && previousSection !== "settings") {
+      state.previewSource = "site";
+      if (els.menuPreviewMobile) els.menuPreviewMobile.checked = true;
+      updateLivePreviewSourceControls({ id: "site", ...LIVE_PREVIEW_SOURCES.site });
+    }
     if (!options || options.collapseSidebar !== false) {
-      setSidebarCollapsed(window.matchMedia("(max-width: 1180px)").matches);
+      setSidebarCollapsed(SIDEBAR_BREAKPOINT.matches);
     }
     if (!options || options.render !== false) renderAll();
   }
@@ -1195,6 +1342,301 @@
 
   function cloneData(value) {
     return JSON.parse(JSON.stringify(value || {}));
+  }
+
+  function loadPanelConfig() {
+    return normalizePanelConfig(readStoredJSON(PANEL_SETTINGS_KEY));
+  }
+
+  function normalizePanelConfig(value) {
+    const source = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+    const behavior = source.behavior && typeof source.behavior === "object" ? source.behavior : {};
+    const security = source.security && typeof source.security === "object" ? source.security : {};
+    const backup = source.backup && typeof source.backup === "object" ? source.backup : {};
+    const section = normalizePanelSection(behavior.defaultSection) || DEFAULT_PANEL_CONFIG.behavior.defaultSection;
+    return {
+      behavior: {
+        keepLastSection: behavior.keepLastSection !== false,
+        sidebarDefaultOpen: behavior.sidebarDefaultOpen !== false,
+        sessionWarningEnabled: behavior.sessionWarningEnabled !== false,
+        autosaveWarning: behavior.autosaveWarning !== false,
+        confirmOnExit: behavior.confirmOnExit !== false,
+        defaultSection: section,
+        warningSeconds: clamp(Number(behavior.warningSeconds || DEFAULT_PANEL_CONFIG.behavior.warningSeconds), 10, 600)
+      },
+      security: {
+        sessionMinutes: clamp(Number(security.sessionMinutes || DEFAULT_PANEL_CONFIG.security.sessionMinutes), 1, 1440),
+        warningSeconds: clamp(Number(security.warningSeconds || DEFAULT_PANEL_CONFIG.security.warningSeconds), 10, 600),
+        failedLoginLimit: clamp(Number(security.failedLoginLimit || DEFAULT_PANEL_CONFIG.security.failedLoginLimit), 1, 20),
+        confirmOnExit: security.confirmOnExit !== false,
+        singleDeviceSession: security.singleDeviceSession === true
+      },
+      backup: {
+        lastBackupAt: String(backup.lastBackupAt || "")
+      }
+    };
+  }
+
+  function savePanelConfig(options) {
+    state.panelConfig = normalizePanelConfig(state.panelConfig);
+    safeLocalSet(PANEL_SETTINGS_KEY, JSON.stringify(state.panelConfig));
+    if (!options || options.dirty !== false) markDirty("panel", "Ayarlar kaydedilmedi");
+  }
+
+  function renderPanelSettings() {
+    if (!els.settingsLastSectionToggle) return;
+    state.panelConfig = normalizePanelConfig(state.panelConfig);
+    populatePanelSettingsSelects();
+    const behavior = state.panelConfig.behavior;
+    const security = state.panelConfig.security;
+
+    els.settingsLastSectionToggle.checked = behavior.keepLastSection;
+    els.settingsSidebarDefaultOpen.checked = behavior.sidebarDefaultOpen;
+    els.settingsSessionWarningEnabled.checked = behavior.sessionWarningEnabled;
+    els.settingsAutosaveWarning.checked = behavior.autosaveWarning;
+    els.settingsConfirmOnExit.checked = behavior.confirmOnExit;
+    els.settingsDefaultSection.value = normalizePanelSection(behavior.defaultSection) || "overview";
+    els.settingsWarningSeconds.value = String(behavior.warningSeconds);
+    els.settingsSessionMinutes.value = String(security.sessionMinutes);
+    els.settingsSecurityWarningSeconds.value = String(security.warningSeconds);
+    els.settingsFailedLoginLimit.value = String(security.failedLoginLimit);
+    els.settingsSecurityConfirmOnExit.checked = security.confirmOnExit;
+    els.settingsSingleDeviceSession.checked = security.singleDeviceSession;
+    if (els.settingsLastBackup) els.settingsLastBackup.textContent = state.panelConfig.backup.lastBackupAt ? formatDateTime(state.panelConfig.backup.lastBackupAt) : "Henüz yedek yok";
+
+    const siteInfo = readSiteInfoFromState();
+    if (els.siteCafeName) els.siteCafeName.value = siteInfo.cafeName;
+    if (els.siteShortDescription) els.siteShortDescription.value = siteInfo.shortDescription;
+    if (els.sitePhoneInfo) els.sitePhoneInfo.value = siteInfo.phone;
+    if (els.siteWhatsappInfo) els.siteWhatsappInfo.value = siteInfo.whatsapp;
+    if (els.siteAddressInfo) els.siteAddressInfo.value = siteInfo.address;
+    if (els.siteHoursInfo) els.siteHoursInfo.value = siteInfo.hours;
+    if (els.siteInstagramInfo) els.siteInstagramInfo.value = siteInfo.instagram;
+    if (els.siteEmailInfo) els.siteEmailInfo.value = siteInfo.email;
+    renderSettingsMediaPreview(els.siteLogoPreview, siteInfo.logo, "Logo yok");
+    renderSettingsMediaPreview(els.siteFaviconPreview, siteInfo.favicon, "Favicon yok");
+  }
+
+  function populatePanelSettingsSelects() {
+    if (els.settingsDefaultSection && !els.settingsDefaultSection.options.length) {
+      els.settingsDefaultSection.innerHTML = Object.keys(SECTION_TITLES)
+        .filter((key) => !DISABLED_PANEL_SECTIONS.has(key))
+        .map((key) => `<option value="${escapeAttribute(key)}">${escapeHTML(SECTION_TITLES[key])}</option>`)
+        .join("");
+    }
+    if (els.settingsSessionMinutes && !els.settingsSessionMinutes.options.length) {
+      els.settingsSessionMinutes.innerHTML = [
+        [10, "10 dakika"],
+        [15, "15 dakika"],
+        [30, "30 dakika"],
+        [60, "1 saat"],
+        [120, "2 saat"],
+        [480, "8 saat"],
+        [1440, "24 saat"]
+      ].map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
+    }
+    if (els.settingsSecurityWarningSeconds && !els.settingsSecurityWarningSeconds.options.length) {
+      els.settingsSecurityWarningSeconds.innerHTML = [
+        [30, "30 saniye"],
+        [60, "1 dakika"],
+        [120, "2 dakika"],
+        [300, "5 dakika"]
+      ].map(([value, label]) => `<option value="${value}">${label}</option>`).join("");
+    }
+  }
+
+  function writePanelConfigFromForm(options) {
+    if (!els.settingsLastSectionToggle) return;
+    state.panelConfig = normalizePanelConfig({
+      behavior: {
+        keepLastSection: els.settingsLastSectionToggle.checked,
+        sidebarDefaultOpen: els.settingsSidebarDefaultOpen.checked,
+        sessionWarningEnabled: els.settingsSessionWarningEnabled.checked,
+        autosaveWarning: els.settingsAutosaveWarning.checked,
+        confirmOnExit: els.settingsConfirmOnExit.checked,
+        defaultSection: els.settingsDefaultSection.value || "overview",
+        warningSeconds: Number(els.settingsWarningSeconds.value || DEFAULT_PANEL_CONFIG.behavior.warningSeconds)
+      },
+      security: {
+        sessionMinutes: Number(els.settingsSessionMinutes.value || DEFAULT_PANEL_CONFIG.security.sessionMinutes),
+        warningSeconds: Number(els.settingsSecurityWarningSeconds.value || DEFAULT_PANEL_CONFIG.security.warningSeconds),
+        failedLoginLimit: Number(els.settingsFailedLoginLimit.value || DEFAULT_PANEL_CONFIG.security.failedLoginLimit),
+        confirmOnExit: els.settingsSecurityConfirmOnExit.checked,
+        singleDeviceSession: els.settingsSingleDeviceSession.checked
+      },
+      backup: state.panelConfig && state.panelConfig.backup
+    });
+    if (options && options.dirty === false) return;
+    state.dirtyPanel = true;
+  }
+
+  function readSiteInfoFromState() {
+    const site = normalizeSiteSettings(state.site || DEFAULT_SITE_SETTINGS);
+    const global = site.global && typeof site.global === "object" ? site.global : {};
+    const contact = site.contact && typeof site.contact === "object" ? site.contact : {};
+    const seo = site.seo && typeof site.seo === "object" ? site.seo : {};
+    return {
+      cafeName: String(global.cafeName || global.businessName || site.cafeName || site.businessName || "Tahmisçi Coffee & Roastery"),
+      shortDescription: String(global.shortDescription || site.shortDescription || site.heroSubtitle || DEFAULT_SITE_SETTINGS.heroSubtitle),
+      phone: String(contact.phone || site.phone || ""),
+      whatsapp: String(contact.whatsapp || site.whatsapp || ""),
+      address: String(contact.address || site.address || ""),
+      hours: String(contact.hours || site.hours || ""),
+      instagram: String(contact.instagram || site.instagram || ""),
+      email: String(contact.email || site.email || ""),
+      logo: String(global.logo || site.logo || site.heroImageUrl || ""),
+      favicon: String(seo.favicon || site.favicon || "")
+    };
+  }
+
+  function readSiteInfoFromForm() {
+    return {
+      cafeName: els.siteCafeName ? els.siteCafeName.value.trim() : "",
+      shortDescription: els.siteShortDescription ? els.siteShortDescription.value.trim() : "",
+      phone: els.sitePhoneInfo ? els.sitePhoneInfo.value.trim() : "",
+      whatsapp: els.siteWhatsappInfo ? els.siteWhatsappInfo.value.trim() : "",
+      address: els.siteAddressInfo ? els.siteAddressInfo.value.trim() : "",
+      hours: els.siteHoursInfo ? els.siteHoursInfo.value.trim() : "",
+      instagram: els.siteInstagramInfo ? els.siteInstagramInfo.value.trim() : "",
+      email: els.siteEmailInfo ? els.siteEmailInfo.value.trim() : "",
+      logo: readSiteInfoFromState().logo,
+      favicon: readSiteInfoFromState().favicon
+    };
+  }
+
+  function writeSiteInfoFromSettings(options) {
+    if (!els.siteCafeName) return;
+    applySiteInfoToState(readSiteInfoFromForm(), options);
+  }
+
+  function applySiteInfoToState(info, options) {
+    const current = normalizeSiteSettings(state.site || DEFAULT_SITE_SETTINGS);
+    const next = Object.assign({}, current, {
+      cafeName: info.cafeName || current.cafeName || "",
+      businessName: info.cafeName || current.businessName || "",
+      shortDescription: info.shortDescription || "",
+      phone: info.phone || "",
+      whatsapp: info.whatsapp || "",
+      address: info.address || "",
+      hours: info.hours || "",
+      instagram: info.instagram || "",
+      email: info.email || ""
+    });
+    if (info.logo !== undefined) {
+      next.logo = info.logo || "";
+      if (info.logo) next.heroImageUrl = info.logo;
+    }
+    if (info.favicon !== undefined) next.favicon = info.favicon || "";
+    if (Number(next.schemaVersion || 0) >= 2) {
+      next.global = Object.assign({}, next.global || {}, {
+        cafeName: info.cafeName || "",
+        businessName: info.cafeName || "",
+        shortDescription: info.shortDescription || "",
+        logo: info.logo || next.global && next.global.logo || ""
+      });
+      next.contact = Object.assign({}, next.contact || {}, {
+        businessName: info.cafeName || "",
+        phone: info.phone || "",
+        whatsapp: info.whatsapp || "",
+        address: info.address || "",
+        hours: info.hours || "",
+        instagram: info.instagram || "",
+        email: info.email || ""
+      });
+      next.seo = Object.assign({}, next.seo || {}, {
+        favicon: info.favicon || next.seo && next.seo.favicon || ""
+      });
+    }
+    state.site = normalizeSiteSettings(next);
+    if (options && options.dirty === false) {
+      safeLocalSet(SITE_STORAGE_KEY, JSON.stringify(state.site));
+    } else {
+      saveSiteSettings();
+    }
+    renderSettingsMediaPreview(els.siteLogoPreview, info.logo, "Logo yok");
+    renderSettingsMediaPreview(els.siteFaviconPreview, info.favicon, "Favicon yok");
+  }
+
+  function renderSettingsMediaPreview(target, src, emptyText) {
+    if (!target) return;
+    const url = String(src || "");
+    target.innerHTML = url
+      ? `<img src="${escapeAttribute(url)}" alt="">`
+      : `<span>${escapeHTML(emptyText)}</span>`;
+  }
+
+  function applyPanelRuntimeSettings() {
+    state.panelConfig = normalizePanelConfig(state.panelConfig);
+    if (!state.panelConfig.behavior.keepLastSection) safeLocalRemove(LAST_ACTIVE_SECTION_KEY);
+    if (state.panelConfig.security.singleDeviceSession && safeSessionGet(AUTH_KEY) === "ok") {
+      safeLocalSet(PANEL_DEVICE_SESSION_KEY, safeLocalGet(PANEL_DEVICE_SESSION_KEY) || String(Date.now()));
+    }
+    scheduleSessionTimers();
+  }
+
+  function handleSettingsMediaInput(event, kind) {
+    const input = event.currentTarget;
+    const file = input && input.files && input.files[0];
+    if (!file || !file.type.startsWith("image/")) {
+      if (input) input.value = "";
+      return;
+    }
+    readImage(input, (dataUrl) => {
+      const info = readSiteInfoFromState();
+      info[kind] = dataUrl;
+      applySiteInfoToState(info, { dirty: true });
+      updateSaveControls(kind === "logo" ? "Logo kaydedilmedi" : "Favicon kaydedilmedi");
+    });
+  }
+
+  function clearSettingsMedia(kind) {
+    const info = readSiteInfoFromState();
+    info[kind] = "";
+    applySiteInfoToState(info, { dirty: true });
+  }
+
+  function exportAdminDataset(kind) {
+    const source = {
+      menu: () => state.data || loadData(),
+      recipes: () => ({ recipeState: state.recipes || loadRecipeData(), recipeCatalog: state.recipeCatalog || [] }),
+      customers: () => ({
+        mudavimCustomers: MUDAVIM_CUSTOMERS,
+        feedbackItems: readStoredJSON(FEEDBACK_STORAGE_KEY) || []
+      })
+    }[kind];
+    if (!source) return;
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      type: kind,
+      data: source()
+    };
+    downloadJSONFile(payload, `tahmisci-${kind}-${isoDateForFile()}.json`);
+  }
+
+  function createAdminBackup() {
+    const createdAt = new Date().toISOString();
+    const payload = {
+      createdAt,
+      menuState: state.data || loadData(),
+      recipeState: state.recipes || loadRecipeData(),
+      recipeCatalog: state.recipeCatalog || [],
+      siteState: state.site || loadSiteData(),
+      panelSettings: normalizePanelConfig(state.panelConfig),
+      feedbackItems: readStoredJSON(FEEDBACK_STORAGE_KEY) || [],
+      mudavimCustomers: MUDAVIM_CUSTOMERS
+    };
+    downloadJSONFile(payload, `tahmisci-backup-${isoDateForFile()}.json`);
+    state.panelConfig.backup.lastBackupAt = createdAt;
+    safeLocalSet(PANEL_SETTINGS_KEY, JSON.stringify(normalizePanelConfig(state.panelConfig)));
+    if (els.settingsLastBackup) els.settingsLastBackup.textContent = formatDateTime(createdAt);
+    updateSaveControls("Yedek indirildi");
+    window.setTimeout(() => updateSaveControls(), 1200);
+  }
+
+  function downloadJSONFile(payload, filename) {
+    const text = JSON.stringify(payload, null, 2);
+    const dataUrl = `data:application/json;charset=utf-8,${encodeURIComponent(text)}`;
+    downloadDataUrl(dataUrl, filename);
   }
 
   function backendBaseUrl() {
@@ -1272,16 +1714,15 @@
   }
 
   function sessionExpiryMs(result) {
-    if (!result || typeof result !== "object") return 0;
-    if (result.expiresAt) {
+    if (result && typeof result === "object" && result.expiresAt) {
       const parsed = Date.parse(result.expiresAt);
       if (Number.isFinite(parsed) && parsed > Date.now()) return parsed;
     }
-    const ttlSeconds = Number(result.ttlSeconds || result.expiresInSeconds || 0);
+    const ttlSeconds = Number(result && typeof result === "object" ? (result.ttlSeconds || result.expiresInSeconds || 0) : 0);
     if (Number.isFinite(ttlSeconds) && ttlSeconds > 0) {
       return Date.now() + ttlSeconds * 1000;
     }
-    return 0;
+    return Date.now() + adminSessionMinutes() * 60 * 1000;
   }
 
   function scheduleSessionTimers() {
@@ -1291,9 +1732,10 @@
     const expiresAt = Number(state.session.expiresAt || 0);
     if (!expiresAt) return;
 
-    const warningDelay = Math.max(0, expiresAt - Date.now() - SESSION_WARNING_SECONDS * 1000);
+    const warningSeconds = sessionWarningSeconds();
+    const warningDelay = Math.max(0, expiresAt - Date.now() - warningSeconds * 1000);
     const expiryDelay = Math.max(0, expiresAt - Date.now());
-    state.session.warningTimer = window.setTimeout(showSessionWarning, warningDelay);
+    if (warningSeconds > 0) state.session.warningTimer = window.setTimeout(showSessionWarning, warningDelay);
     state.session.expiryTimer = window.setTimeout(() => {
       handleSessionEnded(SESSION_EXPIRED_MESSAGE);
     }, expiryDelay);
@@ -1303,7 +1745,7 @@
     if (state.session.expired || state.session.warningShown) return;
     state.session.warningShown = true;
     if (els.sessionWarningText) {
-      els.sessionWarningText.textContent = "Oturumunuz 30 saniye içinde sona erecek. Devam etmek için oturumu yenileyin.";
+      els.sessionWarningText.textContent = `Oturumunuz ${sessionWarningSeconds()} saniye içinde sona erecek. Devam etmek için oturumu yenileyin.`;
     }
     if (els.sessionWarningModal) els.sessionWarningModal.hidden = false;
   }
@@ -1342,6 +1784,7 @@
   }
 
   async function logoutAdminSession() {
+    if (shouldConfirmLogout() && !window.confirm("Oturumu kapatmak istiyor musunuz?")) return;
     try {
       await backendRequest("/api/admin/logout", {
         method: "POST",
@@ -1361,6 +1804,8 @@
     closeBackendEvents();
     safeSessionRemove(AUTH_KEY);
     safeSessionRemove(BACKEND_TOKEN_KEY);
+    safeLocalRemove(LAST_ACTIVE_SECTION_KEY);
+    safeLocalRemove(PANEL_DEVICE_SESSION_KEY);
     state.saving = false;
     if (els.panelShell) {
       els.panelShell.hidden = true;
@@ -1567,13 +2012,14 @@
   }
 
   function hasPendingChanges() {
-    return state.dirtyMenu || state.dirtyRecipes || state.dirtySite;
+    return state.dirtyMenu || state.dirtyRecipes || state.dirtySite || state.dirtyPanel;
   }
 
   function markDirty(scope, message) {
     if (scope === "menu") state.dirtyMenu = true;
     if (scope === "recipes") state.dirtyRecipes = true;
     if (scope === "site") state.dirtySite = true;
+    if (scope === "panel") state.dirtyPanel = true;
     updateSaveControls(message || "Kaydedilmedi");
   }
 
@@ -1638,8 +2084,9 @@
       handleSiteSectionOrder();
       return;
     }
-    if (state.activeSection === "settings" && els.siteHeroKicker) {
-      updateSiteSettingsFromForm();
+    if (state.activeSection === "settings") {
+      writePanelConfigFromForm({ dirty: true });
+      writeSiteInfoFromSettings({ dirty: true });
     }
   }
 
@@ -1670,6 +2117,10 @@
         safeLocalSet(SITE_STORAGE_KEY, JSON.stringify(state.site));
         if (backendBaseUrl()) await saveSiteToBackend();
         state.dirtySite = false;
+      }
+      if (state.dirtyPanel) {
+        safeLocalSet(PANEL_SETTINGS_KEY, JSON.stringify(normalizePanelConfig(state.panelConfig)));
+        state.dirtyPanel = false;
       }
 
       if (state.channel) state.channel.postMessage({ type: "menu-updated", time: Date.now() });
@@ -2041,12 +2492,16 @@
   function normalizeMudavimAnnouncements(value) {
     return (Array.isArray(value) ? value : []).map((item, itemIndex) => {
       const id = String(item && item.id || `announcement-${itemIndex + 1}`);
+      const status = String(item && item.status || (item && item.isPublished === true ? "published" : "draft"));
       return {
         id,
         title: String(item && item.title || "Yeni Duyuru"),
+        summary: String(item && item.summary || ""),
         slug: String(item && item.slug || slugifyMudavimAnnouncement(item && item.title || id)),
         order: Number.isFinite(Number(item && item.order)) ? Number(item.order) : itemIndex,
-        isPublished: item && item.isPublished === true,
+        status,
+        publishedAt: String(item && item.publishedAt || ""),
+        isPublished: status === "published" || item && item.isPublished === true,
         blocks: (Array.isArray(item && item.blocks) ? item.blocks : []).map((block, blockIndex) => {
           const allowedTypes = ["text", "image", "image-text", "text-image"];
           const type = allowedTypes.includes(block && block.type) ? block.type : (block && block.type === "image" ? "image" : "text");
@@ -2254,6 +2709,10 @@
     }
     const category = selectedCategory();
     if (category && (!state.selectedProductId || !category.products.some((product) => product.id === state.selectedProductId))) {
+      if (state.activeSection === "product" && state.allowEmptyProductSelection) {
+        state.selectedProductId = "";
+        return;
+      }
       state.selectedProductId = category.products[0] ? category.products[0].id : "";
     }
   }
@@ -2298,6 +2757,7 @@
     renderMenuOutput();
     renderProductImportReport();
     renderRecipeImportReport();
+    renderPanelSettings();
     renderSections();
     renderPreview();
     renderFeedbackInbox();
@@ -2305,7 +2765,7 @@
   }
 
   function renderSections() {
-    const activeSection = SECTION_TITLES[state.activeSection] ? state.activeSection : "overview";
+    const activeSection = normalizePanelSection(state.activeSection) || "overview";
     state.activeSection = activeSection;
 
     document.querySelectorAll("[data-section-panel]").forEach((section) => {
@@ -2319,15 +2779,17 @@
     if (previewColumn) previewColumn.hidden = hidePreview;
     if (els.contentGrid) els.contentGrid.classList.toggle("is-wide", hidePreview);
     if (els.workspaceTitle) els.workspaceTitle.textContent = SECTION_TITLES[activeSection];
+    const topbarDescription = document.querySelector(".topbar-description");
+    if (topbarDescription) topbarDescription.textContent = SECTION_DESCRIPTIONS[activeSection] || "Dijital menünüzün görünümünü özelleştirin ve yayınlayın.";
     document.querySelectorAll("[data-panel-section]").forEach((link) => {
       link.classList.toggle("is-active", link.dataset.panelSection === activeSection);
     });
 
     if (els.previewKicker && els.previewTitle) {
-      const recipeMode = activeSection === "recipe";
-      els.previewKicker.textContent = recipeMode ? "Reçete Önizleme" : "Canlı Önizleme";
-      els.previewTitle.textContent = recipeMode ? "Canlı Reçete" : "Canlı Önizleme";
+      els.previewKicker.textContent = "Canlı Önizleme";
+      els.previewTitle.textContent = "Canlı Önizleme";
     }
+    if (activeSection === "settings") renderSettingsPreview();
   }
 
   function renderStats() {
@@ -2538,6 +3000,7 @@
       if (!validIds.has(id)) state.bulkPriceSelectedIds.delete(id);
     });
     renderBulkPriceCategorySelect();
+    renderBulkPriceProductSelect();
     renderBulkPriceProductList();
     updateBulkPriceControls();
   }
@@ -2555,6 +3018,20 @@
       : "all";
   }
 
+  function renderBulkPriceProductSelect() {
+    if (!els.bulkPriceProductSelect) return;
+    const products = visibleBulkPriceProducts().filter(({ product }) => !state.bulkPriceSelectedIds.has(product.id));
+    els.bulkPriceProductSelect.innerHTML = products.length
+      ? [
+        `<option value="">Ürün seçiniz</option>`,
+        ...products.map(({ category, product }) => (
+          `<option value="${escapeAttribute(product.id)}">${escapeHTML(product.name)} · ${escapeHTML(category.name)} · ${escapeHTML(priceSummary(product))}</option>`
+        ))
+      ].join("")
+      : `<option value="">Ürün bulunamadı</option>`;
+    els.bulkPriceProductSelect.value = "";
+  }
+
   function visibleBulkPriceProducts() {
     const categoryId = els.bulkPriceCategory.value || "all";
     const query = normalizeText(els.bulkPriceSearch.value || "");
@@ -2565,32 +3042,47 @@
   }
 
   function renderBulkPriceProductList() {
-    const products = visibleBulkPriceProducts();
+    const products = selectedBulkPriceProducts();
     els.bulkPriceProductList.innerHTML = products.length
-      ? products.map(({ category, product }) => `
-        <label class="bulk-price-product-option">
-          <input type="checkbox" value="${escapeAttribute(product.id)}" ${state.bulkPriceSelectedIds.has(product.id) ? "checked" : ""}>
-          <span>
-            <strong>${escapeHTML(product.name)}</strong>
-            <small>${escapeHTML(category.name)} · ${escapeHTML(priceSummary(product))}</small>
-          </span>
-        </label>
-      `).join("")
-      : `<div class="bulk-price-empty">Ürün bulunamadı</div>`;
+      ? `
+        <div class="bulk-price-selected-table" role="table" aria-label="Seçili ürünler">
+          <div class="bulk-price-row bulk-price-row-head" role="row">
+            <span>#</span>
+            <span>Ürün Adı</span>
+            <span>Kategori</span>
+            <span>Mevcut Fiyat</span>
+            <span></span>
+          </div>
+          ${products.map(({ category, product }, index) => `
+            <div class="bulk-price-row" role="row">
+              <span class="bulk-price-index">${String(index + 1).padStart(2, "0")}</span>
+              <strong>${escapeHTML(product.name)}</strong>
+              <span>${escapeHTML(category.name)}</span>
+              <span>${escapeHTML(priceSummary(product))}</span>
+              <button class="bulk-price-remove" type="button" data-bulk-price-remove="${escapeAttribute(product.id)}" aria-label="${escapeAttribute(product.name)} ürününü listeden çıkar">×</button>
+            </div>
+          `).join("")}
+        </div>
+      `
+      : `<div class="bulk-price-empty">Henüz ürün seçilmedi</div>`;
   }
 
-  function handleBulkPriceProductSelection(event) {
-    const input = event.target.closest("input[type='checkbox']");
-    if (!input) return;
-    if (input.checked) state.bulkPriceSelectedIds.add(input.value);
-    else state.bulkPriceSelectedIds.delete(input.value);
+  function handleBulkPriceProductSelect(event) {
+    const productId = event.target.value;
+    if (!productId) return;
+    state.bulkPriceSelectedIds.add(productId);
     state.bulkPriceMessage = "";
+    renderBulkPriceProductSelect();
+    renderBulkPriceProductList();
     updateBulkPriceControls();
   }
 
-  function selectVisibleBulkPriceProducts() {
-    visibleBulkPriceProducts().forEach(({ product }) => state.bulkPriceSelectedIds.add(product.id));
+  function handleBulkPriceProductListClick(event) {
+    const button = event.target.closest("[data-bulk-price-remove]");
+    if (!button) return;
+    state.bulkPriceSelectedIds.delete(button.dataset.bulkPriceRemove);
     state.bulkPriceMessage = "";
+    renderBulkPriceProductSelect();
     renderBulkPriceProductList();
     updateBulkPriceControls();
   }
@@ -2598,6 +3090,7 @@
   function clearBulkPriceSelection() {
     state.bulkPriceSelectedIds.clear();
     state.bulkPriceMessage = "";
+    renderBulkPriceProductSelect();
     renderBulkPriceProductList();
     updateBulkPriceControls();
   }
@@ -2616,25 +3109,52 @@
     const mode = selectedBulkPriceOption("bulkPriceMode", "fixed");
     const direction = selectedBulkPriceOption("bulkPriceDirection", "increase");
     const amount = Number(els.bulkPriceValue.value || 0);
-    els.bulkPriceSelectedCount.textContent = `${selectedCount} ürün seçildi`;
+    els.bulkPriceSelectedCount.textContent = `${selectedCount} ürün`;
     els.bulkPriceValueLabel.textContent = mode === "percentage" ? "Oran (%)" : "Tutar (\u20BA)";
     els.bulkPriceApply.disabled = selectedCount === 0 || !Number.isFinite(amount) || amount <= 0;
 
     if (state.bulkPriceMessage) {
-      els.bulkPriceSummary.textContent = state.bulkPriceMessage;
+      els.bulkPriceSummary.innerHTML = `<h4>Önizleme</h4><p>${escapeHTML(state.bulkPriceMessage)}</p>`;
       return;
     }
     if (!selectedCount) {
-      els.bulkPriceSummary.textContent = "Ürün seçimi bekleniyor";
+      els.bulkPriceSummary.innerHTML = `<h4>Önizleme</h4><p>Ürün seçimi bekleniyor</p>`;
       return;
     }
     if (!Number.isFinite(amount) || amount <= 0) {
-      els.bulkPriceSummary.textContent = `${selectedCount} ürün · Değer bekleniyor`;
+      els.bulkPriceSummary.innerHTML = `<h4>Önizleme</h4><p>${selectedCount} ürün seçildi · Değer bekleniyor</p>`;
       return;
     }
-    const operation = direction === "increase" ? "artış" : "azalış";
+    const estimate = calculateBulkPriceEstimate(selectedBulkPriceProducts(), mode, direction, amount);
+    const operation = direction === "increase" ? "Artır" : "Azalt";
     const value = mode === "percentage" ? `%${formatBulkPriceNumber(amount)}` : `${formatBulkPriceNumber(amount)}\u20BA`;
-    els.bulkPriceSummary.textContent = `${selectedCount} ürün · ${value} ${operation}`;
+    const estimateClass = estimate.totalDelta >= 0 ? "is-positive" : "is-negative";
+    const estimatePrefix = estimate.totalDelta >= 0 ? "+" : "-";
+    els.bulkPriceSummary.innerHTML = `
+      <h4>Önizleme</h4>
+      <dl>
+        <div><dt>İşlem türü</dt><dd>${operation}</dd></div>
+        <div><dt>Tutar</dt><dd>${escapeHTML(value)}</dd></div>
+        <div><dt>Uygulanacak ürün</dt><dd>${selectedCount}</dd></div>
+        <div><dt>Tahmini toplam ${direction === "increase" ? "artış" : "azalış"}</dt><dd class="${estimateClass}">${estimatePrefix}${escapeHTML(formatPrice(Math.abs(estimate.totalDelta)))}</dd></div>
+      </dl>
+    `;
+  }
+
+  function calculateBulkPriceEstimate(selected, mode, direction, amount) {
+    const priceKeys = ["standard", "k", "o", "b", "single", "double"];
+    return selected.reduce((summary, { product }) => {
+      priceKeys.forEach((key) => {
+        if (!hasPrice(product.prices && product.prices[key])) return;
+        const current = Number(product.prices[key]);
+        if (!Number.isFinite(current)) return;
+        const difference = mode === "percentage" ? current * (amount / 100) : amount;
+        const next = Math.max(0, direction === "increase" ? current + difference : current - difference);
+        summary.totalDelta += next - current;
+        summary.priceCount += 1;
+      });
+      return summary;
+    }, { totalDelta: 0, priceCount: 0 });
   }
 
   function applyBulkPriceUpdate() {
@@ -2728,7 +3248,7 @@
       ["Dağıtılan ödül", rewards]
     ];
     els.mudavimStats.innerHTML = stats.map(([label, value]) => (
-      `<article class="mudavim-stat-card"><span>${escapeHTML(label)}</span><strong>${escapeHTML(String(value))}</strong></article>`
+      `<article class="mudavim-stat-card"><i aria-hidden="true"></i><span>${escapeHTML(label)}</span><strong>${escapeHTML(String(value))}</strong></article>`
     )).join("");
   }
 
@@ -2739,7 +3259,7 @@
       state.selectedMudavimCustomerId = customers[0]?.id || MUDAVIM_CUSTOMERS[0]?.id || "";
     }
     if (!customers.length) {
-      els.mudavimCustomerList.innerHTML = `<div class="mudavim-empty">Filtreye uygun müdavim yok.</div>`;
+      els.mudavimCustomerList.innerHTML = `<div class="mudavim-empty">Henüz müdavim kaydı yok.</div>`;
       return;
     }
     els.mudavimCustomerList.innerHTML = customers.map((customer) => (
@@ -2909,8 +3429,11 @@
     const selected = selectedMudavimAnnouncement();
     els.mudavimAnnouncementList.innerHTML = announcements.length ? announcements.map((item) => `
       <button class="mudavim-announcement-row${item.id === state.selectedMudavimAnnouncementId ? " is-active" : ""}" type="button" data-mudavim-announcement-id="${escapeAttribute(item.id)}">
-        <span><strong>${escapeHTML(item.title)}</strong><small>${item.blocks.length} blok · ${escapeHTML(item.slug)}</small></span>
-        <em class="${item.isPublished ? "is-published" : ""}">${item.isPublished ? "Yayında" : "Taslak"}</em>
+        <span><strong>${escapeHTML(item.title)}</strong><small>${escapeHTML(item.summary || `${item.blocks.length} blok`)}</small></span>
+        <span class="mudavim-announcement-row__meta">
+          <em class="${item.isPublished ? "is-published" : ""}">${item.isPublished ? "Yayınlandı" : "Taslak"}</em>
+          <time>${escapeHTML(formatMudavimAnnouncementListDate(item.publishedAt || item.updatedAt || item.createdAt))}</time>
+        </span>
       </button>
     `).join("") : `<div class="mudavim-empty">Henüz duyuru yok. “Yeni Duyuru” ile başlayın.</div>`;
 
@@ -2922,26 +3445,34 @@
 
     els.mudavimAnnouncementEditor.innerHTML = `
       <div class="mudavim-announcement-editor__head">
-        <div><p class="eyebrow">Duyuru düzenleyici</p><h4>${escapeHTML(selected.title)}</h4></div>
+        <div><p class="eyebrow">Duyuru Editörü</p><h4>${escapeHTML(selected.title)}</h4></div>
         <button class="danger-action" type="button" data-mudavim-announcement-action="delete-announcement">Duyuruyu Sil</button>
       </div>
-      <div class="form-grid two mudavim-announcement-fields">
-        <label><span>Başlık</span><input type="text" value="${escapeAttribute(selected.title)}" data-mudavim-announcement-field="title" maxlength="160"></label>
-        <label><span>Slug</span><input type="text" value="${escapeAttribute(selected.slug)}" data-mudavim-announcement-field="slug" maxlength="160"></label>
-        <label><span>Sıra</span><input type="number" min="0" value="${escapeAttribute(selected.order)}" data-mudavim-announcement-field="order"></label>
-        <label class="toggle-row"><input type="checkbox" data-mudavim-announcement-field="isPublished" ${selected.isPublished ? "checked" : ""}><span>Müşteri panelinde yayınla</span></label>
-      </div>
-      <div class="mudavim-block-toolbar">
-        <div><p class="eyebrow">Duyuru Blokları</p><h5>İçerik Yönetimi</h5><span>Bloklar aşağıdaki sırayla yayınlanır.</span></div>
-        <div>
-          <button class="line-action" type="button" data-mudavim-announcement-action="add-text"><i class="fas fa-align-left" aria-hidden="true"></i> Metin</button>
-          <button class="line-action" type="button" data-mudavim-announcement-action="add-image"><i class="far fa-image" aria-hidden="true"></i> Görsel</button>
-          <button class="line-action" type="button" data-mudavim-announcement-action="add-image-text"><i class="fas fa-table-columns" aria-hidden="true"></i> Görsel + Metin</button>
-          <button class="line-action" type="button" data-mudavim-announcement-action="add-text-image"><i class="fas fa-table-columns" aria-hidden="true"></i> Metin + Görsel</button>
+      <div class="mudavim-editor-shell">
+        <div class="mudavim-editor-main">
+          <div class="mudavim-announcement-fields">
+            <label class="is-wide"><span>Başlık</span><input type="text" value="${escapeAttribute(selected.title)}" data-mudavim-announcement-field="title" maxlength="100"><small>${String(selected.title || "").length} / 100</small></label>
+            <label class="is-wide"><span>Kısa özet</span><textarea rows="2" data-mudavim-announcement-field="summary" maxlength="160">${escapeHTML(selected.summary || "")}</textarea><small>${String(selected.summary || "").length} / 160</small></label>
+          </div>
+          <div class="mudavim-block-toolbar">
+            <div><p class="eyebrow">İçerik Blokları</p><h5>Blog editörü</h5><span>Blokları yukarı/aşağı taşıyın, kopyalayın veya silin.</span></div>
+            <div>
+              <button class="line-action" type="button" data-mudavim-announcement-action="add-text"><i class="fas fa-align-left" aria-hidden="true"></i> Metin bloğu</button>
+              <button class="line-action" type="button" data-mudavim-announcement-action="add-image"><i class="far fa-image" aria-hidden="true"></i> Görsel bloğu</button>
+              <button class="line-action" type="button" data-mudavim-announcement-action="add-text-image"><i class="fas fa-table-columns" aria-hidden="true"></i> Metin + Görsel</button>
+            </div>
+          </div>
+          <div class="mudavim-block-list">
+            ${selected.blocks.length ? selected.blocks.map((block, index) => renderMudavimAnnouncementBlock(block, index, selected.blocks.length)).join("") : `<div class="mudavim-empty">Bu duyuruda henüz içerik bloğu yok.</div>`}
+          </div>
         </div>
-      </div>
-      <div class="mudavim-block-list">
-        ${selected.blocks.length ? selected.blocks.map((block, index) => renderMudavimAnnouncementBlock(block, index, selected.blocks.length)).join("") : `<div class="mudavim-empty">Bu duyuruda henüz içerik bloğu yok.</div>`}
+        <aside class="mudavim-publish-settings">
+          <div class="mudavim-manager-kicker"><strong>Yayınlama Ayarları</strong><span>Durum ve zamanlama</span></div>
+          <label><span>Durum</span><select data-mudavim-announcement-field="status"><option value="draft" ${!selected.isPublished ? "selected" : ""}>Taslak</option><option value="published" ${selected.isPublished ? "selected" : ""}>Yayınlandı</option></select></label>
+          <label><span>Yayınlanma tarihi</span><input type="datetime-local" value="${escapeAttribute(datetimeLocalValue(selected.publishedAt))}" data-mudavim-announcement-field="publishedAt"></label>
+          <p class="control-note">Son güncelleme: ${escapeHTML(formatMudavimAnnouncementListDate(selected.updatedAt || selected.createdAt))}</p>
+          <p class="mudavim-publish-hint">Duyuru yayına alındığında müdavim kullanıcı ekranında gösterilir.</p>
+        </aside>
       </div>
       <p class="control-note">Değişiklikler “Değişiklikleri Kaydet” düğmesine basıldığında canlıya alınır.</p>
     `;
@@ -2953,19 +3484,26 @@
     const hasText = block.type !== "image";
     const hasImage = block.type !== "text";
     const typeOptions = [
-      ["text", "Sadece Metin"],
-      ["image", "Sadece Görsel"],
+      ["text", "Metin Bloğu"],
+      ["image", "Görsel Bloğu"],
       ["image-text", "Görsel + Metin"],
-      ["text-image", "Metin + Görsel"]
+      ["text-image", "Metin + Görsel Bloğu"]
     ];
     const textFields = hasText ? `
       <div class="mudavim-block-text-fields">
+        <div class="mudavim-text-tools" aria-label="Metin biçim araçları">
+          <button type="button" data-mudavim-format="bold"><strong>B</strong></button>
+          <button type="button" data-mudavim-format="italic"><em>I</em></button>
+          <button type="button" data-mudavim-format="underline"><u>U</u></button>
+          <button type="button" data-mudavim-format="bullet">•</button>
+          <button type="button" data-mudavim-format="link"><i class="fas fa-link" aria-hidden="true"></i></button>
+        </div>
+        <label><span>Başlık</span><input type="text" value="${escapeAttribute(block.heading)}" data-mudavim-block-field="heading" maxlength="180" placeholder="Duyuru başlığı"></label>
+        <label><span>Kısa açıklama</span><textarea rows="4" data-mudavim-block-field="body" maxlength="10000" placeholder="Duyuru metnini yazın">${escapeHTML(block.body)}</textarea></label>
         <div class="form-grid two">
           <label><span>Etiket / kategori</span><input type="text" value="${escapeAttribute(block.badge)}" data-mudavim-block-field="badge" maxlength="40" placeholder="YENİ, ETKİNLİK, SEZONAL"></label>
           <label><span>Tarih</span><input type="date" value="${escapeAttribute(block.date)}" data-mudavim-block-field="date"></label>
         </div>
-        <label><span>Başlık</span><input type="text" value="${escapeAttribute(block.heading)}" data-mudavim-block-field="heading" maxlength="180" placeholder="Duyuru başlığı"></label>
-        <label><span>Kısa açıklama</span><textarea rows="4" data-mudavim-block-field="body" maxlength="10000" placeholder="Duyuru metnini yazın">${escapeHTML(block.body)}</textarea></label>
       </div>
     ` : "";
     const imageFields = hasImage ? `
@@ -2977,16 +3515,28 @@
       </div>
     ` : "";
     return `
-      <article class="mudavim-block-card" data-mudavim-block-id="${escapeAttribute(block.id)}">
+      <article class="mudavim-block-card is-${escapeAttribute(block.type)}" data-mudavim-block-id="${escapeAttribute(block.id)}">
         <div class="mudavim-block-card__head">
-          <span class="mudavim-block-order">${index + 1}</span>
-          <label class="mudavim-block-type"><span>Blok tipi</span><select data-mudavim-block-field="type">${typeOptions.map(([value, label]) => `<option value="${value}" ${block.type === value ? "selected" : ""}>${label}</option>`).join("")}</select></label>
-          <div>
+          <div class="mudavim-block-title">
+            <span class="mudavim-block-order">${index + 1}</span>
+            <label class="mudavim-block-type"><span>Blok tipi</span><select data-mudavim-block-field="type">${typeOptions.map(([value, label]) => `<option value="${value}" ${block.type === value ? "selected" : ""}>${label}</option>`).join("")}</select></label>
+          </div>
+          <div class="mudavim-block-actions">
             <button type="button" aria-label="Yukarı taşı" data-mudavim-announcement-action="move-block-up" ${index === 0 ? "disabled" : ""}><i class="fas fa-arrow-up" aria-hidden="true"></i></button>
             <button type="button" aria-label="Aşağı taşı" data-mudavim-announcement-action="move-block-down" ${index === total - 1 ? "disabled" : ""}><i class="fas fa-arrow-down" aria-hidden="true"></i></button>
+            <button type="button" aria-label="Bloğu kopyala" data-mudavim-announcement-action="copy-block"><i class="far fa-copy" aria-hidden="true"></i></button>
             <button type="button" aria-label="Bloğu sil" data-mudavim-announcement-action="delete-block"><i class="fas fa-trash" aria-hidden="true"></i></button>
           </div>
         </div>
+        ${hasText && hasImage ? `
+          <label class="mudavim-block-placement">
+            <span>Yerleşim</span>
+            <select data-mudavim-block-field="type">
+              <option value="image-text" ${block.type === "image-text" ? "selected" : ""}>Görsel solda</option>
+              <option value="text-image" ${block.type === "text-image" ? "selected" : ""}>Görsel sağda</option>
+            </select>
+          </label>
+        ` : ""}
         <div class="mudavim-block-editor-grid${hasText && hasImage ? " is-combined" : ""}">${imageFields}${textFields}</div>
       </article>
     `;
@@ -3028,6 +3578,20 @@
     return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
   }
 
+  function formatMudavimAnnouncementListDate(value) {
+    if (!value) return "-";
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? String(value).slice(0, 16) : date.toLocaleDateString("tr-TR", { day: "2-digit", month: "short", year: "numeric" });
+  }
+
+  function datetimeLocalValue(value) {
+    if (!value) return "";
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return String(value).slice(0, 16);
+    const pad = (number) => String(number).padStart(2, "0");
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
   function applyMudavimPreviewImageOrientation(root) {
     root.querySelectorAll("img[data-mudavim-preview-image]").forEach((image) => {
       const apply = () => {
@@ -3048,8 +3612,11 @@
     announcements.push({
       id,
       title: "Yeni Duyuru",
+      summary: "",
       slug: `${slugifyMudavimAnnouncement("Yeni Duyuru")}-${announcements.length + 1}`,
       order: announcements.length,
+      status: "draft",
+      publishedAt: "",
       isPublished: false,
       blocks: [{
         id: `${id}-block-1`,
@@ -3083,9 +3650,14 @@
     if (!announcement) return;
     const announcementField = event.target.dataset.mudavimAnnouncementField;
     if (announcementField) {
-      announcement[announcementField] = event.target.type === "checkbox"
-        ? event.target.checked
-        : event.target.type === "number" ? Number(event.target.value || 0) : event.target.value;
+      if (announcementField === "status") {
+        announcement.status = event.target.value === "published" ? "published" : "draft";
+        announcement.isPublished = announcement.status === "published";
+      } else {
+        announcement[announcementField] = event.target.type === "checkbox"
+          ? event.target.checked
+          : event.target.type === "number" ? Number(event.target.value || 0) : event.target.value;
+      }
       announcement.updatedAt = new Date().toISOString();
       saveSiteSettings();
       renderMudavimAnnouncementPreview();
@@ -3106,10 +3678,11 @@
     const input = event.target.closest("[data-mudavim-block-image]");
     if (!input) {
       if (event.target.matches("[data-mudavim-block-field='type']")) {
+        handleMudavimAnnouncementEditorInput(event);
         renderMudavimAnnouncements();
         return;
       }
-      if (event.target.matches("[data-mudavim-announcement-field='title'], [data-mudavim-announcement-field='slug'], [data-mudavim-announcement-field='order'], [data-mudavim-announcement-field='isPublished']")) {
+      if (event.target.matches("[data-mudavim-announcement-field='title'], [data-mudavim-announcement-field='summary'], [data-mudavim-announcement-field='status'], [data-mudavim-announcement-field='publishedAt']")) {
         renderMudavimAnnouncements();
       }
       return;
@@ -3135,6 +3708,11 @@
   }
 
   function handleMudavimAnnouncementEditorClick(event) {
+    const formatButton = event.target.closest("[data-mudavim-format]");
+    if (formatButton) {
+      applyMudavimTextFormat(formatButton);
+      return;
+    }
     const button = event.target.closest("[data-mudavim-announcement-action]");
     if (!button) return;
     const action = button.dataset.mudavimAnnouncementAction;
@@ -3168,6 +3746,12 @@
     const blockId = button.closest("[data-mudavim-block-id]")?.dataset.mudavimBlockId;
     const blockIndex = announcement.blocks.findIndex((item) => item.id === blockId);
     if (action === "delete-block" && blockIndex >= 0) announcement.blocks.splice(blockIndex, 1);
+    if (action === "copy-block" && blockIndex >= 0) {
+      const copy = cloneData(announcement.blocks[blockIndex]);
+      copy.id = `${announcement.id}-block-${Date.now().toString(36)}`;
+      copy.order = blockIndex + 1;
+      announcement.blocks.splice(blockIndex + 1, 0, copy);
+    }
     if (action === "move-block-up" && blockIndex > 0) {
       [announcement.blocks[blockIndex - 1], announcement.blocks[blockIndex]] = [announcement.blocks[blockIndex], announcement.blocks[blockIndex - 1]];
     }
@@ -3178,6 +3762,37 @@
     announcement.updatedAt = new Date().toISOString();
     saveSiteSettings();
     renderMudavimAnnouncements();
+  }
+
+  function applyMudavimTextFormat(button) {
+    const announcement = selectedMudavimAnnouncement();
+    const card = button.closest("[data-mudavim-block-id]");
+    const textarea = card ? card.querySelector("textarea[data-mudavim-block-field='body']") : null;
+    const block = announcement && card ? announcement.blocks.find((item) => item.id === card.dataset.mudavimBlockId) : null;
+    if (!announcement || !block || !textarea) return;
+    const start = textarea.selectionStart || 0;
+    const end = textarea.selectionEnd || start;
+    const value = textarea.value || "";
+    const selected = value.slice(start, end) || "metin";
+    const type = button.dataset.mudavimFormat;
+    let replacement = selected;
+    if (type === "bold") replacement = `**${selected}**`;
+    if (type === "italic") replacement = `_${selected}_`;
+    if (type === "underline") replacement = `<u>${selected}</u>`;
+    if (type === "bullet") replacement = selected.split("\n").map((line) => `• ${line.replace(/^•\\s*/, "")}`).join("\n");
+    if (type === "link") {
+      const url = prompt("Bağlantı adresi", "https://");
+      if (!url) return;
+      replacement = `[${selected}](${url})`;
+    }
+    textarea.value = `${value.slice(0, start)}${replacement}${value.slice(end)}`;
+    textarea.focus();
+    textarea.setSelectionRange(start, start + replacement.length);
+    block.body = textarea.value;
+    if (block.type === "text") block.content = block.body;
+    announcement.updatedAt = new Date().toISOString();
+    saveSiteSettings();
+    renderMudavimAnnouncementPreview();
   }
 
   function formatMudavimRewardStatus(status) {
@@ -3205,6 +3820,7 @@
     if (!els.feedbackList) return;
     const items = loadFeedbackItems();
     renderFeedbackInsights(items);
+    renderFeedbackMudavimSummary(items);
     const filter = state.feedbackFilter || "all";
     const favoriteCounts = favoriteRanking(items);
     const filtered = filter === "all"
@@ -3228,32 +3844,52 @@
     }
 
     if (!filtered.length) {
-      els.feedbackList.innerHTML = `<div class="feedback-item is-empty"><strong>Kayıt yok</strong><p>Müşteri mesajları, puanlamalar ve favori içecek tercihleri burada listelenecek.</p></div>`;
+      els.feedbackList.innerHTML = `
+        <div class="feedback-empty-state">
+          <strong>Kayıt yok</strong>
+          <p>Müşteri mesajları, puanlamalar ve favori içecek tercihleri burada listelenecek.</p>
+        </div>
+      `;
       return;
     }
 
     const rankingHtml = filter === "favori" ? renderFavoriteRanking(favoriteCounts) : "";
-    els.feedbackList.innerHTML = rankingHtml + filtered.map((item) => {
+    els.feedbackList.innerHTML = rankingHtml + `
+      <div class="feedback-table" role="table" aria-label="Dilek ve şikayet kayıtları">
+        <div class="feedback-table-row feedback-table-head" role="row">
+          <span role="columnheader">Tarih</span>
+          <span role="columnheader">Müşteri</span>
+          <span role="columnheader">Kategori</span>
+          <span role="columnheader">Puan / Detay</span>
+          <span role="columnheader">Mesaj</span>
+          <span role="columnheader">Favori içecek</span>
+          <span role="columnheader">İşlem</span>
+        </div>
+        ${filtered.map((item) => {
       const type = normalizeFeedbackType(item.type);
       const count = favoriteCounts.get(favoriteKey(item.favorite)) || 0;
-      const favorite = item.favorite ? `<p><strong>Favori içecek:</strong> ${escapeHTML(item.favorite)}</p>` : "";
-      const text = item.text ? `<p>${escapeHTML(item.text)}</p>` : "";
+      const favorite = String(item.favorite || "").trim();
+      const text = String(item.text || "").trim();
       const emptyText = type === "puanlama" ? "Sadece puanlama gönderildi." : "Metin girilmedi.";
       return `
-        <article class="feedback-item">
-          <div class="feedback-item-head">
-            <strong>${escapeHTML(feedbackTypeLabel(type))}</strong>
-            <span>${escapeHTML(formatFeedbackDate(item.createdAt))}</span>
+          <div class="feedback-table-row" role="row">
+            <span class="feedback-date" role="cell">${escapeHTML(formatFeedbackDate(item.createdAt) || "-")}</span>
+            <span class="feedback-customer" role="cell">
+              <strong>${escapeHTML(feedbackCustomerName(item))}</strong>
+              <small>${escapeHTML(feedbackCustomerDetail(item))}</small>
+            </span>
+            <span role="cell"><em class="feedback-type-badge is-${escapeAttribute(type)}">${escapeHTML(feedbackTypeLabel(type))}</em></span>
+            <span class="feedback-rating-cell" role="cell">${escapeHTML(feedbackStars(item.rating))}${type === "favori" && count ? `<small>${count} tercih</small>` : ""}</span>
+            <span class="feedback-message-cell" role="cell">${escapeHTML(text || emptyText)}</span>
+            <span class="feedback-favorite-cell" role="cell">${favorite ? `<strong>${escapeHTML(favorite)}</strong><small>Favori içecek</small>` : "<small>—</small>"}</span>
+            <span class="feedback-actions-cell" role="cell">
+              <button class="feedback-mini-action" type="button" aria-label="Kaydı görüntüle">Göz at</button>
+            </span>
           </div>
-          ${text || `<p>${escapeHTML(emptyText)}</p>`}
-          ${favorite}
-          <div class="feedback-meta">
-            <span>${escapeHTML(feedbackStars(item.rating))}</span>
-            ${type === "favori" ? `<span>${count} tercih</span>` : ""}
-          </div>
-        </article>
+        `;
+        }).join("")}
+      </div>
       `;
-    }).join("");
   }
 
   async function refreshFeedbackInbox() {
@@ -3322,7 +3958,7 @@
     const complaints = items.filter((item) => normalizeFeedbackType(item.type) === "sikayet").length;
     const suggestions = items.filter((item) => normalizeFeedbackType(item.type) === "oneri").length;
     const requests = items.filter((item) => normalizeFeedbackType(item.type) === "istek").length;
-    const favorites = items.filter((item) => normalizeFeedbackType(item.type) === "favori").length;
+    const favorites = items.filter((item) => normalizeFeedbackType(item.type) === "favori" || String(item.favorite || "").trim()).length;
     const ratings = items.filter((item) => normalizeFeedbackType(item.type) === "puanlama").length;
 
     const insights = [
@@ -3339,6 +3975,54 @@
     els.feedbackInsights.innerHTML = insights.map(([label, value]) => (
       `<article class="feedback-insight"><span>${escapeHTML(label)}</span><strong>${escapeHTML(String(value))}</strong></article>`
     )).join("");
+  }
+
+  function renderFeedbackMudavimSummary(items) {
+    if (!els.feedbackMudavimSummary) return;
+    const mudavimItems = items.filter(isMudavimFeedback);
+    const rated = mudavimItems.filter((item) => Number(item.rating || 0) > 0);
+    const average = rated.length
+      ? (rated.reduce((sum, item) => sum + Number(item.rating || 0), 0) / rated.length).toFixed(1)
+      : "0.0";
+    const latest = mudavimItems[0];
+    els.feedbackMudavimSummary.innerHTML = `
+      <div class="feedback-mudavim-head">
+        <span aria-hidden="true">TM</span>
+        <div>
+          <p class="eyebrow">Müdavim Yorumları</p>
+          <h3>Müdavim özeti</h3>
+        </div>
+      </div>
+      <div class="feedback-mudavim-stats">
+        <article><span>Toplam yorum</span><strong>${escapeHTML(String(mudavimItems.length))}</strong></article>
+        <article><span>Ortalama puan</span><strong>${escapeHTML(`${average}/5`)}</strong></article>
+      </div>
+      <div class="feedback-mudavim-latest">
+        <span>Son yorum</span>
+        <p>${latest ? escapeHTML(String(latest.text || latest.favorite || "Sadece puanlama gönderildi.")).slice(0, 180) : "Henüz Müdavim yorumu yok."}</p>
+        <small>${latest ? escapeHTML(formatFeedbackDate(latest.createdAt) || "-") : "Müdavim kanalı bekleniyor"}</small>
+      </div>
+      <div class="feedback-mudavim-channel">
+        <span>Müdavim kanal durumu</span>
+        <strong>${mudavimItems.length ? "Aktif" : "Beklemede"}</strong>
+        <small>${mudavimItems.length ? "Müdavim geri bildirimleri izleniyor." : "İlk Müdavim yorumu geldiğinde burada öne çıkar."}</small>
+      </div>
+    `;
+  }
+
+  function feedbackCustomerName(item) {
+    const value = item.customerName || item.memberName || item.profileName || item.displayName || item.name || item.customer || "";
+    return String(value || "").trim() || (isMudavimFeedback(item) ? "Müdavim" : "Anonim misafir");
+  }
+
+  function feedbackCustomerDetail(item) {
+    const value = item.phoneMasked || item.maskedPhone || item.phone || item.customerPhone || item.memberId || item.customerId || item.id || "";
+    return value ? String(value).trim() : "Kanal: QR Menü";
+  }
+
+  function isMudavimFeedback(item) {
+    const value = `${item.source || ""} ${item.channel || ""} ${item.customerType || ""} ${item.origin || ""}`.toLocaleLowerCase("tr-TR");
+    return Boolean(item.mudavim || item.memberId || item.memberName || item.profileName || value.includes("mudavim"));
   }
 
   function handleFeedbackTabs(event) {
@@ -3385,11 +4069,35 @@
   function renderStaffAccess() {
     if (!els.staffUserList) return;
     const access = state.recipeAccess || { users: [], assignments: [], activity: [] };
+    renderStaffOverview(access);
     renderStaffUsers(access.users || []);
     renderStaffAssignmentOptions();
     renderStaffAssignments(access.assignments || []);
     renderStaffActivity(access.activity || []);
     if (els.staffUserMessage) els.staffUserMessage.textContent = state.staffMessage || "";
+  }
+
+  function renderStaffOverview(access) {
+    if (!els.staffOverviewGrid) return;
+    const users = Array.isArray(access && access.users) ? access.users : [];
+    const assignments = Array.isArray(access && access.assignments) ? access.assignments : [];
+    const activeCount = users.filter((user) => user.active !== false).length;
+    const passiveCount = Math.max(0, users.length - activeCount);
+    els.staffOverviewGrid.innerHTML = [
+      ["Toplam Personel", users.length, "Tüm personel sayısı"],
+      ["Aktif Personel", activeCount, "Aktif çalışan personel"],
+      ["Pasif Personel", passiveCount, "Pasif durumda personel"],
+      ["Atanmış Programlar", assignments.length, "Toplam atanan program"]
+    ].map(([label, value, note]) => `
+      <article>
+        <span aria-hidden="true"></span>
+        <div>
+          <p>${escapeHTML(label)}</p>
+          <strong>${escapeHTML(value)}</strong>
+          <small>${escapeHTML(note)}</small>
+        </div>
+      </article>
+    `).join("");
   }
 
   function renderStaffUsers(users) {
@@ -3411,27 +4119,37 @@
       });
     }
     if (!visible.length) {
-      els.staffUserList.innerHTML = `<div class="staff-empty">Bu filtrede barista kullanıcısı yok.</div>`;
+      els.staffUserList.innerHTML = `<div class="staff-empty">Bu filtrede personel yok.</div>`;
       return;
     }
 
-    els.staffUserList.innerHTML = visible.map((user) => `
-      <article class="staff-user-row${user.id === state.selectedStaffUserId ? " is-active" : ""}">
-        <button class="staff-user-main" type="button" data-staff-user="${escapeAttribute(user.id)}">
-          <span>
-            <strong>${escapeHTML(user.name || user.username)}</strong>
-            <small>@${escapeHTML(user.username)}${user.lastLoginAt ? ` - son giriş ${escapeHTML(formatStaffDate(user.lastLoginAt))}` : ""}</small>
-          </span>
-        </button>
-        <em class="${user.active === false ? "is-passive" : "is-active"}">${user.active === false ? "Pasif" : "Aktif"}</em>
-        <span class="staff-row-actions">
-          <button class="${user.active === false ? "line-action" : "danger-mini"}" type="button" data-toggle-staff-user="${escapeAttribute(user.id)}" data-next-active="${user.active === false ? "true" : "false"}">
-            ${user.active === false ? "Tekrar aktif et" : "Yetkiyi Kaldır"}
-          </button>
-          <button class="danger-mini" type="button" data-permanent-delete-user="${escapeAttribute(user.id)}">Kalıcı Sil</button>
-        </span>
-      </article>
-    `).join("");
+    els.staffUserList.innerHTML = `
+      <div class="staff-user-table">
+        <div class="staff-user-row staff-user-head">
+          <span>Ad Soyad</span>
+          <span>Kullanıcı Adı</span>
+          <span>Durum</span>
+          <span>Oluşturulma Tarihi</span>
+          <span></span>
+        </div>
+        ${visible.map((user) => `
+          <article class="staff-user-row${user.id === state.selectedStaffUserId ? " is-active" : ""}">
+            <button class="staff-user-main" type="button" data-staff-user="${escapeAttribute(user.id)}">
+              <strong>${escapeHTML(user.name || user.username)}</strong>
+            </button>
+            <span>@${escapeHTML(user.username)}</span>
+            <em class="${user.active === false ? "is-passive" : "is-active"}">${user.active === false ? "Pasif" : "Aktif"}</em>
+            <time>${escapeHTML(formatStaffDate(user.createdAt))}</time>
+            <span class="staff-row-actions">
+              <button class="${user.active === false ? "line-action" : "danger-mini"}" type="button" data-toggle-staff-user="${escapeAttribute(user.id)}" data-next-active="${user.active === false ? "true" : "false"}">
+                ${user.active === false ? "Aktif Et" : "Pasifleştir"}
+              </button>
+              <button class="danger-mini" type="button" data-permanent-delete-user="${escapeAttribute(user.id)}">Sil</button>
+            </span>
+          </article>
+        `).join("")}
+      </div>
+    `;
   }
 
   function handleStaffUserListClick(event) {
@@ -3456,7 +4174,7 @@
     if (els.staffUsername) els.staffUsername.value = user.username || "";
     if (els.staffPassword) els.staffPassword.value = "";
     if (els.staffUserActive) els.staffUserActive.checked = user.active !== false;
-    state.staffMessage = "Kullanıcı düzenleniyor";
+    state.staffMessage = "Personel düzenleniyor";
     renderStaffAccess();
   }
 
@@ -3493,11 +4211,11 @@
       if (Array.isArray(result.users)) state.recipeAccess.users = result.users;
       if (Array.isArray(result.assignments)) state.recipeAccess.assignments = result.assignments;
       if (Array.isArray(result.activity)) state.recipeAccess.activity = result.activity;
-      state.staffMessage = nextActive ? "Kullanıcı tekrar aktif edildi" : "Kullanıcı yetkisi kaldırıldı";
+      state.staffMessage = nextActive ? "Personel tekrar aktif edildi" : "Personel pasif hale getirildi";
       if (!nextActive && state.selectedStaffUserId === id && els.staffUserActive) els.staffUserActive.checked = false;
       renderStaffAccess();
     } catch (error) {
-      state.staffMessage = error.message || "Kullanıcı yetkisi güncellenemedi";
+      state.staffMessage = error.message || "Personel durumu güncellenemedi";
       renderStaffAccess();
     }
   }
@@ -3557,11 +4275,11 @@
       if (Array.isArray(result.assignments)) state.recipeAccess.assignments = result.assignments;
       if (Array.isArray(result.activity)) state.recipeAccess.activity = result.activity;
       state.selectedStaffUserId = result.user && result.user.id || selectedId || "";
-      state.staffMessage = selectedId ? "Kullanıcı güncellendi" : "Kullanıcı oluşturuldu";
+      state.staffMessage = selectedId ? "Personel güncellendi" : "Personel oluşturuldu";
       if (els.staffPassword) els.staffPassword.value = "";
       renderStaffAccess();
     } catch (error) {
-      state.staffMessage = error.message || "Kullanıcı kaydedilemedi";
+      state.staffMessage = error.message || "Personel kaydedilemedi";
       renderStaffAccess();
     }
   }
@@ -3646,15 +4364,53 @@
 
     const currentProduct = els.staffAssignmentProduct ? els.staffAssignmentProduct.value : "";
     const currentSize = els.staffAssignmentSize ? els.staffAssignmentSize.value : "";
-    els.staffProductPicker.innerHTML = items.map((item) => {
+    const selectedLabels = items
+      .filter((item) => item.product === currentProduct && (!currentSize || item.size === currentSize))
+      .map((item) => [item.product, item.size].filter(Boolean).join(" / "));
+    els.staffProductPicker.innerHTML = `
+      <details class="staff-multiselect">
+        <summary class="staff-multiselect-control">
+          <span class="staff-multiselect-chips">
+            ${staffProductPickerChipMarkup(selectedLabels)}
+          </span>
+          <span class="staff-multiselect-arrow" aria-hidden="true"></span>
+        </summary>
+        <div class="staff-multiselect-menu">
+          ${items.map((item) => {
       const checked = item.product === currentProduct && (!currentSize || item.size === currentSize);
       return `
-        <label>
+        <label class="staff-multiselect-option">
           <input type="checkbox" value="${escapeAttribute(recipeItemKey(item))}"${checked ? " checked" : ""}>
           <span>${escapeHTML([item.product, item.size].filter(Boolean).join(" / "))}</span>
         </label>
       `;
-    }).join("");
+    }).join("")}
+        </div>
+      </details>
+    `;
+  }
+
+  function syncStaffProductPickerChips() {
+    if (!els.staffProductPicker) return;
+    const chipBox = els.staffProductPicker.querySelector(".staff-multiselect-chips");
+    if (!chipBox) return;
+    const labels = Array.from(els.staffProductPicker.querySelectorAll(".staff-multiselect-option input[type='checkbox']:checked"))
+      .map((input) => {
+        const label = input.closest(".staff-multiselect-option");
+        return label ? label.textContent.trim() : "";
+      })
+      .filter(Boolean);
+    chipBox.innerHTML = staffProductPickerChipMarkup(labels);
+  }
+
+  function staffProductPickerChipMarkup(labels) {
+    const visible = labels.slice(0, 2);
+    const overflow = Math.max(0, labels.length - visible.length);
+    if (!visible.length) return `<em>Ürün seçin</em>`;
+    return [
+      ...visible.map((label) => `<span>${escapeHTML(label)}</span>`),
+      overflow ? `<span>+${overflow}</span>` : ""
+    ].join("");
   }
 
   function flattenRecipeAssignmentItems(categoryFilter) {
@@ -3725,11 +4481,11 @@
       });
       if (Array.isArray(result.assignments)) state.recipeAccess.assignments = result.assignments;
       if (Array.isArray(result.activity)) state.recipeAccess.activity = result.activity;
-      if (els.staffAssignmentMessage) els.staffAssignmentMessage.textContent = "Program atandi";
+      if (els.staffAssignmentMessage) els.staffAssignmentMessage.textContent = "Program atandı";
       if (els.staffAdminNote) els.staffAdminNote.value = "";
       renderStaffAccess();
     } catch (error) {
-      if (els.staffAssignmentMessage) els.staffAssignmentMessage.textContent = error.message || "Program atanamadi";
+      if (els.staffAssignmentMessage) els.staffAssignmentMessage.textContent = error.message || "Program atanamadı";
     }
   }
 
@@ -3759,14 +4515,14 @@
       <div class="staff-ledger staff-assignment-ledger">
         <div class="staff-ledger-head">
           <span>Tarih</span>
-          <span>Barista</span>
+          <span>Personel</span>
           <span>Tip</span>
           <span>Başlık</span>
           <span>Kapsam</span>
           <span>Durum</span>
-          <span>Ilerleme</span>
+          <span>İlerleme</span>
           <span>Skor</span>
-          <span>Islem</span>
+          <span>İşlem</span>
         </div>
         ${list.map((assignment) => {
       const score = staffAssignmentScore(assignment);
@@ -3824,16 +4580,16 @@
     els.staffAssignmentDetail.hidden = false;
     els.staffAssignmentDetail.innerHTML = `
       <div class="staff-box-head">
-        <h4>Program Detayi</h4>
+        <h4>Program Detayı</h4>
         <button class="line-action" type="button" data-close-assignment-detail>Kapat</button>
       </div>
       <div class="staff-detail-grid">
-        <span>Barista</span><strong>${escapeHTML(assignment.name || assignment.username || "Silinmiş Kullanıcı")}</strong>
+        <span>Personel</span><strong>${escapeHTML(assignment.name || assignment.username || "Silinmiş Kullanıcı")}</strong>
         <span>Başlık</span><strong>${escapeHTML(assignment.title || "-")}</strong>
         <span>Tip</span><strong>${escapeHTML(staffAssignmentKindLabel(assignment.assignmentKind || assignment.assignmentType))}</strong>
         <span>Kapsam</span><strong>${escapeHTML(staffScopeSummary(assignment))}</strong>
         <span>Durum</span><strong>${escapeHTML(staffAssignmentStatusLabel(assignment.status))}</strong>
-        <span>Ilerleme</span><strong>${escapeHTML(staffAssignmentProgress(assignment))}</strong>
+        <span>İlerleme</span><strong>${escapeHTML(staffAssignmentProgress(assignment))}</strong>
         <span>Skor</span><strong>${escapeHTML(staffAssignmentScore(assignment))}</strong>
         <span>Tamamlanma</span><strong>${escapeHTML(formatStaffDate(assignment.completedAt))}</strong>
         <span>Admin notu</span><strong>${escapeHTML(assignment.adminNote || "-")}</strong>
@@ -3896,7 +4652,7 @@
     els.staffActivityList.innerHTML = `
       <div class="staff-ledger staff-activity-ledger">
         <div class="staff-ledger-head">
-          <span>Barista</span>
+          <span>Personel</span>
           <span>Hareket</span>
           <span>Detay</span>
           <span>Tarih</span>
@@ -4200,15 +4956,19 @@
     renderSiteSettingsForm();
     renderSiteEditorForm();
 
-    const product = selectedProduct();
+    const product = selectedProductStrict();
     els.deleteProductButton.disabled = !product;
+    if (els.productDetailsAccordion) {
+      els.productDetailsAccordion.hidden = !product;
+      if (product) els.productDetailsAccordion.open = true;
+    }
     if (!product) {
-      els.productEditorTitle.textContent = "Ürün eklemek için + Ürün";
+      els.productEditorTitle.textContent = "Ürün Detayları";
       clearProductForm();
       return;
     }
 
-    els.productEditorTitle.textContent = `${product.name} detayı`;
+    els.productEditorTitle.textContent = "Ürün Detayları";
     els.productName.value = product.name;
     els.productCategory.value = category ? category.id : "";
     els.productDesc.value = product.desc;
@@ -4484,19 +5244,31 @@
   function renderProductNavigation() {
     if (!els.productCategoryTabs || !els.productQuickList) return;
     const category = selectedCategory();
-    els.productCategoryTabs.innerHTML = state.data.categories.map((item) => `
-      <button class="category-tab${category && item.id === category.id ? " is-active" : ""}" type="button" data-product-category-tab="${escapeAttribute(item.id)}">
-        ${escapeHTML(item.name)} <span>${item.products.length}</span>
-      </button>
-    `).join("");
+    const product = selectedProductStrict();
+    els.productCategoryTabs.innerHTML = `
+      <label class="product-select-field">
+        <span>Kategori seç</span>
+        <select data-product-category-select>
+          <option value="">Kategori seç</option>
+          ${state.data.categories.map((item) => `
+            <option value="${escapeAttribute(item.id)}"${category && item.id === category.id ? " selected" : ""}>${escapeHTML(item.name)}</option>
+          `).join("")}
+        </select>
+      </label>
+    `;
 
-    els.productQuickList.innerHTML = category && category.products.length
-      ? category.products.map((product) => `
-        <button class="product-chip${product.id === state.selectedProductId ? " is-active" : ""}" type="button" data-product-chip="${escapeAttribute(product.id)}">
-          ${escapeHTML(product.name)}
-        </button>
-      `).join("")
-      : `<button class="product-chip" type="button" disabled>Ürün yok</button>`;
+    els.productQuickList.innerHTML = `
+      <label class="product-select-field">
+        <span>Ürün seç</span>
+        <select data-product-select${!category ? " disabled" : ""}>
+          <option value="">Ürün seç</option>
+          ${(category && category.products.length ? category.products : []).map((item) => `
+            <option value="${escapeAttribute(item.id)}"${product && item.id === product.id ? " selected" : ""}>${escapeHTML(item.name)}</option>
+          `).join("")}
+        </select>
+      </label>
+      <p class="product-selection-status">${product ? `Seçili ürün: ${escapeHTML(product.name)} (${escapeHTML(category.name)})` : "Ürün seçilince detay alanı açılır."}</p>
+    `;
   }
 
   function renderCategoryIconOptions(category) {
@@ -4509,24 +5281,39 @@
   }
 
   function handleProductCategoryTabs(event) {
+    const select = event.target.closest("[data-product-category-select]");
     const button = event.target.closest("[data-product-category-tab]");
-    if (!button) return;
-    state.selectedCategoryId = button.dataset.productCategoryTab;
+    if (!button && !select) return;
+    state.selectedCategoryId = select ? select.value : button.dataset.productCategoryTab;
     const category = selectedCategory();
-    state.selectedProductId = category && category.products[0] ? category.products[0].id : "";
+    state.allowEmptyProductSelection = Boolean(select);
+    state.selectedProductId = select ? "" : (category && category.products[0] ? category.products[0].id : "");
     setActiveSection("product", { collapseSidebar: false, render: false });
     renderAll();
   }
 
   function handleProductQuickList(event) {
+    const select = event.target.closest("[data-product-select]");
     const button = event.target.closest("[data-product-chip]");
-    if (!button) return;
-    state.selectedProductId = button.dataset.productChip;
+    if (!button && !select) return;
+    state.selectedProductId = select ? select.value : button.dataset.productChip;
+    if (!state.selectedProductId && button) state.selectedProductId = button.dataset.productChip;
+    state.allowEmptyProductSelection = !state.selectedProductId;
     setActiveSection("product", { collapseSidebar: false, render: false });
     renderAll();
   }
 
+  function handleProductEditorCardClick(event) {
+    const addButton = event.target.closest("[data-product-add-inline]");
+    if (!addButton) return;
+    event.preventDefault();
+    event.stopPropagation();
+    addProduct();
+  }
+
   function bindMenuOutputEvents() {
+    // Menü Çıktısı modülü geçici olarak pasif. İleride tekrar aktif edilebilir.
+    // Export/indirme fonksiyonları silinmedi; modül normal panel akışından açılmadığı için kullanılmaz durumdadır.
     [
       "menuOutputBgColor", "menuOutputBoxColor", "menuOutputTextColor",
       "menuOutputTitleFont", "menuOutputBodyFont", "menuOutputPriceFont",
@@ -6632,11 +7419,49 @@
   }
 
   function renderPreview() {
-    if (state.activeSection === "recipe") {
-      renderRecipePreview();
-      return;
-    }
     renderMenuPreview();
+  }
+
+  function renderSettingsPreview() {
+    if (!els.settingsDesktopPreviewFrame) return;
+    ensureSettingsDesktopPreviewResizeObserver();
+    const src = livePreviewUrl("site");
+    if (els.settingsDesktopPreviewFrame.getAttribute("data-preview-src") !== src) {
+      els.settingsDesktopPreviewFrame.setAttribute("data-preview-src", src);
+      els.settingsDesktopPreviewFrame.src = src;
+    }
+    queueSettingsDesktopPreviewScale();
+  }
+
+  let settingsDesktopPreviewScaleFrame = 0;
+
+  function queueSettingsDesktopPreviewScale() {
+    window.cancelAnimationFrame(settingsDesktopPreviewScaleFrame);
+    settingsDesktopPreviewScaleFrame = window.requestAnimationFrame(syncSettingsDesktopPreviewScale);
+  }
+
+  function ensureSettingsDesktopPreviewResizeObserver() {
+    const viewport = els.settingsDesktopPreviewViewport;
+    if (!viewport || !window.ResizeObserver || viewport.__settingsDesktopPreviewResizeObserver) return;
+    const observer = new ResizeObserver(queueSettingsDesktopPreviewScale);
+    observer.observe(viewport);
+    viewport.__settingsDesktopPreviewResizeObserver = observer;
+  }
+
+  function syncSettingsDesktopPreviewScale() {
+    const viewport = els.settingsDesktopPreviewViewport;
+    const frame = els.settingsDesktopPreviewFrame;
+    if (!viewport || !frame) return;
+    const availableWidth = viewport.clientWidth;
+    const availableHeight = viewport.clientHeight || (availableWidth * 900 / 1440);
+    const scale = Math.min(availableWidth / 1440, availableHeight / 900);
+    if (!Number.isFinite(scale) || scale <= 0) return;
+    frame.style.width = "1440px";
+    frame.style.height = "900px";
+    frame.style.transformOrigin = "top left";
+    frame.style.transform = `scale(${scale})`;
+    frame.style.left = `${Math.max(0, (availableWidth - 1440 * scale) / 2)}px`;
+    frame.style.top = `${Math.max(0, (availableHeight - 900 * scale) / 2)}px`;
   }
 
   let menuPreviewScaleFrame = 0;
@@ -6744,9 +7569,17 @@
   function livePreviewUrl(sourceId) {
     const source = LIVE_PREVIEW_SOURCES[sourceId] || LIVE_PREVIEW_SOURCES.site;
     const base = publicSiteUrl();
-    if (!source.path) return base;
-    if (source.path.startsWith("?") || source.path.startsWith("#")) return `${base}${source.path}`;
-    return `${base}${source.path.replace(/^\/+/, "")}`;
+    let url = "";
+    if (!source.path) url = base;
+    else if (source.path.startsWith("?") || source.path.startsWith("#")) url = `${base}${source.path}`;
+    else url = `${base}${source.path.replace(/^\/+/, "")}`;
+
+    if (sourceId !== "menu") return url;
+    const params = new URLSearchParams({ preview: "menu" });
+    if (state.activeSection === "category" && state.selectedCategoryId) {
+      params.set("category", state.selectedCategoryId);
+    }
+    return `${url}${url.includes("?") ? "&" : "?"}${params.toString()}`;
   }
 
   function renderRecipePreview() {
@@ -7048,6 +7881,7 @@
     const product = makeProduct(`Yeni Ürün ${category.products.length + 1}`, category.id);
     category.products.push(product);
     state.selectedProductId = product.id;
+    state.allowEmptyProductSelection = false;
     saveAndRender();
   }
 
@@ -7067,6 +7901,7 @@
     if (!confirm(`${product.name} ürünü silinsin mi?`)) return;
     category.products = category.products.filter((item) => item.id !== product.id);
     state.selectedProductId = category.products[0] ? category.products[0].id : "";
+    state.allowEmptyProductSelection = !state.selectedProductId;
     saveAndRender();
   }
 
@@ -7080,10 +7915,15 @@
     to.products.push(product);
     state.selectedCategoryId = to.id;
     state.selectedProductId = product.id;
+    state.allowEmptyProductSelection = false;
     saveAndRender();
   }
 
   function resetToDefault() {
+    if (state.activeSection === "settings") {
+      applySettingsDefault();
+      return;
+    }
     const savedDefault = readStoredJSON(CUSTOM_DEFAULT_KEY);
     if (savedDefault) {
       openDefaultChoiceModal();
@@ -7094,6 +7934,22 @@
   }
 
   function saveCurrentAsDefault() {
+    if (state.activeSection === "settings") {
+      writePanelConfigFromForm({ dirty: false });
+      writeSiteInfoFromSettings({ dirty: false });
+      const snapshot = {
+        savedAt: new Date().toISOString(),
+        panelConfig: normalizePanelConfig(state.panelConfig),
+        siteInfo: readSiteInfoFromState()
+      };
+      const ok = safeLocalSet(PANEL_SETTINGS_DEFAULT_KEY, JSON.stringify(snapshot));
+      if (els.saveState) els.saveState.textContent = ok ? "Ayar varsayılanı kaydedildi" : "Ayar varsayılanı geçici kaydedildi";
+      window.clearTimeout(saveCurrentAsDefault.timer);
+      saveCurrentAsDefault.timer = window.setTimeout(() => {
+        if (els.saveState) els.saveState.textContent = "Hazır";
+      }, 1400);
+      return;
+    }
     const snapshot = normalizeState(cloneData(state.data));
     const ok = safeLocalSet(CUSTOM_DEFAULT_KEY, JSON.stringify(snapshot));
     if (els.saveState) els.saveState.textContent = ok ? "Varsayılan kaydedildi" : "Varsayılan geçici kaydedildi";
@@ -7141,6 +7997,26 @@
     state.selectedCategoryId = "";
     state.selectedProductId = "";
     saveAndRender();
+  }
+
+  function applySettingsDefault() {
+    const saved = readStoredJSON(PANEL_SETTINGS_DEFAULT_KEY);
+    const panelConfig = saved && saved.panelConfig ? saved.panelConfig : saved;
+    let siteInfo = saved && saved.siteInfo ? saved.siteInfo : null;
+    if (!siteInfo && !saved) {
+      const currentSite = state.site;
+      state.site = normalizeSiteSettings(DEFAULT_SITE_SETTINGS);
+      siteInfo = readSiteInfoFromState();
+      state.site = currentSite;
+    }
+    state.panelConfig = normalizePanelConfig(panelConfig || DEFAULT_PANEL_CONFIG);
+    safeLocalSet(PANEL_SETTINGS_KEY, JSON.stringify(state.panelConfig));
+    if (siteInfo) applySiteInfoToState(siteInfo, { dirty: false });
+    renderPanelSettings();
+    applyPanelRuntimeSettings();
+    state.dirtyPanel = false;
+    updateSaveControls(saved ? "Varsayılan ayarlar yüklendi" : "İlk ayarlar yüklendi");
+    window.setTimeout(() => updateSaveControls(), 1200);
   }
 
   function initialDefaultState() {
@@ -7234,6 +8110,12 @@
     const category = selectedCategory();
     if (!category) return null;
     return category.products.find((product) => product.id === state.selectedProductId) || category.products[0] || null;
+  }
+
+  function selectedProductStrict() {
+    const category = selectedCategory();
+    if (!category || !state.selectedProductId) return null;
+    return category.products.find((product) => product.id === state.selectedProductId) || null;
   }
 
   function flatProducts() {
